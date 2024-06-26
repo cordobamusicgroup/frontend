@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
 import api from "@/lib/axios";
 import apiRoutes from "@/lib/apiRoutes";
