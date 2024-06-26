@@ -33,7 +33,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 1 }}>
+    <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 3 }}>
       <TextField margin="normal" required fullWidth id="username" label="Username" name="username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={Boolean(error)} />
       <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={Boolean(error)} />
       {error && (

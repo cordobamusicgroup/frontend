@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import LockIcon from "@/components/atoms/auth/LockIcon";
 import SignInForm from "@/components/molecules/auth/SignInForm";
 import ErrorModal from "@/components/molecules/ErrorModal";
 import { useAuth } from "@/context/AuthContext";
 import FullScreenLoader from "../FullScreenLoader";
+import LoginLogo from "@/components/atoms/auth/LoginLogo";
 
 function SignInBox() {
   const { login } = useAuth();
@@ -38,10 +38,7 @@ function SignInBox() {
         padding: 3,
       }}
     >
-      <LockIcon />
-      <Typography component="h1" variant="h5">
-        Sign in
-      </Typography>
+      <LoginLogo />
       <SignInForm handleSubmit={handleSubmit} loading={loading} />
       <ErrorModal open={!!error} onClose={handleClose} errorMessage={error || ""} />
       <FullScreenLoader open={loading} /> {/* Usa el nuevo componente aquí */}
