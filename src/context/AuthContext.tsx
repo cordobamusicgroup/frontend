@@ -1,10 +1,10 @@
 "use client";
 
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import api from "@/lib/axios";
 import apiRoutes from "@/lib/apiRoutes";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { apiRequest } from "@/lib/apiHelper";
 
 interface User {
   id: string;
@@ -26,33 +26,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get("access_token");
-    if (token) {
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      api
-        .get(apiRoutes.me)
-        .then((response) => setUser(response.data.user))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    apiRequest({
+      url: apiRoutes.me,
+      method: "get",
+      requiereAuth: true,
+    })
+      .then((response) => setUser(response.data.user))
+      .catch(() => logout())
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (username: string, password: string) => {
     setLoading(true);
-    const response = await api.post(apiRoutes.login, { username, password });
-    const { access_token } = response.data;
-    Cookies.set("access_token", access_token, { expires: 1 / 24 }); // Expira en 60 minutos
-    api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-    setUser(response.data.user);
-    setLoading(false);
-    router.push("/");
+    try {
+      const response = await apiRequest({
+        url: apiRoutes.login,
+        method: "post",
+        data: { username, password },
+        requiereAuth: false,
+      });
+      const { access_token } = response.data;
+      Cookies.set("access_token", access_token, { expires: 1 / 24 }); // Expira en 60 minutos
+      setUser(response.data.user);
+      router.push("/");
+    } catch (error) {
+      throw new Error("Failed to log in. Please check your username and password and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
     Cookies.remove("access_token");
-    delete api.defaults.headers.common["Authorization"];
     setUser(null);
     router.push("/auth");
   };
