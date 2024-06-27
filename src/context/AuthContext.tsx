@@ -26,15 +26,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    apiRequest({
-      url: apiRoutes.me,
-      method: "get",
-      requiereAuth: true,
-    })
-      .then((response) => setUser(response.data.user))
-      .catch(() => logout())
-      .finally(() => setLoading(false));
+    checkAuthentication();
   }, []);
+
+  const checkAuthentication = async () => {
+    const token = Cookies.get("access_token");
+    if (token) {
+      try {
+        const response = await apiRequest({
+          url: apiRoutes.me,
+          method: "get",
+          requiereAuth: true,
+        });
+        setUser(response.data.user);
+      } catch {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
+    }
+  };
 
   const login = async (username: string, password: string) => {
     setLoading(true);
