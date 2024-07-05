@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 
 interface SignInFormProps {
@@ -14,12 +11,26 @@ interface SignInFormProps {
   loading: boolean;
 }
 
+/**
+ * Sign In Form component.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Function} props.handleSubmit - The function to handle form submission.
+ * @param {boolean} props.loading - A flag indicating if the form is currently loading.
+ * @returns {JSX.Element} The Sign In Form component.
+ */
 const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Handles the form submission.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
+   */
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -41,12 +52,10 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
           {error}
         </Typography>
       )}
-      <FormControlLabel control={<Checkbox checked={remember} onChange={(e) => setRemember(e.target.checked)} color="primary" />} label="Remember me" />
       <Box sx={{ position: "relative" }}>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
           {loading ? "Signing In..." : "Sign In"}
         </Button>
-        
       </Box>
       <Grid container justifyContent="center">
         <Grid item>

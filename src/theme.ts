@@ -2,7 +2,6 @@
 
 import { createTheme } from "@mui/material/styles";
 
-// Define los colores y la tipografía de tu tema
 const theme = createTheme({
   palette: {
     primary: {

@@ -2,22 +2,23 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import SignInForm from "@/components/molecules/auth/SignInForm";
-import ErrorModal from "@/components/molecules/ErrorModal";
 import { useAuth } from "@/context/AuthContext";
-import FullScreenLoader from "../FullScreenLoader";
+import FullScreenLoader from "../../molecules/loader/FullScreenLoader";
 import LoginLogo from "@/components/atoms/auth/LoginLogo";
+import { useGlobal } from "@/context/GlobalContext";
+import ErrorModal from "@/components/molecules/modals/ErrorModal";
 
 function SignInBox() {
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useGlobal(); // Usar el estado y la función de loading del contexto global
 
   const handleSubmit = async (username: string, password: string) => {
     setLoading(true);
     try {
       await login(username, password);
-    } catch (err) {
-      setError("Failed to log in. Please check your username and password and try again.");
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }

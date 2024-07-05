@@ -1,21 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { routeConfigs } from "./lib/routes/routes";
 
+/**
+ * Middleware function to handle authentication and authorization.
+ * @param request - The NextRequest object representing the incoming request.
+ * @returns A NextResponse object representing the response to be sent.
+ */
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("access_token");
+  const token = request.cookies.get("access_token")?.value;
+  const userRole = request.cookies.get("user_role")?.value;
 
-  // Redirige a la página de autenticación si no hay token y la ruta no es /auth
-  if (!token && request.nextUrl.pathname !== "/auth") {
-    return NextResponse.redirect(new URL("/auth", request.url));
+  const matchedRoute = routeConfigs.find((route) => new RegExp(`^${route.path}`).test(request.nextUrl.pathname));
+
+  if (matchedRoute) {
+    if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  } else if (!token && request.nextUrl.pathname !== "/login") {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Continúa con la siguiente respuesta si hay un token o si la ruta es /auth
   return NextResponse.next();
 }
 
-// Configuración del matcher para determinar las rutas que deben pasar por el middleware
 export const config = {
-  matcher: [
-    "/((?!auth|static|_next/static|_next/image|favicon.ico|public/.*).*)", // Excluye rutas específicas y la carpeta public
-  ],
+  matcher: routeConfigs.map((route) => route.path),
 };

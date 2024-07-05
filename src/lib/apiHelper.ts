@@ -1,5 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
+import logger from "../../logger";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -47,8 +48,8 @@ export const apiRequest = async ({ url, method, data, params, headers, isFormDat
   try {
     const response = await api.request(config);
     return response;
-  } catch (error) {
-    console.error(`Error ${method}ing data to ${url}:`, error);
+  } catch (error: any) {
+    console.error(`Error ${method}ing data to ${url}:`, error.message);
     throw error;
   }
 };
