@@ -1,9 +1,6 @@
 import { Metadata } from "next";
 import RootLayout from "../layout";
-
-export const metadata: Metadata = {
-  title: "Auth - Córdoba Music Group",
-};
+import PortalLayout from "@/components/organisms/PortalLayout";
 
 export default function AuthLayout({
   children,
@@ -12,9 +9,7 @@ export default function AuthLayout({
 }>) {
   return (
     <RootLayout>
-      <html>
-        <body>{children}</body>
-      </html>
+      <PortalLayout pageTitle="Overview">{children}</PortalLayout>
     </RootLayout>
   );
 }

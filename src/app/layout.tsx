@@ -18,7 +18,11 @@ export default function RootLayout({
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GlobalProvider>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <html>
+            <body>{children}</body>
+          </html>
+        </AuthProvider>
       </GlobalProvider>
     </ThemeProvider>
   );
