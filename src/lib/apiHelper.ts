@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import logger from "../../logger";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
