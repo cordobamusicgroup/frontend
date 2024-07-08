@@ -2,14 +2,13 @@
 
 import { createTheme } from "@mui/material/styles";
 
-// Define los colores y la tipografía de tu tema
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#1976d2", // Color primario
+      main: "#09365F", // Color primario
     },
     secondary: {
-      main: "#dc004e", // Color secundario
+      main: "#001B33", // Color secundario
     },
   },
   typography: {

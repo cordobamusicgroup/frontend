@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import RootLayout from "../layout";
 
 export const metadata: Metadata = {
-  title: "Authetication - Partner Portal",
+  title: "Auth - Córdoba Music Group",
 };
 
 export default function AuthLayout({
@@ -10,11 +10,5 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <RootLayout>
-      <html>
-        <body>{children}</body>
-      </html>
-    </RootLayout>
-  );
+  return <RootLayout>{children}</RootLayout>;
 }

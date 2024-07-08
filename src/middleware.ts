@@ -1,21 +1,39 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 
+/**
+ * Middleware function that handles authentication and authorization for protected routes.
+ * @param request - The NextRequest object representing the incoming request.
+ * @returns A NextResponse object or calls the NextResponse.next() function to continue processing the request.
+ */
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("access_token");
-
-  // Redirige a la página de autenticación si no hay token y la ruta no es /auth
-  if (!token && request.nextUrl.pathname !== "/auth") {
-    return NextResponse.redirect(new URL("/auth", request.url));
+  const token = request.cookies.get("access_token")?.value;
+  const userRole = request.cookies.get("user_role")?.value;
+  /*
+  // Early return if the request is for the login page to avoid infinite redirects
+  if (request.nextUrl.pathname === "/auth/login") {
+    return NextResponse.next();
   }
 
-  // Continúa con la siguiente respuesta si hay un token o si la ruta es /auth
+  const matchedRoute = protectedRouteConfigs.find((route) => {
+    const regex = new RegExp(`^${route.path}`);
+    return regex.test(request.nextUrl.pathname);
+  });
+
+  if (matchedRoute) {
+    // Check if the user has the required role for the matched route
+    if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+  } else if (!token) {
+    // Redirect to login if no token is present and the request is not for the login page
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }*/
+
   return NextResponse.next();
 }
 
-// Configuración del matcher para determinar las rutas que deben pasar por el middleware
 export const config = {
-  matcher: [
-    "/((?!auth|static|_next/static|_next/image|favicon.ico|public/.*).*)", // Excluye rutas específicas y la carpeta public
-  ],
+  matcher: ["/((?!api|static|_next|.*\\..*).*)"],
 };
