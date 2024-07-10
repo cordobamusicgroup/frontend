@@ -1,7 +1,9 @@
-import React from "react";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton as MuiIconButton, Icon } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { AccountCircle } from "@mui/icons-material";
 import IconButton from "../../atoms/header/IconButton";
+import UserMenu from "./UserMenu";
 
 interface AppBarProps {
   open: boolean;
@@ -34,15 +36,37 @@ const AppBarStyled = styled(AppBar, {
   }),
 }));
 
-const AppBarComponent: React.FC<AppBarProps> = ({ open, handleDrawerOpen, pageTitle }) => (
-  <AppBarStyled position="fixed" open={open}>
-    <Toolbar>
-      <IconButton open={open} onClick={handleDrawerOpen} />
-      <Typography variant="h6" noWrap component="div">
-        {pageTitle}
-      </Typography>
-    </Toolbar>
-  </AppBarStyled>
-);
+const ToolbarContent = styled("div")({
+  display: "flex",
+  justifyContent: "space-between",
+  width: "100%",
+  alignItems: "center",
+});
+
+const AppBarComponent: React.FC<AppBarProps> = ({ open, handleDrawerOpen, pageTitle }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <AppBarStyled position="fixed" open={open}>
+      <Toolbar>
+        <ToolbarContent>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <IconButton open={open} onClick={handleDrawerOpen} />
+            <Typography variant="h6" noWrap component="div">
+              {pageTitle}
+            </Typography>
+          </div>
+          <div><UserMenu username="Santiago Joaquin Diaz" clientId="805620" /></div>
+        </ToolbarContent>
+      </Toolbar>
+    </AppBarStyled>
+  );
+};
 
 export default AppBarComponent;
