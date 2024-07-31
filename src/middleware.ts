@@ -1,19 +1,42 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
+import webRoutes from "./lib/routes/webRoutes";
 
-/**
- * Middleware function that handles authentication and authorization for protected routes.
- * @param request - The NextRequest object representing the incoming request.
- * @returns A NextResponse object or calls the NextResponse.next() function to continue processing the request.
- */
-export function middleware(request: NextRequest) {
+const encoder = new TextEncoder();
+const JWT_SECRET = encoder.encode(process.env.JWT_SECRET || "your-secret-key");
+
+const supportedLocales = ["en", "es"] as const;
+type SupportedLocale = (typeof supportedLocales)[number];
+
+function isSupportedLocale(locale: string): locale is SupportedLocale {
+  return supportedLocales.includes(locale as SupportedLocale);
+}
+
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
-  const userRole = request.cookies.get("user_role")?.value;
-  /*
-  // Early return if the request is for the login page to avoid infinite redirects
-  if (request.nextUrl.pathname === "/auth/login") {
-    return NextResponse.next();
+  const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
+  const userLocale = request.cookies.get("user_locale")?.value;
+  const preferredLocale = userLocale || request.headers.get("accept-language")?.split(",")[0].split("-")[0] || "en";
+
+  const locale: SupportedLocale = isSupportedLocale(preferredLocale) ? preferredLocale : "en";
+
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+
+      if (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/") {
+        return NextResponse.redirect(new URL(lastUrl, request.url));
+      }
+    } catch (error) {
+      console.log(error);
+      return NextResponse.redirect(new URL(webRoutes.login, request.url));
+    }
+  } else {
+    if (request.nextUrl.pathname !== webRoutes.login) {
+      return NextResponse.redirect(new URL(webRoutes.login, request.url));
+    }
   }
 
   const matchedRoute = protectedRouteConfigs.find((route) => {
@@ -22,16 +45,20 @@ export function middleware(request: NextRequest) {
   });
 
   if (matchedRoute) {
-    // Check if the user has the required role for the matched route
+    const userRole = JSON.parse(request.cookies.get("user_role")?.value || "null");
     if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
-      return NextResponse.redirect(new URL("/auth/login", request.url));
+      return NextResponse.redirect(new URL(webRoutes.login, request.url));
     }
-  } else if (!token) {
-    // Redirect to login if no token is present and the request is not for the login page
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }*/
+  }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  if (request.nextUrl.pathname !== webRoutes.login) {
+    response.cookies.set("last_url", request.nextUrl.pathname);
+  }
+  response.cookies.set("user_locale", locale);
+
+  return response;
 }
 
 export const config = {

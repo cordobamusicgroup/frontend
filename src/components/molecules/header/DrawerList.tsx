@@ -9,12 +9,7 @@ interface DrawerListProps {
 const DrawerList: React.FC<DrawerListProps> = ({ open }) => {
   const items = [
     { text: "Overview", icon: <HomeIcon /> },
-    { text: "Catalog", icon: <LibraryMusicIcon /> },
-    { text: "Analytics", icon: <AssessmentIcon /> },
-    { text: "Promotion", icon: <CampaignIcon /> },
     { text: "Financial", icon: <AttachMoneyIcon /> },
-    { text: "Neighbouring Rights", icon: <GavelIcon /> },
-    { text: "Legal", icon: <GavelIcon /> },
   ];
 
   return items.map(({ text, icon }) => (

@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 interface AppBarProps {
   open: boolean;
   handleDrawerOpen: () => void;
-  pageTitle: string;
+  pageTitle: any;
 }
 
 const AppBarStyled = styled(AppBar, {
@@ -62,7 +62,9 @@ const AppBarComponent: React.FC<AppBarProps> = ({ open, handleDrawerOpen, pageTi
               {pageTitle}
             </Typography>
           </div>
-          <div><UserMenu username="Santiago Joaquin Diaz" clientId="805620" /></div>
+          <div>
+            <UserMenu username="Santiago Joaquin Diaz" clientId="805620" />
+          </div>
         </ToolbarContent>
       </Toolbar>
     </AppBarStyled>

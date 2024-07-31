@@ -1,0 +1,13 @@
+{
+  "auth": {
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign In",
+    "forgot": "Forgot your password or username?",
+    "signIng": "Signing..."
+  },
+  "localeswitcher": {
+    "en": "English",
+    "es": "Spanish"
+  }
+}

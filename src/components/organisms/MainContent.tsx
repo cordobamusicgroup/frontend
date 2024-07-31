@@ -7,6 +7,10 @@ interface MainContentProps {
   children: ReactNode;
 }
 
+/**
+ * Represents the main content component.
+ * @component
+ */
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ open?: boolean }>(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),

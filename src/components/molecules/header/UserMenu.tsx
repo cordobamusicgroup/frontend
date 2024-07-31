@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { menuItems } from "@/data/userMenuItems";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useMenuItems } from "@/lib/data/menuItems";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface UserMenuProps {
   username: string;
@@ -21,6 +22,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const menuItems = useMenuItems(); // Obtén los items del menú
+  const userData = useAppSelector((state) => state.user.userData);
 
   return (
     <Box display="flex" alignItems="center">
@@ -31,8 +34,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
           sx={{
             whiteSpace: "nowrap",
             overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: { xs: "80px", sm: "150px", md: "200px" }, // Ajustar según las necesidades
           }}
         >
           <Typography variant="body1">{username}</Typography>
@@ -58,9 +59,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: "300px", // Limita la altura máxima del menú
+            maxHeight: "300px",
             [theme.breakpoints.down("sm")]: {
-              maxHeight: "200px", // Limita la altura máxima del menú en pantallas pequeñas
+              maxHeight: "200px",
             },
           },
         }}

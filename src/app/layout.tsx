@@ -1,29 +1,38 @@
 import "./globals.css";
-import theme from "@/theme";
-import { AuthProvider } from "@/context/AuthContext";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Metadata } from "next";
-import { GlobalProvider } from "@/context/GlobalContext";
+import { getLocale, getMessages } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import StyleProviders from "@/context/StyleContext";
+import React from "react";
+import ReduxProvider from "@/context/ReduxContext";
+import TanstackQueryProvider from "@/context/TanstackContext";
 
 export const metadata: Metadata = {
-  title: "Córdoba Music Group",
+  title: {
+    default: "Córdoba Music Group",
+    template: "%s - Córdoba Music Group",
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  readonly children: React.ReactNode;
+}
+
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalProvider>
-        <AuthProvider>
+    <ReduxProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <StyleProviders>
           <html>
-            <body>{children}</body>
+            <body>
+              <TanstackQueryProvider>{children}</TanstackQueryProvider>
+            </body>
           </html>
-        </AuthProvider>
-      </GlobalProvider>
-    </ThemeProvider>
+        </StyleProviders>
+      </NextIntlClientProvider>
+    </ReduxProvider>
   );
 }

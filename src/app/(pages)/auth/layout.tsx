@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import RootLayout from "../layout";
+import RootLayout from "../../layout";
 
 export const metadata: Metadata = {
-  title: "Auth - Córdoba Music Group",
+  title: "Auth",
 };
 
 export default function AuthLayout({

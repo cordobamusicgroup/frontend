@@ -1,0 +1,13 @@
+{
+  "auth": {
+    "username": "Usuario",
+    "password": "Contraseña",
+    "signIn": "Iniciar Sesión",
+    "forgot": "¿Olvidaste tu contraseña o nombre de usuario?",
+    "signIng": "Iniciando sesión..."
+  },
+  "localeswitcher": {
+    "en": "English",
+    "es": "Spanish"
+  }
+}

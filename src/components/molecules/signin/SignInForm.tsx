@@ -5,6 +5,9 @@ import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import LanguageSwitcher from "../language/LocaleSwitcher";
+import { useTranslations } from "next-intl";
+import LocaleSwitcher from "../language/LocaleSwitcher";
 
 interface SignInFormProps {
   handleSubmit: (username: string, password: string) => void;
@@ -25,6 +28,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations();
 
   /**
    * Handles the form submission.
@@ -45,22 +49,23 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
 
   return (
     <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 3 }}>
-      <TextField margin="normal" required fullWidth id="username" label="Username" name="username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={Boolean(error)} />
-      <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={Boolean(error)} />
+      <TextField margin="normal" required fullWidth id="username" label={t("auth.username")} name="username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={Boolean(error)} />
+      <TextField margin="normal" required fullWidth name="password" label={t("auth.password")} type="password" id="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={Boolean(error)} />
       {error && (
         <Typography variant="body2" color="error" align="center">
           {error}
         </Typography>
       )}
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
-          {loading ? "Signing In..." : "Sign In"}
+          {loading ? t("auth.signIng") : t("auth.signIn")}
         </Button>
+        <LocaleSwitcher />
       </Box>
-      <Grid container justifyContent="center">
+      <Grid container justifyContent="center" sx={{ mt: 2 }}>
         <Grid item>
           <Link href="#" variant="body2">
-            Forgot password or username?
+            {t("auth.forgot")}
           </Link>
         </Grid>
       </Grid>
