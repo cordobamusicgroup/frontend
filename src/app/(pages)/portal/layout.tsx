@@ -7,6 +7,7 @@ interface PortalProps {
   children: React.ReactNode;
   pageTitle: string;
 }
+
 export const metadata: Metadata = {
   title: "Portal",
 };
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 const PortalPageLayout: React.FC<PortalProps> = ({ children }) => {
   return (
     <RootLayout>
-      <PortalLayout pageTitle={metadata.title}>{children}</PortalLayout>
+      <PortalLayout pageTitle={metadata.title as string}>{children}</PortalLayout>
     </RootLayout>
   );
 };
