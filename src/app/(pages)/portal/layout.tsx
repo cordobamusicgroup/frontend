@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   title: "Portal",
 };
 
-const PortalPageLayout: React.FC<PortalProps> = ({ children }) => {
+function PortalPageLayout({ children }: PortalProps) {
   return (
     <RootLayout>
       <PortalLayout pageTitle={metadata.title as string}>{children}</PortalLayout>
     </RootLayout>
   );
-};
+}
 
 export default PortalPageLayout;
