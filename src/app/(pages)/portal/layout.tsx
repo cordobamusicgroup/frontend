@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Portal",
 };
 
-function PortalPageLayout({ children }: PortalProps) {
+export default async function PortalPageLayout({ children }: PortalProps) {
   return (
     <RootLayout>
       <PortalLayout pageTitle={metadata.title as string}>{children}</PortalLayout>
@@ -20,4 +20,3 @@ function PortalPageLayout({ children }: PortalProps) {
   );
 }
 
-export default PortalPageLayout;
