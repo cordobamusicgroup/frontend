@@ -7,6 +7,8 @@ import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
 import TanstackQueryProvider from "@/context/TanstackContext";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: {
     default: "Córdoba Music Group",
