@@ -5,26 +5,17 @@ import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 import webRoutes from "./lib/routes/webRoutes";
 
 const encoder = new TextEncoder();
-const JWT_SECRET = encoder.encode(process.env.JWT_SECRET || "your-secret-key");
-
-const supportedLocales = ["en", "es"] as const;
-type SupportedLocale = (typeof supportedLocales)[number];
-
-function isSupportedLocale(locale: string): locale is SupportedLocale {
-  return supportedLocales.includes(locale as SupportedLocale);
-}
+const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
-  const userLocale = request.cookies.get("user_locale")?.value;
-  const preferredLocale = userLocale || request.headers.get("accept-language")?.split(",")[0].split("-")[0] || "en";
-
-  const locale: SupportedLocale = isSupportedLocale(preferredLocale) ? preferredLocale : "en";
+  let isAuthenticated = false;
 
   if (token) {
     try {
-      const { payload } = await jwtVerify(token, JWT_SECRET);
+      await jwtVerify(token, JWT_SECRET);
+      isAuthenticated = true;
 
       if (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/") {
         return NextResponse.redirect(new URL(lastUrl, request.url));
@@ -54,9 +45,9 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   if (request.nextUrl.pathname !== webRoutes.login) {
-    response.cookies.set("last_url", request.nextUrl.pathname);
+    response.cookies.set("last_url", request.nextUrl.pathname, { path: "/" });
   }
-  response.cookies.set("user_locale", locale);
+  response.cookies.set("isAuthenticated", isAuthenticated.toString(), { path: "/" });
 
   return response;
 }
