@@ -1,34 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import FullScreenLoader from "../../molecules/loaders/FullScreenLoader";
 import LoginLogo from "@/components/atoms/logos/LoginLogo";
 import ErrorModal from "@/components/molecules/modals/ErrorModal";
 import SignInForm from "@/components/molecules/signin/SignInForm";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { login, clearError } from "@/lib/redux/slices/authSlice";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * Renders a sign-in box component.
  */
 function SignInBox() {
-  const loading = useAppSelector((state) => state.loader.loading);
-  const error = useAppSelector((state) => state.auth.error);
-  const dispatch = useAppDispatch();
+  const { login, error, setError } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   useEffect(() => {
     return () => {
-      dispatch(clearError());
+      setError(null);
     };
-  }, [dispatch]);
+  }, [setError]);
 
   const handleSubmit = async (username: string, password: string) => {
-    await dispatch(login({ username, password, router })).unwrap();
+    setLoading(true);
+    try {
+      await login(username, password);
+      router.push("/portal");
+    } catch (err) {
+      // Handle error if necessary, the AuthContext should already set the error state
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClose = () => {
-    dispatch(clearError());
+    setError(null);
   };
 
   return (

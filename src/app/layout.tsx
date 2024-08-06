@@ -5,9 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import StyleProviders from "@/context/StyleContext";
 import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
-import TanstackQueryProvider from "@/context/TanstackContext";
-
-export const runtime = "edge";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: {
@@ -25,16 +23,16 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const messages = await getMessages();
 
   return (
-    <ReduxProvider>
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <StyleProviders>
-          <html>
-            <body>
-              <TanstackQueryProvider>{children}</TanstackQueryProvider>
-            </body>
-          </html>
-        </StyleProviders>
-      </NextIntlClientProvider>
-    </ReduxProvider>
+    <html lang={locale}>
+      <body>
+        <ReduxProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <AuthProvider>
+              <StyleProviders>{children}</StyleProviders>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </ReduxProvider>
+      </body>
+    </html>
   );
 }

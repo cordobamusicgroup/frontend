@@ -2,8 +2,8 @@
 import React from "react";
 import { AccountBalance, AccountCircle, ExitToApp } from "@mui/icons-material";
 import { useAppDispatch } from "../redux/hooks";
-import { logout } from "../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface MenuItemType {
   text: string;
@@ -14,6 +14,7 @@ interface MenuItemType {
 export const useMenuItems = (): MenuItemType[] => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const auth = useAuth();
 
   return [
     {
@@ -34,7 +35,7 @@ export const useMenuItems = (): MenuItemType[] => {
       text: "Logout",
       icon: <ExitToApp fontSize="small" />,
       onClick: () => {
-        dispatch(logout({ router }));
+        auth.logout();
       },
     },
   ];

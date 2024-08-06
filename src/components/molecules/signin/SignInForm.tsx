@@ -39,7 +39,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
     event.preventDefault();
 
     if (username.trim() === "" || password.trim() === "") {
-      setError("Username and password are required");
+      setError(t("auth.missingFields"));
       return;
     }
 

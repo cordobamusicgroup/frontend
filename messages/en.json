@@ -4,7 +4,20 @@
     "password": "Password",
     "signIn": "Sign In",
     "forgot": "Forgot your password or username?",
-    "signIng": "Signing..."
+    "signIng": "Signing...",
+    "missingFields": "Username and password are required",
+    "errors": {
+      "invalidCredentials": "Invalid username or password. Please try again.",
+      "500": "Internal server error. Please try again later.",
+      "network": "Network error. Check your connection.",
+      "default": "An unknown error occurred while logging in. Please try again later."
+    }
+  },
+  "modals": {
+    "error": {
+      "title": "Something went wrong",
+      "closeButton": "Close"
+    }
   },
   "localeswitcher": {
     "en": "English",

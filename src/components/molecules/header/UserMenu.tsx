@@ -1,10 +1,13 @@
+"use client";
 import React, { useState } from "react";
-import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton } from "@mui/material";
+import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useMenuItems } from "@/lib/data/menuItems";
 import { useAppSelector } from "@/lib/redux/hooks";
+import FullScreenLoader from "../loaders/FullScreenLoader";
+import LoadingSpinner from "@/components/atoms/loaders/LoadingSpinner";
 
 interface UserMenuProps {
   username: string;
@@ -36,8 +39,14 @@ const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
             overflow: "hidden",
           }}
         >
-          <Typography variant="body1">{username}</Typography>
-          <Typography variant="body2">Client ID: {clientId}</Typography>
+          {userData ? (
+            <>
+              <Typography variant="body1">{userData.username}</Typography>
+              <Typography variant="body2">Client ID: {userData.id}</Typography>
+            </>
+          ) : (
+            <LoadingSpinner size={25} />
+          )}
         </Box>
       )}
       <IconButton edge="end" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu} color="inherit">

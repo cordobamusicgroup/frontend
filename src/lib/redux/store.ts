@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import loaderReducer from "@/lib/redux/slices/loaderSlice";
-import authReducer from "@/lib/redux/slices/authSlice";
 import userReducer from "@/lib/redux/slices/userSlice";
 import languageReducer from "@/lib/redux/slices/languageSlice";
 
@@ -12,7 +11,6 @@ const store = configureStore({
     loader: loaderReducer,
     language: languageReducer,
     user: userReducer,
-    auth: authReducer,
   },
 });
 
