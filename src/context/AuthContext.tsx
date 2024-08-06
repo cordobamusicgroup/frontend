@@ -86,8 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     dispatch(clearUserData());
     Cookies.remove("access_token");
-    router.push(apiRoutes.login);
     await mutate("userData", null, { revalidate: false });
+    router.push(apiRoutes.login);
   };
 
   return <AuthContext.Provider value={{ error, login, logout, setError }}>{children}</AuthContext.Provider>;
