@@ -31,7 +31,6 @@ interface ApiParams {
  * @throws If an error occurs during the request.
  */
 export const useApiRequest = () => {
-  const [loading, setLoading] = useState(false);
 
   const apiRequest = async ({ url, method, data, params, headers, isFormData = false, requiereAuth = true }: ApiParams): Promise<AxiosResponse<any>> => {
     const token = requiereAuth ? Cookies.get("access_token") : null;
@@ -48,18 +47,14 @@ export const useApiRequest = () => {
       withCredentials: true,
     };
 
-    setLoading(true);
-
     try {
       const response = await api.request(config);
       return response;
     } catch (error: any) {
       console.error(`Error ${method}ing data to ${url}:`, error.message);
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
-  return { apiRequest, loading };
+  return { apiRequest };
 };
