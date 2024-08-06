@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 import webRoutes from "./lib/routes/webRoutes";
+import { strict } from "assert";
 
 const encoder = new TextEncoder();
 const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
@@ -16,18 +17,19 @@ export async function middleware(request: NextRequest) {
     try {
       await jwtVerify(token, JWT_SECRET);
       isAuthenticated = true;
-
-      if (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/") {
-        return NextResponse.redirect(new URL(lastUrl, request.url));
-      }
     } catch (error) {
       console.log(error);
-      return NextResponse.redirect(new URL(webRoutes.login, request.url));
     }
-  } else {
-    if (request.nextUrl.pathname !== webRoutes.login) {
-      return NextResponse.redirect(new URL(webRoutes.login, request.url));
-    }
+  }
+
+  // Redirige al login si no está autenticado y no está en la página de login
+  if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
+    return NextResponse.redirect(new URL(webRoutes.login, request.url));
+  }
+
+  // Redirige al último URL si está autenticado y está en la página de login o en la raíz
+  if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
+    return NextResponse.redirect(new URL(lastUrl, request.url));
   }
 
   const matchedRoute = protectedRouteConfigs.find((route) => {
@@ -44,10 +46,22 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
+  // Configura last_url solo si no está en la página de login
   if (request.nextUrl.pathname !== webRoutes.login) {
-    response.cookies.set("last_url", request.nextUrl.pathname, { path: "/" });
+    response.cookies.set("last_url", request.nextUrl.pathname, {
+      path: "/",
+      sameSite: true,
+      secure: true,
+      httpOnly: true,
+    });
   }
-  response.cookies.set("isAuthenticated", isAuthenticated.toString(), { path: "/" });
+
+  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
+    path: "/",
+    sameSite: true,
+    secure: true,
+    httpOnly: true,
+  });
 
   return response;
 }
