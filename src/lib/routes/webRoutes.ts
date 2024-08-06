@@ -1,6 +1,6 @@
 const webRoutes = {
   login: "/auth/login",
-  portal: "portal",
+  portal: "/portal",
 };
 
 export default webRoutes;

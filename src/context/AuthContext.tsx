@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import apiRoutes from "@/lib/routes/apiRoutes";
 import { useTranslations } from "next-intl";
+import webRoutes from "@/lib/routes/webRoutes";
 
 interface AuthContextType {
   error: string | null;
@@ -67,10 +68,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       const { access_token } = response.data;
       Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
-      Cookies.set("isAuthenticated", "true");
-      dispatch(setUserData(null));
       await mutate("userData");
-      router.push("/portal");
+      router.push(webRoutes.portal);
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         setError(t("auth.errors.invalidCredentials"));

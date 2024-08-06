@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 import webRoutes from "./lib/routes/webRoutes";
-import { strict } from "assert";
 
 const encoder = new TextEncoder();
 const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
@@ -18,7 +17,7 @@ export async function middleware(request: NextRequest) {
       await jwtVerify(token, JWT_SECRET);
       isAuthenticated = true;
     } catch (error) {
-      console.log(error);
+      console.log("JWT verification error:", error);
     }
   }
 
@@ -27,9 +26,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(webRoutes.login, request.url));
   }
 
-  // Redirige al último URL si está autenticado y está en la página de login o en la raíz
+  // Redirige al portal si está autenticado y está en la página de login o en la raíz
   if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
-    return NextResponse.redirect(new URL(lastUrl, request.url));
+    return NextResponse.redirect(new URL(webRoutes.portal, request.url));
   }
 
   const matchedRoute = protectedRouteConfigs.find((route) => {
