@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 interface RootLayoutProps {
   readonly children: React.ReactNode;
 }
-
+export const runtime = "edge";
 export default async function RootLayout({ children }: RootLayoutProps) {
   const locale = await getLocale();
   const messages = await getMessages();
