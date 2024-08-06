@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname !== webRoutes.login) {
     response.cookies.set("last_url", request.nextUrl.pathname, {
       path: "/",
-      sameSite: true,
+      sameSite: "strict",
       secure: true,
       httpOnly: true,
     });
@@ -58,9 +58,8 @@ export async function middleware(request: NextRequest) {
 
   response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
     path: "/",
-    sameSite: true,
+    sameSite: "strict",
     secure: true,
-    httpOnly: true,
   });
 
   return response;
