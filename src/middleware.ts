@@ -12,22 +12,31 @@ export async function middleware(request: NextRequest) {
   const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
   let isAuthenticated = false;
 
+  console.log("Incoming request URL:", request.url);
+  console.log("Token found:", !!token);
+  console.log("Last URL cookie:", lastUrl);
+
   if (token) {
     try {
       await jwtVerify(token, JWT_SECRET);
       isAuthenticated = true;
+      console.log("Token is valid, user is authenticated.");
     } catch (error) {
       console.log("JWT verification error:", error);
     }
   }
 
+  console.log("Is Authenticated:", isAuthenticated);
+
   // Redirige al login si no está autenticado y no está en la página de login
   if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
+    console.log("User is not authenticated. Redirecting to login.");
     return NextResponse.redirect(new URL(webRoutes.login, request.url));
   }
 
   // Redirige al portal si está autenticado y está en la página de login o en la raíz
   if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
+    console.log("User is authenticated and on login or root page. Redirecting to portal.");
     return NextResponse.redirect(new URL(webRoutes.portal, request.url));
   }
 
@@ -39,6 +48,7 @@ export async function middleware(request: NextRequest) {
   if (matchedRoute) {
     const userRole = JSON.parse(request.cookies.get("user_role")?.value || "null");
     if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
+      console.log("User does not have the required role. Redirecting to login.");
       return NextResponse.redirect(new URL(webRoutes.login, request.url));
     }
   }
@@ -51,15 +61,18 @@ export async function middleware(request: NextRequest) {
       path: "/",
       sameSite: "strict",
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
     });
+    console.log("Setting last_url cookie to:", request.nextUrl.pathname);
   }
 
   response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
     path: "/",
     sameSite: "strict",
     secure: true,
+    httpOnly: false,
   });
+  console.log("Setting isAuthenticated cookie to:", isAuthenticated.toString());
 
   return response;
 }
