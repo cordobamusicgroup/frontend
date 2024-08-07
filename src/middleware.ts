@@ -25,31 +25,63 @@ export default async function middleware(request: NextRequest) {
 
   console.log("Is Authenticated after JWT check:", isAuthenticated);
 
-  let response = NextResponse.next();
-
-  // Set isAuthenticated cookie
-  console.log("Setting isAuthenticated cookie");
-  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
-    path: "/",
-    sameSite: "strict",
-    secure: true,
-    httpOnly: false,
-  });
-
-  // Set last_url cookie
+  const isAuthenticatedCookie = request.cookies.get("isAuthenticated");
+  const lastUrlCookie = request.cookies.get("last_url");
   const currentUrl = request.nextUrl.pathname + request.nextUrl.search;
-  console.log("Setting last_url cookie");
-  response.cookies.set("last_url", currentUrl, {
-    path: "/",
-    sameSite: "strict",
-    secure: true,
-    httpOnly: false,
+  let response;
+
+  if (!isAuthenticatedCookie || isAuthenticatedCookie.value !== isAuthenticated.toString()) {
+    console.log("Setting isAuthenticated cookie");
+    response = NextResponse.next();
+    response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+      httpOnly: false,
+    });
+    response = NextResponse.redirect(request.nextUrl.clone());
+    return response;
+  }
+
+  if (!lastUrlCookie || lastUrlCookie.value !== currentUrl) {
+    console.log("Setting last_url cookie");
+    response = NextResponse.next();
+    response.cookies.set("last_url", currentUrl, {
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+      httpOnly: false,
+    });
+    response = NextResponse.redirect(request.nextUrl.clone());
+    return response;
+  }
+
+  // Redirige al login si no está autenticado y no está en la página de login
+  if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
+    console.log("User is not authenticated. Redirecting to login.");
+    return NextResponse.redirect(new URL(webRoutes.login, request.url));
+  }
+
+  // Redirige al portal si está autenticado y está en la página de login o en la raíz
+  if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
+    console.log("User is authenticated and on login or root page. Redirecting to portal.");
+    return NextResponse.redirect(new URL(webRoutes.portal, request.url));
+  }
+
+  const matchedRoute = protectedRouteConfigs.find((route) => {
+    const regex = new RegExp(`^${route.path}`);
+    return regex.test(request.nextUrl.pathname);
   });
 
-  // Redirect to ensure cookies are set
-  console.log("Redirecting to ensure cookies are set");
-  response = NextResponse.redirect(request.nextUrl.clone());
+  if (matchedRoute) {
+    const userRole = JSON.parse(request.cookies.get("user_role")?.value || "null");
+    if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
+      console.log("User does not have the required role. Redirecting to login.");
+      return NextResponse.redirect(new URL(webRoutes.login, request.url));
+    }
+  }
 
+  response = NextResponse.next();
   return response;
 }
 
