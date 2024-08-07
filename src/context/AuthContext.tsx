@@ -68,6 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       const { access_token } = response.data;
       Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
+      //Cookies.set("isAuthenticated", "true");
       await mutate("userData");
       router.push(webRoutes.portal);
     } catch (error: any) {
