@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 import webRoutes from "./lib/routes/webRoutes";
@@ -7,15 +6,14 @@ import webRoutes from "./lib/routes/webRoutes";
 const encoder = new TextEncoder();
 const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 
-export async function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
+  let isAuthenticated = false;
 
   console.log("Incoming request URL:", request.url);
   console.log("Token found:", !!token);
   console.log("Last URL cookie:", lastUrl);
-
-  let isAuthenticated = false;
 
   if (token) {
     try {
@@ -29,13 +27,31 @@ export async function middleware(request: NextRequest) {
 
   console.log("Is Authenticated after JWT check:", isAuthenticated);
 
-  const response = NextResponse.next();
-  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
-    path: "/",
-    sameSite: "lax",
-    secure: true,
-  });
-  console.log("Setting isAuthenticated cookie to:", isAuthenticated.toString());
+  // Check if we need to set the isAuthenticated cookie
+  if (!request.cookies.get("isAuthenticated")) {
+    console.log("Setting isAuthenticated cookie");
+    const response = NextResponse.redirect(request.nextUrl.clone());
+    response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+      httpOnly: false, // Set to false to be accessible from client-side scripts
+    });
+    return response;
+  }
+
+  // Check if we need to set the last_url cookie
+  if (request.nextUrl.pathname !== webRoutes.login && !request.cookies.get("last_url")) {
+    console.log("Setting last_url cookie");
+    const response = NextResponse.redirect(request.nextUrl.clone());
+    response.cookies.set("last_url", request.nextUrl.pathname, {
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+      httpOnly: false,
+    });
+    return response;
+  }
 
   // Redirige al login si no está autenticado y no está en la página de login
   if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
@@ -62,16 +78,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Configura last_url solo si no está en la página de login
-  if (request.nextUrl.pathname !== webRoutes.login) {
-    response.cookies.set("last_url", request.nextUrl.pathname, {
-      path: "/",
-      sameSite: "strict",
-      secure: true,
-      httpOnly: true,
-    });
-    console.log("Setting last_url cookie to:", request.nextUrl.pathname);
-  }
+  const response = NextResponse.next();
 
   return response;
 }
