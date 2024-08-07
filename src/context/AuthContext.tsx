@@ -84,9 +84,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
+    await mutate("userData", null, { revalidate: false });
     dispatch(clearUserData());
     Cookies.remove("access_token");
-    await mutate("userData", null, { revalidate: false });
     router.push(apiRoutes.login);
   };
 
