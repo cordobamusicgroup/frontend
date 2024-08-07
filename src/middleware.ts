@@ -10,11 +10,12 @@ const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
-  let isAuthenticated = false;
 
   console.log("Incoming request URL:", request.url);
   console.log("Token found:", !!token);
   console.log("Last URL cookie:", lastUrl);
+
+  let isAuthenticated = false;
 
   if (token) {
     try {
@@ -26,7 +27,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  console.log("Is Authenticated:", isAuthenticated);
+  console.log("Is Authenticated after JWT check:", isAuthenticated);
 
   // Redirige al login si no está autenticado y no está en la página de login
   if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
@@ -55,7 +56,15 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  // Configura last_url solo si no está en la página de login
+  // Configura las cookies necesarias
+  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
+    path: "/",
+    sameSite: "strict",
+    secure: true,
+    httpOnly: false,
+  });
+  console.log("Setting isAuthenticated cookie to:", isAuthenticated.toString());
+
   if (request.nextUrl.pathname !== webRoutes.login) {
     response.cookies.set("last_url", request.nextUrl.pathname, {
       path: "/",
@@ -65,14 +74,6 @@ export async function middleware(request: NextRequest) {
     });
     console.log("Setting last_url cookie to:", request.nextUrl.pathname);
   }
-
-  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
-    path: "/",
-    sameSite: "strict",
-    secure: true,
-    httpOnly: false,
-  });
-  console.log("Setting isAuthenticated cookie to:", isAuthenticated.toString());
 
   return response;
 }
