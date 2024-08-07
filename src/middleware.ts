@@ -2,18 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
 import webRoutes from "./lib/routes/webRoutes";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 const encoder = new TextEncoder();
 const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 
+const setCookie = (request: NextRequest, response: NextResponse, cookie: ResponseCookie) => {
+  request.cookies.set(cookie);
+  response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+  response.cookies.set(cookie);
+  return response;
+};
+
 export default async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
-  const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
   let isAuthenticated = false;
 
   console.log("Incoming request URL:", request.url);
   console.log("Token found:", !!token);
-  console.log("Last URL cookie:", lastUrl);
 
   if (token) {
     try {
@@ -27,24 +37,14 @@ export default async function middleware(request: NextRequest) {
 
   console.log("Is Authenticated after JWT check:", isAuthenticated);
 
-  // Check if we need to set the isAuthenticated cookie
+  let response = NextResponse.next();
+
+  // Set isAuthenticated cookie if not present
   if (!request.cookies.get("isAuthenticated")) {
     console.log("Setting isAuthenticated cookie");
-    const response = NextResponse.redirect(request.nextUrl.clone());
-    response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
-      path: "/",
-      sameSite: "strict",
-      secure: true,
-      httpOnly: false, // Set to false to be accessible from client-side scripts
-    });
-    return response;
-  }
-
-  // Check if we need to set the last_url cookie
-  if (request.nextUrl.pathname !== webRoutes.login && !request.cookies.get("last_url")) {
-    console.log("Setting last_url cookie");
-    const response = NextResponse.redirect(request.nextUrl.clone());
-    response.cookies.set("last_url", request.nextUrl.pathname, {
+    response = setCookie(request, response, {
+      name: "isAuthenticated",
+      value: isAuthenticated.toString(),
       path: "/",
       sameSite: "strict",
       secure: true,
@@ -53,13 +53,29 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Redirige al login si no está autenticado y no está en la página de login
+  // Set last_url cookie if not present
+  const currentUrl = request.nextUrl.pathname + request.nextUrl.search;
+  const lastUrl = request.cookies.get("last_url")?.value;
+  if (!lastUrl && currentUrl !== request.nextUrl.pathname) {
+    console.log("Setting last_url cookie");
+    response = setCookie(request, response, {
+      name: "last_url",
+      value: currentUrl,
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+      httpOnly: false,
+    });
+    return response;
+  }
+
+  // Redirect to login if not authenticated and not on login page
   if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
     console.log("User is not authenticated. Redirecting to login.");
     return NextResponse.redirect(new URL(webRoutes.login, request.url));
   }
 
-  // Redirige al portal si está autenticado y está en la página de login o en la raíz
+  // Redirect to portal if authenticated and on login or root page
   if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
     console.log("User is authenticated and on login or root page. Redirecting to portal.");
     return NextResponse.redirect(new URL(webRoutes.portal, request.url));
@@ -77,8 +93,6 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL(webRoutes.login, request.url));
     }
   }
-
-  const response = NextResponse.next();
 
   return response;
 }
