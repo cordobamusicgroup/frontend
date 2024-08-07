@@ -5,7 +5,6 @@ import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import LanguageSwitcher from "../language/LocaleSwitcher";
 import { useTranslations } from "next-intl";
 import LocaleSwitcher from "../language/LocaleSwitcher";
 

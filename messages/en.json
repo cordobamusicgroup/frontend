@@ -9,7 +9,7 @@
     "errors": {
       "invalidCredentials": "Invalid username or password. Please try again.",
       "500": "Internal server error. Please try again later.",
-      "network": "Network error. Check your connection.",
+      "networkError": "Network error. Check your connection.",
       "default": "An unknown error occurred while logging in. Please try again later."
     }
   },
