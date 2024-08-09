@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 interface AppBarProps {
   open: boolean;
   handleDrawerOpen: () => void;
-  pageTitle: any;
+  pageTitle: string;
 }
 
 const AppBarStyled = styled(AppBar, {
@@ -44,14 +44,6 @@ const ToolbarContent = styled("div")({
 });
 
 const AppBarComponent: React.FC<AppBarProps> = ({ open, handleDrawerOpen, pageTitle }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
     <AppBarStyled position="fixed" open={open}>
       <Toolbar>
@@ -63,7 +55,7 @@ const AppBarComponent: React.FC<AppBarProps> = ({ open, handleDrawerOpen, pageTi
             </Typography>
           </div>
           <div>
-            <UserMenu username="Santiago Joaquin Diaz" clientId="805620" />
+            <UserMenu />
           </div>
         </ToolbarContent>
       </Toolbar>

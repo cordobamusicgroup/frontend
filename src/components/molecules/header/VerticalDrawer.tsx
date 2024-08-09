@@ -3,7 +3,9 @@ import { Drawer, Divider, List } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import DrawerHeader from "../../atoms/header/DrawerHeader";
 import PortalLogo from "../../atoms/logos/PortalLogo";
-import DrawerList from "./DrawerList";
+import DrawerList from "./VerticalDrawerList";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { useSelector } from "react-redux";
 
 interface DrawerProps {
   open: boolean;
@@ -30,16 +32,18 @@ const DrawerStyled = styled(Drawer, {
   },
 }));
 
-const DrawerComponent: React.FC<DrawerProps> = ({ open }) => (
-  <DrawerStyled variant="permanent" open={open}>
-    <DrawerHeader>
-      <PortalLogo small={!open} />
-    </DrawerHeader>
-    <Divider />
-    <List>
-      <DrawerList open={open} />
-    </List>
-  </DrawerStyled>
-);
+const VerticalDrawer: React.FC<DrawerProps> = ({ open }) => {
+  return (
+    <DrawerStyled variant="permanent" open={open}>
+      <DrawerHeader>
+        <PortalLogo small={!open} />
+      </DrawerHeader>
+      <Divider />
+      <List>
+        <DrawerList open={open} />
+      </List>
+    </DrawerStyled>
+  );
+};
 
-export default DrawerComponent;
+export default VerticalDrawer;

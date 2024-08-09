@@ -11,7 +11,7 @@ interface MenuItemType {
   onClick: () => void;
 }
 
-export const useMenuItems = (): MenuItemType[] => {
+export const useUserMenuItems = (): MenuItemType[] => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const auth = useAuth();

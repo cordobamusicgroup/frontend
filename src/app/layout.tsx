@@ -28,7 +28,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ReduxProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <AuthProvider>
-              <StyleProviders>{children}</StyleProviders>
+              <StyleProviders>
+                {children}
+              </StyleProviders>
             </AuthProvider>
           </NextIntlClientProvider>
         </ReduxProvider>

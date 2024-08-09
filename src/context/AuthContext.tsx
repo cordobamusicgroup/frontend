@@ -10,6 +10,7 @@ import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import apiRoutes from "@/lib/routes/apiRoutes";
 import { useTranslations } from "next-intl";
 import webRoutes from "@/lib/routes/webRoutes";
+import { useAppDispatch } from "@/lib/redux/hooks";
 
 interface AuthContextType {
   error: string | null;
@@ -32,7 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
   const t = useTranslations();
 
@@ -70,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
       Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
       await mutate("userData");
-      router.push(webRoutes.portal);
+      router.push(webRoutes.portal.overview);
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         setError(t("auth.errors.invalidCredentials"));

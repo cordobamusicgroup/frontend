@@ -1,35 +1,46 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useMenuItems } from "@/lib/data/menuItems";
-import { useAppSelector } from "@/lib/redux/hooks";
-import FullScreenLoader from "../loaders/FullScreenLoader";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import LoadingSpinner from "@/components/atoms/loaders/LoadingSpinner";
+import { useUserMenuItems } from "@/lib/data/userMenuItems";
+import { setLoading } from "@/lib/redux/slices/loaderSlice";
 
-interface UserMenuProps {
-  username: string;
-  clientId: string;
-}
-
-const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
+/**
+ * UserMenu component displays a user menu with options for the current user.
+ *
+ * @returns {React.FC} The UserMenu component.
+ */
+const UserMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const menuItems = useUserMenuItems(); // Obtén los items del menú
+  const userData = useAppSelector((state) => state.user.userData);
+
+  /**
+   * Handles the opening of the user menu.
+   *
+   * @param {React.MouseEvent<HTMLElement>} event - The click event.
+   */
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  /**
+   * Handles the closing of the user menu.
+   */
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const menuItems = useMenuItems(); // Obtén los items del menú
-  const userData = useAppSelector((state) => state.user.userData);
-
   return (
     <Box display="flex" alignItems="center">
+      {/* Show user info only on desktop */}
       {!isMobile && (
         <Box
           mr={2}
@@ -49,9 +60,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ username, clientId }) => {
           )}
         </Box>
       )}
+
+      {/* User icon button to open menu */}
       <IconButton edge="end" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu} color="inherit">
         <AccountCircle />
       </IconButton>
+
+      {/* User menu */}
       <Menu
         id="menu-appbar"
         anchorEl={anchorEl}
