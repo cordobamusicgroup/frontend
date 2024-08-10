@@ -2,34 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsIcon, Security as SecurityIcon, AssessmentOutlined, SubdirectoryArrowRight as SubdirectoryArrowRightIcon } from "@mui/icons-material";
+import GroupIcon from "@mui/icons-material/Group";
 import { MenuItemType } from "./usePortalMenu";
 import { filterItemsByRole } from "../utils/portalMenuUtils";
+import webRoutes from "../routes/webRoutes";
 
 export const usePortalAdminMenuItems = (userRole: string): MenuItemType[] => {
   const router = useRouter();
 
   const adminMenuItems: MenuItemType[] = [
     {
-      text: "Settings",
-      icon: <SettingsIcon />,
-      roles: ["ADMIN"],
-      onClick: () => router.push("/settings"),
-      subMenuItems: [
-        {
-          text: "General",
-          onClick: () => router.push("/settings/general"),
-          roles: ["ADMIN"],
-        },
-        {
-          text: "Security",
-          onClick: () => router.push("/settings/security"),
-          roles: ["ADMIN"],
-        },
-      ],
-    },
-    {
-      text: "Security",
-      icon: <SecurityIcon />,
+      text: "Clients",
+      icon: <GroupIcon />,
       roles: ["ADMIN"],
       subMenuItems: [
         {
@@ -38,8 +22,8 @@ export const usePortalAdminMenuItems = (userRole: string): MenuItemType[] => {
           roles: ["ADMIN"],
         },
         {
-          text: "Permissions",
-          onClick: () => router.push("/security/permissions"),
+          text: "Manage Clients",
+          onClick: () => router.push(webRoutes.admin.clients),
           roles: ["ADMIN"],
         },
       ],

@@ -10,7 +10,7 @@ const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
-  const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal;
+  const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal.overview;
   let isAuthenticated = false;
 
   if (token) {

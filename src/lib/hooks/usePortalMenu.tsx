@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsIcon, Security as SecurityIcon, AssessmentOutlined, SubdirectoryArrowRight as SubdirectoryArrowRightIcon } from "@mui/icons-material";
+import DescriptionIcon from "@mui/icons-material/Description";
 import webRoutes from "../routes/webRoutes";
 import { filterItemsByRole } from "../utils/portalMenuUtils";
 
