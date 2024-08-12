@@ -1,7 +1,8 @@
+import React from "react";
 import Image from "next/image";
 
 interface PortalLogoProps {
-  small?: boolean;
+  small: boolean;
 }
 
 const PortalLogo: React.FC<PortalLogoProps> = ({ small }) => {

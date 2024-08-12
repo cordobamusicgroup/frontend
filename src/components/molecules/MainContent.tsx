@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { styled } from "@mui/material/styles";
-import DrawerHeader from "../atoms/header/DrawerHeader";
+import VerticalMenuHeader from "./header/VerticalMenuHeader";
 
 interface MainContentProps {
   open: boolean;
@@ -14,6 +14,7 @@ interface MainContentProps {
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ open?: boolean }>(({ theme, open }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
+  marginTop: 64,
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -28,11 +29,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ 
   }),
 }));
 
-const MainContent: React.FC<MainContentProps> = ({ open, children }) => (
-  <Main open={open}>
-    <DrawerHeader />
-    {children}
-  </Main>
-);
+const MainContent: React.FC<MainContentProps> = ({ open, children }) => <Main open={open}>{children}</Main>;
 
 export default MainContent;

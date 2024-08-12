@@ -1,28 +1,24 @@
 "use client";
-import React, { useState, ReactNode, Suspense } from "react";
+import React, { useState, ReactNode } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBarComponent from "../molecules/header/AppBar";
-import VerticalDrawer from "../molecules/header/VerticalDrawer";
-import MainContent from "./MainContent";
-import { metadata } from "@/app/layout";
+import VerticalMenu from "../molecules/header/VerticalMenu";
+import MainContent from "../molecules/MainContent";
+import Header from "./header/HeaderApp";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface PortalLayoutProps {
   children: ReactNode;
 }
 
 const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(!open);
-  };
+  const isOpen = useAppSelector((state) => state.menu.isOpen);
 
   return (
     <div>
       <CssBaseline />
-      <AppBarComponent open={open} handleDrawerOpen={handleDrawerOpen} pageTitle="" />
-      <VerticalDrawer open={open} />
-      <MainContent open={open}>{children}</MainContent>
+      <Header title="test" />
+      <VerticalMenu />
+      <MainContent open={isOpen}>{children}</MainContent>
     </div>
   );
 };

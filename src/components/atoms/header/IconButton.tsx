@@ -3,13 +3,13 @@ import { IconButton as MUIIconButton } from "@mui/material";
 import { Menu as MenuIcon, MenuOpen } from "@mui/icons-material";
 
 interface IconButtonProps {
-  open: boolean;
+  isOpen: boolean;
   onClick: () => void;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({ open, onClick }) => (
-  <MUIIconButton color="inherit" aria-label="open drawer" onClick={onClick} edge="start" sx={{ marginRight: 5 }}>
-    {open ? <MenuOpen /> : <MenuIcon />}
+const IconButton: React.FC<IconButtonProps> = ({ isOpen, onClick }) => (
+  <MUIIconButton color="inherit" aria-label="toggle menu" onClick={onClick} edge="start">
+    {isOpen ? <MenuOpen /> : <MenuIcon />}
   </MUIIconButton>
 );
 

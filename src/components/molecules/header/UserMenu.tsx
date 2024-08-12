@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton, CircularProgress } from "@mui/material";
+import React, { useState } from "react";
+import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppSelector } from "@/lib/redux/hooks";
 import LoadingSpinner from "@/components/atoms/loaders/LoadingSpinner";
 import { useUserMenuItems } from "@/lib/data/userMenuItems";
-import { setLoading } from "@/lib/redux/slices/loaderSlice";
 
 /**
  * UserMenu component displays a user menu with options for the current user.
