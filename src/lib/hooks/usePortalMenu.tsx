@@ -5,6 +5,7 @@ import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Settings as SettingsI
 import DescriptionIcon from "@mui/icons-material/Description";
 import webRoutes from "../routes/webRoutes";
 import { filterItemsByRole } from "../utils/portalMenuUtils";
+import { useTranslations } from "next-intl";
 
 export interface SubMenuType {
   text: string;
@@ -22,29 +23,29 @@ export interface MenuItemType {
 
 export const usePortalMenuItems = (userRole: string): MenuItemType[] => {
   const router = useRouter();
+  const t = useTranslations();
 
   const menuItems: MenuItemType[] = [
     {
-      text: "Overview",
+      text: t("portal.pages.overview"),
       icon: <HomeIcon />,
-      roles: ["USER", "ADMIN", "ALL"],
+      roles: ["ALL"],
       onClick: () => router.push(webRoutes.portal.overview),
     },
     {
-      text: "Financial",
+      text: t("portal.pages.financial.title"),
       icon: <AttachMoneyIcon />,
-      roles: ["USER", "ADMIN", "ALL"],
-      onClick: () => router.push(webRoutes.portal.financial),
+      roles: ["ALL"],
       subMenuItems: [
         {
-          text: "Invoices",
-          onClick: () => router.push(webRoutes.portal.financial),
-          roles: ["USER", "ADMIN"],
+          text: t("portal.pages.financial.invoices"),
+          onClick: () => router.push(webRoutes.portal.financial.invoices),
+          roles: ["ALL"],
         },
         {
-          text: "Reports",
-          onClick: () => router.push(webRoutes.portal.overview),
-          roles: ["ADMIN"],
+          text: t("portal.pages.financial.reports"),
+          onClick: () => router.push(webRoutes.portal.financial.reports),
+          roles: ["ALL"],
         },
       ],
     },

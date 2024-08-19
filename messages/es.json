@@ -1,5 +1,6 @@
 {
   "auth": {
+    "pagetitle": "Autenticación",
     "username": "Usuario",
     "password": "Contraseña",
     "signIn": "Iniciar Sesión",
@@ -11,6 +12,16 @@
       "internalServerError": "Error interno del servidor. Vuelva a intentarlo más tarde.",
       "networkError": "Error de red. Compruebe su conexión.",
       "defaultError": "Se ha producido un error desconocido al iniciar sesión. Vuelva a intentarlo más tarde."
+    }
+  },
+  "portal": {
+    "pages": {
+      "overview": "Inicio",
+      "financial": {
+        "title": "Financiero",
+        "invoices": "Facturas",
+        "reports": "Informes"
+      }
     }
   },
   "modals": {

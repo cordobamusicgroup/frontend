@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { List, Divider, styled } from "@mui/material";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { usePortalMenuItems } from "@/lib/hooks/usePortalMenu";
 import { usePortalAdminMenuItems } from "@/lib/hooks/useAdminMenu";
 import VerticalMenuItem from "./VerticalMenuItem";
+import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
 
 interface VerticalDrawerListProps {
   open: boolean;
@@ -18,14 +19,14 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
 }));
 
 const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
-  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
   const user = useAppSelector((state) => state.user.userData);
-
+  const dispatch = useAppDispatch();
+  const openSubMenu = useAppSelector((state) => state.pageData.openSubMenu);
   const menuItems = usePortalMenuItems(user?.role);
   const adminMenuItems = usePortalAdminMenuItems(user?.role);
 
   const handleSubMenuClick = (text: string) => {
-    setOpenSubMenu(openSubMenu === text ? null : text);
+    dispatch(toggleSubMenu(text));
   };
 
   return (

@@ -1,16 +1,34 @@
 {
   "auth": {
+    "pagetitle": "Authentication",
     "username": "Username",
     "password": "Password",
     "signIn": "Sign In",
     "forgot": "Forgot your password or username?",
-    "signIng": "Signing...",
-    "missingFields": "Username and password are required",
+    "signIng": "Signing in...",
+    "missingFields": "Username and password required",
     "errors": {
       "invalidCredentials": "Invalid username or password. Please try again.",
-      "500": "Internal server error. Please try again later.",
+      "internalServerError": "Internal server error. Please try again later.",
       "networkError": "Network error. Check your connection.",
-      "default": "An unknown error occurred while logging in. Please try again later."
+      "defaultError": "An unknown error occurred while signing in. Please try again later."
+    }
+  },
+  "portal": {
+    "pages": {
+      "overview": "Overview",
+      "financial": {
+        "title": "Finance",
+        "invoices": "Invoices",
+        "reports": "Reports"
+      }
+    },
+    "admin": {
+      "pages": {
+        "clients": "Clients",
+        "manageClients": "Manage Clients",
+        "manageUsers": "Manage Users"
+      }
     }
   },
   "modals": {

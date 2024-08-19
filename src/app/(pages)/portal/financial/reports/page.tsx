@@ -1,19 +1,16 @@
+import React from "react";
 import { Metadata } from "next";
-import RootLayout from "../../layout";
+import PageFinancialReports from "@/components/templates/financial/PageFinancialReports";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations(params.locale);
 
   return {
-    title: t("auth.pagetitle"),
+    title: t("portal.pages.financial.reports"),
   };
 }
 
-export default function AuthLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return <RootLayout>{children}</RootLayout>;
+export default function FinancialPortal() {
+  return <PageFinancialReports />;
 }

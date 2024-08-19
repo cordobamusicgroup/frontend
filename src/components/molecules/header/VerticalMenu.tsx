@@ -25,7 +25,7 @@ const StyledDrawer = styled(Drawer)<{ isOpen?: boolean }>(({ theme, isOpen }) =>
 }));
 
 const VerticalMenu: React.FC = () => {
-  const isOpen = useAppSelector((state) => state.menu.isOpen);
+  const isOpen = useAppSelector((state) => state.pageData.openMenu);
 
   return (
     <StyledDrawer variant="permanent" isOpen={isOpen}>

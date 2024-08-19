@@ -2,7 +2,10 @@ const webRoutes = {
   login: "/auth/login",
   portal: {
     overview: "/portal",
-    financial: "/portal/financial",
+    financial: {
+      invoices: "/portal/financial/invoices",
+      reports: "/portal/financial/reports",
+    },
   },
   admin: {
     overview: "/admin",

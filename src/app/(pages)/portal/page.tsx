@@ -1,16 +1,15 @@
-import React from "react";
-import PortalPageLayout from "./layout";
+import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
-import Head from "next/head";
+import PageOverview from "@/components/templates/PageOverview";
 
-export const metadata: Metadata = {
-  title: "Overview",
-};
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const t = await getTranslations(params.locale);
 
-export default function Portal() {
-  return (
-    <>
-      <div>Welcome to Overview!</div>
-    </>
-  );
+  return {
+    title: t("portal.pages.overview"),
+  };
+}
+
+export default function Overview() {
+  return <PageOverview />;
 }

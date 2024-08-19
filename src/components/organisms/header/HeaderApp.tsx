@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 import IconButton from "../../atoms/header/IconButton";
 import UserMenu from "../../molecules/header/UserMenu";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { toggleMenu } from "@/lib/redux/slices/menuSlice";
+import { toggleMenu } from "@/lib/redux/slices/pageDataSlice";
 
 const StyledAppBar = styled(AppBar)<{ isOpen?: boolean }>(({ theme, isOpen }) => ({
   transition: theme.transitions.create(["margin", "width"], {
@@ -21,9 +21,10 @@ const StyledAppBar = styled(AppBar)<{ isOpen?: boolean }>(({ theme, isOpen }) =>
   }),
 }));
 
-const Header: React.FC<{ title: string }> = ({ title }) => {
+const Header: React.FC = () => {
   const dispatch = useAppDispatch();
-  const isOpen = useAppSelector((state) => state.menu.isOpen);
+  const isOpen = useAppSelector((state) => state.pageData.openMenu);
+  const pageTitle = useAppSelector((state) => state.pageData.pageTitle);
 
   const handleToggleDrawer = () => {
     dispatch(toggleMenu());
@@ -35,7 +36,7 @@ const Header: React.FC<{ title: string }> = ({ title }) => {
         <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <IconButton isOpen={isOpen} onClick={handleToggleDrawer} />
           <Typography variant="h6" noWrap>
-            {title}
+            {pageTitle}
           </Typography>
         </Box>
         <UserMenu />
