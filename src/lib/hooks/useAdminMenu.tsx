@@ -17,11 +17,6 @@ export const usePortalAdminMenuItems = (userRole: string): MenuItemType[] => {
       roles: ["ADMIN"],
       subMenuItems: [
         {
-          text: "User Management",
-          onClick: () => router.push("/security/user-management"),
-          roles: ["ADMIN"],
-        },
-        {
           text: "Manage Clients",
           onClick: () => router.push(webRoutes.admin.clients),
           roles: ["ADMIN"],

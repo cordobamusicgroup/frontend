@@ -1,6 +1,7 @@
 "use client";
 
 import { createTheme } from "@mui/material/styles";
+import { esES } from "@mui/x-data-grid/locales";
 
 const theme = createTheme({
   palette: {

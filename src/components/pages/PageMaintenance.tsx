@@ -2,8 +2,12 @@
 import React from "react";
 import { Box, Typography, Container } from "@mui/material";
 import ConstructionIcon from "@mui/icons-material/Construction";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 
 const PageMaintenance: React.FC = () => {
+  const dispatch = useAppDispatch();
+  dispatch(setPageTitle("Maintenance"));
   return (
     <Container
       sx={{
@@ -12,7 +16,7 @@ const PageMaintenance: React.FC = () => {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        minHeight: "50vh",
+        minHeight: "80vh",
       }}
       component="main"
       maxWidth="xs"
