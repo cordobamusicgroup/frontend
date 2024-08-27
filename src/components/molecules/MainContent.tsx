@@ -27,6 +27,10 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ 
     }),
     marginLeft: `240px`,
   }),
+  [theme.breakpoints.down("sm")]: {
+    marginLeft: "60px",
+    padding: theme.spacing(1),
+  },
 }));
 
 const MainContent: React.FC<MainContentProps> = ({ open, children }) => <Main open={open}>{children}</Main>;

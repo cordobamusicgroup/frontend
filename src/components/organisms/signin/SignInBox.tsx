@@ -3,9 +3,9 @@ import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import FullScreenLoader from "../../molecules/loaders/FullScreenLoader";
 import LoginLogo from "@/components/atoms/logos/LoginLogo";
-import ErrorModal from "@/components/molecules/modals/ErrorModal";
-import SignInForm from "@/components/molecules/signin/SignInForm";
+import ErrorModal from "@/components/molecules/ErrorModal";
 import { useAuth } from "@/context/AuthContext";
+import SignInForm from "@/components/molecules/SignInForm";
 
 /**
  * Renders a sign-in box component.

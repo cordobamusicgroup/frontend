@@ -6,14 +6,6 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import VerticalMenuList from "./VerticalMenuList";
 
 const StyledDrawer = styled(Drawer)<{ isOpen?: boolean }>(({ theme, isOpen }) => ({
-  width: isOpen ? 240 : 60,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
   "& .MuiDrawer-paper": {
     width: isOpen ? 240 : 60,
     transition: theme.transitions.create("width", {

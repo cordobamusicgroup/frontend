@@ -21,6 +21,7 @@
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
+    "formik": "^2.4.6",
     "jose": "^5.6.3",
     "js-cookie": "^3.0.5",
     "next": "^14",

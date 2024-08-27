@@ -1,15 +1,23 @@
 "use client";
 
-import { Add, CancelOutlined, CheckCircleOutline, Delete, Edit, Visibility } from "@mui/icons-material";
+import { Add, CancelOutlined, CheckCircleOutline, Delete, Edit, ErrorOutline, Visibility } from "@mui/icons-material";
 import { DataGrid, gridClasses, GridColDef } from "@mui/x-data-grid";
 
-import { Box, Button, Chip, CircularProgress, IconButton } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, IconButton, Typography } from "@mui/material";
 import { useClients } from "@/lib/hooks/clients/useClients";
+import { useState } from "react";
 
 function ClientList() {
-  const { clients, isLoading, error } = useClients();
-  if (isLoading) return <CircularProgress />;
-  if (error) return <div>Error loading clients</div>;
+  const { clients, clientsLoading, clientsError } = useClients();
+  const [open, setOpen] = useState(false);
+
+  if (clientsError) return <div>Error loading clients</div>;
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleClientCreated = () => {
+    // Aquí puedes añadir lógica adicional después de crear el cliente
+  };
 
   const renderVatStatus = (params: any) => {
     if (params.value) {
@@ -61,7 +69,7 @@ function ClientList() {
       renderCell: renderVatStatus,
       width: 150,
     },
-    { field: "vatId", headerName: "ID de IVA", width: 180 },
+    { field: "vatId", headerName: "VAT ID", width: 180 },
     {
       field: "actions",
       headerName: "Actions",
@@ -74,7 +82,7 @@ function ClientList() {
     },
   ];
 
-  const rows = clients.map((client: any) => ({
+  const rows = clients?.map((client: any) => ({
     id: client.id,
     clientName: client.clientName,
     firstName: client.firstName,
@@ -89,11 +97,11 @@ function ClientList() {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
-        <Button variant="contained" color="primary" startIcon={<Add />}>
+        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleOpen}>
           Add new client
         </Button>
       </Box>
-      <Box sx={{ display: "flex", height: "400", width: "100%" }}>
+      <Box sx={{ display: "flex", height: "400px", width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -108,6 +116,16 @@ function ClientList() {
             [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]: {
               outline: "none",
             },
+          }}
+          slotProps={{
+            loadingOverlay: {
+              variant: "linear-progress",
+              noRowsVariant: "linear-progress",
+            },
+          }}
+          loading={clientsLoading}
+          localeText={{
+            noRowsLabel: "No clients found",
           }}
         />
       </Box>
