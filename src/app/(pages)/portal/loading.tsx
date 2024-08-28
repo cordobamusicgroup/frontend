@@ -1,4 +1,4 @@
-import FullScreenLoader from "@/components/molecules/loaders/FullScreenLoader";
+import FullScreenLoader from "@/components/molecules/FullScreenLoader";
 
 export default function Loading() {
   return <FullScreenLoader open={true} />;

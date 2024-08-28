@@ -6,8 +6,11 @@ import { DataGrid, gridClasses, GridColDef } from "@mui/x-data-grid";
 import { Box, Button, Chip, CircularProgress, IconButton, Typography } from "@mui/material";
 import { useClients } from "@/lib/hooks/clients/useClients";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import webRoutes from "@/lib/routes/webRoutes";
 
 function ClientList() {
+  const router = useRouter();
   const { clients, clientsLoading, clientsError } = useClients();
   const [open, setOpen] = useState(false);
 
@@ -16,7 +19,7 @@ function ClientList() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleClientCreated = () => {
-    // Aquí puedes añadir lógica adicional después de crear el cliente
+    handleClose();
   };
 
   const renderVatStatus = (params: any) => {
@@ -39,6 +42,9 @@ function ClientList() {
       </IconButton>
     </Box>
   );
+  const handleCreateClient = () => {
+    router.push(webRoutes.admin.createClient); // Redirige a la página de creación de cliente
+  };
 
   const handleEdit = (row: any) => {
     // Implement edit functionality
@@ -74,7 +80,7 @@ function ClientList() {
       field: "actions",
       headerName: "Actions",
       width: 150,
-      renderCell: renderActions, // Custom rendering for action buttons
+      renderCell: renderActions,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -97,7 +103,7 @@ function ClientList() {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
-        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleOpen}>
+        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleCreateClient}>
           Add new client
         </Button>
       </Box>

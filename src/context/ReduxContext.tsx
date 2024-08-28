@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import store, { persistor } from "@/lib/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Fullscreen } from "@mui/icons-material";
-import FullScreenLoader from "@/components/molecules/loaders/FullScreenLoader";
+import FullScreenLoader from "@/components/molecules/FullScreenLoader";
 
 interface ReduxProviderProps {
   children: ReactNode;
@@ -22,7 +22,7 @@ interface ReduxProviderProps {
 const ReduxProvider: React.FC<ReduxProviderProps> = ({ children }) => {
   return (
     <Provider store={store}>
-      <PersistGate loading={<FullScreenLoader open/>} persistor={persistor}>
+      <PersistGate loading={<FullScreenLoader open />} persistor={persistor}>
         {children}
       </PersistGate>
     </Provider>
