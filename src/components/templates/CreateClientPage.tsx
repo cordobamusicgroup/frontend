@@ -22,12 +22,34 @@ const validationSchema = Yup.object({
   type: Yup.string().oneOf(["PERSON", "BUSINESS"], "Invalid type").required("Type is required"),
   taxIdType: Yup.string().oneOf(["COMPANY_NUMBER", "NATIONAL_ID", "PASSPORT", "RESIDENT_PERMIT", "ID_CARD", "DRIVERS_LICENSE"], "Invalid Tax ID Type").required("Tax ID Type is required"),
   taxId: Yup.string().required("Tax ID is required"),
+  vatRegistered: Yup.boolean().required(),
+  vatId: Yup.string().when("vatRegistered", {
+    is: true,
+    then: (schema) => schema.required("VAT ID is required when VAT Registered is true"),
+    otherwise: (schema) => schema.nullable().notRequired(),
+  }),
   street: Yup.string().required("Street is required"),
   city: Yup.string().required("City is required"),
   state: Yup.string().required("State is required"),
   countryId: Yup.number().required("Country is required"),
   zip: Yup.string().required("Zip is required"),
 });
+
+const initialValues = {
+  clientName: "",
+  firstName: "",
+  lastName: "",
+  type: "",
+  taxIdType: "",
+  taxId: "",
+  vatRegistered: false,
+  vatId: "",
+  street: "",
+  city: "",
+  state: "",
+  countryId: null,
+  zip: "",
+};
 
 const CreateClientPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -73,36 +95,12 @@ const CreateClientPage: React.FC = () => {
   };
 
   return (
-    <Formik
-      initialValues={{
-        clientName: "",
-        firstName: "",
-        lastName: "",
-        type: "",
-        taxIdType: "",
-        taxId: "",
-        vatRegistered: false,
-        street: "",
-        city: "",
-        state: "",
-        countryId: null,
-        zip: "",
-      }}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
+    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, submitForm }) => (
         <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", justifyContent: "right", alignItems: "center", marginBottom: "20px", gap: 2 }}>
             <BackPageButton />
-            <Button
-              onClick={submitForm} // Llama a submitForm para enviar el formulario
-              color="primary"
-              variant="contained"
-              disabled={createClientLoading || isSubmitting}
-              startIcon={<AddOutlined />}
-              endIcon={createClientLoading || isSubmitting ? <CircularProgress size={20} /> : null}
-            >
+            <Button onClick={submitForm} color="primary" variant="contained" disabled={createClientLoading || isSubmitting} startIcon={<AddOutlined />} endIcon={createClientLoading || isSubmitting ? <CircularProgress size={20} /> : null}>
               Create Client
             </Button>
           </Box>

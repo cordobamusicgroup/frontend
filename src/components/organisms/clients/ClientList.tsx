@@ -107,7 +107,7 @@ function ClientList() {
           Add new client
         </Button>
       </Box>
-      <Box sx={{ display: "flex", height: "400px", width: "100%" }}>
+      <Box sx={{ display: "flex", height: "600px", width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
