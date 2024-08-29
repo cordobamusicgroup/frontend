@@ -1,7 +1,7 @@
 import React from "react";
 import { AppBar, Box, Toolbar, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import IconButton from "../../atoms/header/IconButton";
+import IconButton from "../../atoms/IconButton";
 import UserMenu from "../../molecules/header/UserMenu";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { toggleMenu } from "@/lib/redux/slices/pageDataSlice";
