@@ -13,7 +13,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif", // Tipografía
+    fontFamily: "Roboto, Arial, sans-serif",
   },
   breakpoints: {
     values: {
@@ -25,5 +25,39 @@ const theme = createTheme({
     },
   },
 });
+
+theme.typography.h1 = {
+  fontSize: "2rem",
+  "@media (min-width:600px)": {
+    fontSize: "2.5rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "3rem",
+  },
+};
+
+theme.typography.h2 = {
+  fontSize: "1.75rem",
+  "@media (min-width:600px)": {
+    fontSize: "2rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "2.5rem",
+  },
+};
+
+theme.typography.h3 = {
+  fontSize: "1.5rem",
+  "@media (min-width:600px)": {
+    fontSize: "1.75rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "2rem",
+  },
+};
+
+theme.typography.h6 = {
+  fontSize: "18px",
+};
 
 export default theme;

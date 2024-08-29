@@ -26,14 +26,13 @@
     "admin": {
       "pages": {
         "clients": "Clients",
+        "createClient": "Create New Client",
         "manageClients": "Manage Clients",
         "manageUsers": "Manage Users"
       }
     }
   },
-  "tables": {
-
-  },
+  "tables": {},
   "modals": {
     "error": {
       "title": "Something went wrong",
