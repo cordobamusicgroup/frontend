@@ -15,27 +15,27 @@ const ClientDetailsForm: React.FC = () => {
   };
   return (
     <>
-      <Field name="clientName" label="Client Nickname" component={TextFieldForm} />
-      <Field name="firstName" label="First Name" component={TextFieldForm} />
-      <Field name="lastName" label="Last Name" component={TextFieldForm} />
-      <Field name="type" label="Type" select component={TextFieldForm}>
+      <Field required name="clientName" label="Client Nickname" component={TextFieldForm} />
+      <Field required name="firstName" label="First Name" component={TextFieldForm} />
+      <Field required name="lastName" label="Last Name" component={TextFieldForm} />
+      <Field required name="type" label="Type" select component={TextFieldForm}>
         {typeOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}
       </Field>
-      <Field name="taxIdType" label="Tax ID Type" select component={TextFieldForm}>
+      <Field required name="taxIdType" label="Tax ID Type" select component={TextFieldForm}>
         {taxIdTypeOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}
       </Field>
-      <Field name="taxId" label="Tax ID" component={TextFieldForm} />
-      <FormControlLabel control={<Switch checked={values.vatRegistered} onChange={handleVatToggle} color="primary" />} label="VAT Registered" />
+      <Field required name="taxId" label="Tax ID" component={TextFieldForm} />
+      <FormControlLabel control={<Switch required checked={values.vatRegistered} onChange={handleVatToggle} color="primary" />} label="VAT Registered" />
 
-      {values.vatRegistered && <Field name="vatId" label="VAT ID" component={TextFieldForm} />}
+      {values.vatRegistered && <Field required name="vatId" label="VAT ID" component={TextFieldForm} />}
     </>
   );
 };

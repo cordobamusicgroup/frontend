@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from "react";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import FullScreenLoader from "../../molecules/FullScreenLoader";
-import LoginLogo from "@/components/atoms/logos/LoginLogo";
+import LoginLogo from "@/components/atoms/LoginLogo";
 import { useAuth } from "@/context/AuthContext";
 import SignInForm from "@/components/molecules/SignInForm";
 import ErrorModal from "@/components/molecules/modals/ErrorModal";

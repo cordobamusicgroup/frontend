@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Chip, Typography } from "@mui/material";
-import PortalLogo from "../../atoms/header/PortalLogo";
+import PortalLogo from "../../atoms/PortalLogo";
 
 interface DrawerHeaderProps {
   isOpen: boolean;

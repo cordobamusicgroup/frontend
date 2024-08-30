@@ -5,7 +5,7 @@ import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useAppSelector } from "@/lib/redux/hooks";
-import LoadingSpinner from "@/components/atoms/loaders/LoadingSpinner";
+import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import { useUserMenuItems } from "@/lib/data/userMenuItems";
 
 /**
