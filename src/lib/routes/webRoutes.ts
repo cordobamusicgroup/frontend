@@ -1,5 +1,3 @@
-import { create } from "domain";
-
 const webRoutes = {
   login: "/auth/login",
   portal: {
@@ -12,7 +10,7 @@ const webRoutes = {
   admin: {
     overview: "/admin",
     clients: "/portal/admin/clients",
-    createClient: "/portal/admin/clients/new",
+    createClient: "/portal/admin/clients/create",
   },
 };
 

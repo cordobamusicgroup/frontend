@@ -1,19 +1,19 @@
 "use client";
-import React, { useState } from "react";
-import { Box, Button, CircularProgress, Typography, Grid } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemText } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useCreateClient } from "@/lib/hooks/clients/useCreateClient";
-import { useCountries } from "@/lib/hooks/useCountries";
 import CreateClientForm from "../organisms/CreateClientForm";
-import SuccessModal from "../molecules/modals/SucessModal";
 import ErrorModal from "../molecules/modals/ErrorModal";
 import AddressDetailsForm from "../molecules/AddressDetailsForm";
 import BackPageButton from "../atoms/BackPageButton";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 import { useTranslations } from "next-intl";
-import { AddOutlined, PlusOneRounded } from "@mui/icons-material";
+import { AddOutlined } from "@mui/icons-material";
+import ErrorBox from "../atoms/ErrorBox";
+import SuccessBox from "../atoms/SuccessBox";
 
 const validationSchema = Yup.object({
   clientName: Yup.string().required("Client nickname is required"),
@@ -56,9 +56,10 @@ const CreateClientPage: React.FC = () => {
   const t = useTranslations();
   dispatch(setPageTitle(t("portal.admin.pages.createClient")));
   const { createClient, createClientLoading } = useCreateClient();
-  const [successOpen, setSuccessOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const handleSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
     try {
@@ -76,35 +77,51 @@ const CreateClientPage: React.FC = () => {
       };
 
       await createClient(payload);
-      setSuccessOpen(true);
+      setSuccessMessage("The client was successfully created.");
       resetForm();
     } catch (error: any) {
-      setErrorMessage(error.message || "An error occurred while creating the client.");
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
       setErrorOpen(true);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleSuccessClose = () => {
-    setSuccessOpen(false);
-  };
-
   const handleErrorClose = () => {
     setErrorOpen(false);
   };
 
+  const handleInputChange = () => {
+    setSuccessMessage(null);
+  };
+
   return (
     <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-      {({ isSubmitting, submitForm }) => (
+      {({ isSubmitting, submitForm, errors, handleChange }) => (
         <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", justifyContent: "right", alignItems: "center", marginBottom: "20px", gap: 2 }}>
             <BackPageButton />
-            <Button onClick={submitForm} color="primary" variant="contained" disabled={createClientLoading || isSubmitting} startIcon={<AddOutlined />} endIcon={createClientLoading || isSubmitting ? <CircularProgress size={20} /> : null}>
+            <Button
+              onClick={() => {
+                submitForm();
+              }}
+              color="primary"
+              variant="contained"
+              disabled={createClientLoading || isSubmitting}
+              startIcon={<AddOutlined />}
+              endIcon={createClientLoading || isSubmitting ? <CircularProgress size={20} /> : null}
+            >
               Create Client
             </Button>
           </Box>
-          <Form>
+
+          <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>
+
+          <Form onChange={handleInputChange}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
@@ -120,8 +137,6 @@ const CreateClientPage: React.FC = () => {
               </Grid>
             </Grid>
           </Form>
-
-          <SuccessModal open={successOpen} onClose={handleSuccessClose} title="Client Created" message="The client was successfully created." />
 
           <ErrorModal open={errorOpen} onClose={handleErrorClose} errorMessage={errorMessage} />
         </Box>

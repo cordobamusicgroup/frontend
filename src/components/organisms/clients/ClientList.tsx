@@ -16,17 +16,11 @@ function ClientList() {
 
   if (clientsError) return <div>Error loading clients</div>;
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleClientCreated = () => {
-    handleClose();
-  };
-
   const renderVatStatus = (params: any) => {
     if (params.value) {
       return <Chip label="Registered" color="success" icon={<CheckCircleOutline style={{ color: "white" }} />} size="small" />;
     }
-    return <Chip label="Not Registered" color="default" icon={<CancelOutlined style={{ color: "gray" }} />} size="small" />; // If not registered, show nothing or customize this as needed
+    return <Chip label="Not Registered" color="default" icon={<CancelOutlined style={{ color: "gray" }} />} size="small" />;
   };
 
   const renderActions = (params: any) => (

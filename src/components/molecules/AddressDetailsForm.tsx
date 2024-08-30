@@ -19,11 +19,11 @@ const AddressDetailsForm: React.FC = () => {
 
   return (
     <>
-      <Field name="street" label="Street" component={TextFieldForm} />
-      <Field name="city" label="City" component={TextFieldForm} />
-      <Field name="state" label="State" component={TextFieldForm} />
-      <Autocomplete options={countries || []} getOptionLabel={(option) => option.name} loading={countriesLoading} onChange={(event, value) => setFieldValue("countryId", value ? value.id : null)} renderInput={(params) => <TextField {...params} label="Country" margin="normal" fullWidth error={touched.countryId && Boolean(errors.countryId)} helperText={<ErrorMessage name="countryId" />} />} />
-      <Field name="zip" label="Zip" component={TextFieldForm} />
+      <Field required name="street" label="Street" component={TextFieldForm} />
+      <Field required name="city" label="City" component={TextFieldForm} />
+      <Field required name="state" label="State" component={TextFieldForm} />
+      <Autocomplete options={countries || []} getOptionLabel={(option) => option.name} loading={countriesLoading} onChange={(event, value) => setFieldValue("countryId", value ? value.id : null)} renderInput={(params) => <TextField required {...params} label="Country" margin="normal" fullWidth error={touched.countryId && Boolean(errors.countryId)} helperText={<ErrorMessage name="countryId" />} />} />
+      <Field required name="zip" label="Zip" component={TextFieldForm} />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
-import PageManageClients from "@/components/pages/admin/PageManageClients";
 import { getTranslations } from "next-intl/server";
+import ClientListPage from "@/components/pages/ClientListPage";
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const t = await getTranslations(params.locale);
@@ -12,5 +12,5 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 }
 
 export default function ManageClients() {
-  return <PageManageClients />;
+  return <ClientListPage />;
 }
