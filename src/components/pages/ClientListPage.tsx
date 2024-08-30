@@ -6,7 +6,7 @@ import webRoutes from "@/lib/routes/webRoutes";
 
 const ClientListPage: React.FC = () => {
   const router = useRouter();
-  const { clients = [], clientsLoading, clientsError } = useClients();
+  const { clients = [], clientsLoading, clientsError, deleteClients } = useClients();
 
   if (clientsError) return <div>Error loading clients</div>;
 
@@ -22,8 +22,13 @@ const ClientListPage: React.FC = () => {
     console.log("View", client);
   };
 
-  const handleDelete = (client: any): void => {
-    console.log("Delete", client);
+  const handleDelete = async (client: any): Promise<void> => {
+    try {
+      await deleteClients([client.id]);
+      console.log("Client deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete client", error);
+    }
   };
 
   return <ClientListTemplate clients={clients} onCreate={handleCreateClient} onEdit={handleEdit} onView={handleView} onDelete={handleDelete} loading={clientsLoading} />;
