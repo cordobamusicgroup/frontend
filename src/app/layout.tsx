@@ -6,6 +6,8 @@ import StyleProviders from "@/context/StyleContext";
 import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 export const metadata: Metadata = {
   title: {
@@ -28,9 +30,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ReduxProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <AuthProvider>
-              <StyleProviders>
-                {children}
-              </StyleProviders>
+              <StyleProviders>{children}</StyleProviders>
             </AuthProvider>
           </NextIntlClientProvider>
         </ReduxProvider>

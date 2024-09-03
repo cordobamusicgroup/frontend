@@ -17,6 +17,7 @@
   "portal": {
     "pages": {
       "overview": "Inicio",
+      "createClient": "Create New Client",
       "financial": {
         "title": "Financiero",
         "invoices": "Facturas",
