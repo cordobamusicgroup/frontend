@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 const PageFinancialReports: React.FC = () => {
   const dispatch = useAppDispatch();
   const t = useTranslations();
-  const title = t("portal.pages.financial.reports");
+  const title = t("menus.financial.reports");
   dispatch(setPageTitle(title));
 
   return <div>Welcome to Córdoba Music Group!</div>;
