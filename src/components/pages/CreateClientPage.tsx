@@ -1,22 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemText, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useCreateClient } from "@/lib/hooks/clients/useCreateClient";
 import ErrorModal from "../molecules/modals/ErrorModal";
-import AddressDetailsForm from "../molecules/AddressDetailsForm";
 import BackPageButton from "../atoms/BackPageButton";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 import { useTranslations } from "next-intl";
-import { AddOutlined, ErrorOutline, FiberManualRecord } from "@mui/icons-material";
+import { AddOutlined, ErrorOutline, ExpandMore, FiberManualRecord } from "@mui/icons-material";
 import SuccessBox from "../atoms/SuccessBox";
-import ContractDetailsForm from "../molecules/ContractDetailsForm";
-import ClientDetailsForm from "../molecules/ClientDetailsForm";
+import ContractDetailsForm from "../molecules/forms/create/CreateContractForm";
+import ClientDetailsForm from "../molecules/forms/create/CreateClientForm";
 import { contractStatusOptions, contractTypeOptions, taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
 import dayjs from "dayjs";
 import ErrorBox from "../atoms/ErrorBox";
+import AddressDetailsForm from "../molecules/forms/create/CreateAddressForm";
 
 const validationSchema = Yup.object({
   clientName: Yup.string().required("Client nickname is required"),
@@ -67,7 +67,7 @@ const validationSchema = Yup.object({
       return value ? dayjs(value).isAfter(dayjs().subtract(1, "day")) : false;
     }),
   endDate: Yup.date()
-    .required("End date is required")
+    .optional()
     .test("isValidDate", "Invalid date", (value) => {
       return value ? dayjs(value).isValid() : false;
     })
@@ -99,13 +99,12 @@ const initialValues = {
   ppd: "",
   docUrl: "",
   startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
 };
 
 const CreateClientPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const t = useTranslations();
-  dispatch(setPageTitle(t("portal.admin.pages.createClient")));
+  dispatch(setPageTitle(t("pages.clients.add")));
   const { createClient, createClientLoading } = useCreateClient();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -133,9 +132,9 @@ const CreateClientPage: React.FC = () => {
         contract: {
           contractType: values.contractType,
           status: values.contractStatus,
-          signed: true, //change
-          signedBy: "Admin", //change
-          signedAt: values.startDate, //change
+          signed: values.contractSigned,
+          signedBy: values.contractSignedBy,
+          signedAt: values.contractSignedAt,
           startDate: values.startDate,
           endDate: values.endDate,
           ppd: values.ppd,
@@ -204,26 +203,32 @@ const CreateClientPage: React.FC = () => {
           <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>
 
           <Form onChange={handleInputChange}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
-                  Personal Details
-                </Typography>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id="panel1a-header">
+                <Typography>Personal Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
                 <ClientDetailsForm />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
-                  Address
-                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel2a-content" id="panel2a-header">
+                <Typography>Address</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
                 <AddressDetailsForm />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
-                  Contract
-                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel3a-content" id="panel3a-header">
+                <Typography>Contract Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
                 <ContractDetailsForm />
-              </Grid>
-            </Grid>
+              </AccordionDetails>
+            </Accordion>
           </Form>
 
           <ErrorModal open={errorOpen} onClose={handleErrorClose} errorMessage={errorMessage} />

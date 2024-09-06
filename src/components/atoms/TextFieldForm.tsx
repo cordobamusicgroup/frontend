@@ -7,7 +7,7 @@ interface TextFieldFormProps extends FieldProps, BaseTextFieldProps {
 }
 
 const TextFieldForm: React.FC<TextFieldFormProps> = ({ field, form, label, ...props }) => {
-  return <TextField {...field} {...props} label={label} fullWidth error={Boolean(form.touched[field.name] && form.errors[field.name])} helperText={<ErrorMessage name={field.name} />} sx={{ marginBottom: 2, marginTop: 2 }} />;
+  return <TextField {...field} {...props} label={label} fullWidth error={Boolean(form.touched[field.name] && form.errors[field.name])} helperText={<ErrorMessage name={field.name} />} sx={{ marginBottom: 2, marginTop: 2 }} variant="standard" />;
 };
 
 export default TextFieldForm;

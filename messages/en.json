@@ -1,38 +1,51 @@
 {
-  "auth": {
-    "pagetitle": "Authentication",
-    "username": "Username",
-    "password": "Password",
-    "signIn": "Sign In",
-    "forgot": "Forgot your password or username?",
-    "signIng": "Signing in...",
-    "missingFields": "Username and password required",
-    "errors": {
-      "invalidCredentials": "Invalid username or password. Please try again.",
-      "internalServerError": "Internal server error. Please try again later.",
-      "networkError": "Network error. Check your connection.",
-      "defaultError": "An unknown error occurred while signing in. Please try again later."
-    }
+  "menus": {
+    "overview": "Overview",
+    "financial": {
+      "title": "Financial",
+      "invoices": "Invoices",
+      "reports": "Reports"
+    },
+    "clients": "Clients"
   },
-  "portal": {
-    "pages": {
-      "overview": "Overview",
-      "financial": {
-        "title": "Finance",
-        "invoices": "Invoices",
-        "reports": "Reports"
+  "pages": {
+    "auth": {
+      "pagetitle": "Authentication",
+      "username": "Username",
+      "password": "Password",
+      "signIn": "Sign In",
+      "forgot": "Forgot your password or username?",
+      "signIng": "Signing in...",
+      "missingFields": "Username and password required",
+      "errors": {
+        "invalidCredentials": "Invalid username or password. Please try again.",
+        "internalServerError": "Internal server error. Please try again later.",
+        "networkError": "Network error. Check your connection.",
+        "defaultError": "An unknown error occurred while signing in. Please try again later."
       }
     },
-    "admin": {
-      "pages": {
-        "clients": "Clients",
-        "createClient": "Create New Client",
-        "manageClients": "Manage Clients",
-        "manageUsers": "Manage Users"
+    "overview": {
+      "title": "Overview"
+    },
+    "clients": {
+      "title": "Clients",
+      "listError": "Error loading clients",
+      "add": "Add Client",
+      "table": {
+        "clientName": "Client Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "type": "Type",
+        "taxIdType": "Tax ID Type",
+        "taxId": "Tax ID",
+        "vatRegistered": "VAT Registered",
+        "vatNumber": "VAT Number",
+        "actions": "Actions",
+        "noRowsLabel": "No clients found"
       }
     }
   },
-  "tables": {},
+  "table": {},
   "modals": {
     "error": {
       "title": "Something went wrong",

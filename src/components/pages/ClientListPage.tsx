@@ -3,12 +3,14 @@ import { useRouter } from "next/navigation";
 import { useClients } from "@/lib/hooks/clients/useClients";
 import ClientListTemplate from "../templates/ClientListTemplate";
 import webRoutes from "@/lib/routes/webRoutes";
+import { useTranslations } from "next-intl";
 
 const ClientListPage: React.FC = () => {
   const router = useRouter();
+  const t = useTranslations("pages.clients");
   const { clients = [], clientsLoading, clientsError, deleteClients } = useClients();
 
-  if (clientsError) return <div>Error loading clients</div>;
+  if (clientsError) return <div>{t("listError")}</div>;
 
   const handleCreateClient = (): void => {
     router.push(webRoutes.admin.createClient);
@@ -22,10 +24,10 @@ const ClientListPage: React.FC = () => {
     console.log("View", client);
   };
 
+  // TODO - Add sucess and error boxes
   const handleDelete = async (client: any): Promise<void> => {
     try {
       await deleteClients([client.id]);
-      console.log("Client deleted successfully");
     } catch (error) {
       console.error("Failed to delete client", error);
     }

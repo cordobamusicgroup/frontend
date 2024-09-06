@@ -17,10 +17,12 @@ const BasicDatePicker: React.FC = ({ field, form, label, ...props }: any) => {
         {...props}
         label={label}
         fullWidth
+        format="DD/MM/YYYY"
+        slotProps={{ textField: { variant: "standard", helperText: "DD/MM/YYYY" } }}
         onChange={(value) => {
           setFieldValue(field.name, value);
         }}
-        renderInput={(params: any) => <TextField {...params} error={error} helperText={<ErrorMessage name={field.name} />} sx={{ marginBottom: 2, marginTop: 2 }} />}
+        sx={{ marginBottom: 2, marginTop: 2 }}
       />
     </LocalizationProvider>
   );

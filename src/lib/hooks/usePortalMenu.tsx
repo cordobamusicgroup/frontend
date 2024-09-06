@@ -23,27 +23,27 @@ export interface MenuItemType {
 
 export const usePortalMenuItems = (userRole: string): MenuItemType[] => {
   const router = useRouter();
-  const t = useTranslations();
+  const t = useTranslations("menus");
 
   const menuItems: MenuItemType[] = [
     {
-      text: t("portal.pages.overview"),
+      text: t("overview"),
       icon: <HomeIcon />,
       roles: ["ALL"],
       onClick: () => router.push(webRoutes.portal.overview),
     },
     {
-      text: t("portal.pages.financial.title"),
+      text: t("financial.title"),
       icon: <AttachMoneyIcon />,
       roles: ["ALL"],
       subMenuItems: [
         {
-          text: t("portal.pages.financial.invoices"),
+          text: t("financial.invoices"),
           onClick: () => router.push(webRoutes.portal.financial.invoices),
           roles: ["ALL"],
         },
         {
-          text: t("portal.pages.financial.reports"),
+          text: t("financial.reports"),
           onClick: () => router.push(webRoutes.portal.financial.reports),
           roles: ["ALL"],
         },

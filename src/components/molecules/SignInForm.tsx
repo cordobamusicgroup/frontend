@@ -27,7 +27,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const t = useTranslations();
+  const t = useTranslations("pages.auth");
 
   /**
    * Handles the form submission.
@@ -38,7 +38,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
     event.preventDefault();
 
     if (username.trim() === "" || password.trim() === "") {
-      setError(t("auth.missingFields"));
+      setError(t("missingFields"));
       return;
     }
 
@@ -48,8 +48,8 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
 
   return (
     <Box component="form" onSubmit={handleFormSubmit} sx={{ mt: 3 }}>
-      <TextField margin="normal" required fullWidth id="username" label={t("auth.username")} name="username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={Boolean(error)} />
-      <TextField margin="normal" required fullWidth name="password" label={t("auth.password")} type="password" id="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={Boolean(error)} />
+      <TextField margin="normal" required fullWidth id="username" label={t("username")} name="username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={Boolean(error)} />
+      <TextField margin="normal" required fullWidth name="password" label={t("password")} type="password" id="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={Boolean(error)} />
       {error && (
         <Typography variant="body2" color="error" align="center">
           {error}
@@ -57,14 +57,14 @@ const SignInForm: React.FC<SignInFormProps> = ({ handleSubmit, loading }) => {
       )}
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
-          {loading ? t("auth.signIng") : t("auth.signIn")}
+          {loading ? t("signIng") : t("signIn")}
         </Button>
         <LocaleSwitcher />
       </Box>
       <Grid container justifyContent="center" sx={{ mt: 2 }}>
         <Grid item>
           <Link href="#" variant="body2">
-            {t("auth.forgot")}
+            {t("forgot")}
           </Link>
         </Grid>
       </Grid>

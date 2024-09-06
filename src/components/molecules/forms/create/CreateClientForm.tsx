@@ -1,7 +1,7 @@
 import React from "react";
 import { FormControlLabel, MenuItem, Switch } from "@mui/material";
 import { Field, useFormikContext } from "formik";
-import TextFieldForm from "../atoms/TextFieldForm";
+import TextFieldForm from "../../../atoms/TextFieldForm";
 import { taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
 
 const ClientDetailsForm: React.FC = () => {

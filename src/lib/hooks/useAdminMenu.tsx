@@ -6,22 +6,18 @@ import GroupIcon from "@mui/icons-material/Group";
 import { MenuItemType } from "./usePortalMenu";
 import { filterItemsByRole } from "../utils/portalMenuUtils";
 import webRoutes from "../routes/webRoutes";
+import { useTranslations } from "next-intl";
 
 export const usePortalAdminMenuItems = (userRole: string): MenuItemType[] => {
   const router = useRouter();
+  const t = useTranslations("menus");
 
   const adminMenuItems: MenuItemType[] = [
     {
-      text: "Clients",
+      text: t("clients"),
       icon: <GroupIcon />,
+      onClick: () => router.push(webRoutes.admin.clients),
       roles: ["ADMIN"],
-      subMenuItems: [
-        {
-          text: "Manage Clients",
-          onClick: () => router.push(webRoutes.admin.clients),
-          roles: ["ADMIN"],
-        },
-      ],
     },
   ];
 
