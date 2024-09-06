@@ -1,5 +1,4 @@
 import React from "react";
-import { Metadata } from "next";
 import PageFinancialReports from "@/components/pages/admin/financial/PageFinancialReports";
 import { getTranslations } from "next-intl/server";
 

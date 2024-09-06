@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 import { useTranslations } from "next-intl";

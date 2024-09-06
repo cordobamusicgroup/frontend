@@ -3,9 +3,10 @@ import { FormControlLabel, MenuItem, Switch } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import TextFieldForm from "../../../atoms/TextFieldForm";
 import { taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
+import { FormikValues } from "formik"; // Import FormikValues type
 
 const ClientDetailsForm: React.FC = () => {
-  const { values, setFieldValue } = useFormikContext<any>();
+  const { values, setFieldValue } = useFormikContext<FormikValues>(); // Provide the type for values
 
   const handleVatToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFieldValue("vatRegistered", event.target.checked);
