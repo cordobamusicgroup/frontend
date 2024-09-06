@@ -3,11 +3,11 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import CreateClientPage from "@/components/pages/CreateClientPage";
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations(params.locale);
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  const t = await getTranslations({ locale, namespace: "pages.clients" });
 
   return {
-    title: t("portal.admin.pages.createClient"),
+    title: t("createClient"),
   };
 }
 

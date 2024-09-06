@@ -29,6 +29,7 @@
     },
     "clients": {
       "title": "Clients",
+      "createClient": "Create Client",
       "listError": "Error loading clients",
       "add": "Add Client",
       "table": {
