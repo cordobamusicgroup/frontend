@@ -3,12 +3,11 @@ import { Metadata } from "next";
 import PageFinancialReports from "@/components/pages/admin/financial/PageFinancialReports";
 import { getTranslations } from "next-intl/server";
 import PageMaintenance from "@/components/pages/PageMaintenance";
-
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations(params.locale);
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  const t = await getTranslations({ locale, namespace: "menus" });
 
   return {
-    title: t("portal.pages.financial.invoices"),
+    title: t("financial.invoices"),
   };
 }
 
