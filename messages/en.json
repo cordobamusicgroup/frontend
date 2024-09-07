@@ -46,7 +46,6 @@
       }
     }
   },
-  "table": {},
   "modals": {
     "error": {
       "title": "Something went wrong",
