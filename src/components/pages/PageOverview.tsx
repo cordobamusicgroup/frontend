@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 
 const PageOverview: React.FC = () => {
   const dispatch = useAppDispatch();
-  const t = useTranslations();
-  const title = t("portal.pages.overview");
+  const t = useTranslations("pages.overview");
+  const title = t("title");
 
   dispatch(setPageTitle(title));
 

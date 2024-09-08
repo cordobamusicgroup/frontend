@@ -1,9 +1,11 @@
 import useSWR from "swr";
+import { useState } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import apiRoutes from "@/lib/routes/apiRoutes";
 
 export const useClients = () => {
   const { apiRequest } = useApiRequest();
+  const [isDeleting, setIsDeleting] = useState(false); // Estado para manejar la eliminación
 
   // Function to fetch clients
   const fetchClients = async () => {
@@ -18,6 +20,7 @@ export const useClients = () => {
   // Function to delete multiple clients
   const deleteClients = async (ids: number[]): Promise<void> => {
     try {
+      setIsDeleting(true); // Activar estado de eliminación
       await apiRequest({
         url: apiRoutes.clients,
         method: "delete",
@@ -30,6 +33,8 @@ export const useClients = () => {
     } catch (error) {
       console.error("Failed to delete clients", error);
       throw error;
+    } finally {
+      setIsDeleting(false); // Desactivar estado de eliminación
     }
   };
 
@@ -45,7 +50,7 @@ export const useClients = () => {
 
   return {
     clients: data,
-    clientsLoading,
+    clientsLoading: clientsLoading || isDeleting,
     clientsError,
     clientsMutate,
     deleteClients,

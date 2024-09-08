@@ -1,31 +1,22 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode, useEffect, useState } from "react";
+import React, { createContext, useContext, ReactNode, useState } from "react";
 import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
-import { useDispatch } from "react-redux";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import apiRoutes from "@/lib/routes/apiRoutes";
 import { useTranslations } from "next-intl";
 import webRoutes from "@/lib/routes/webRoutes";
 import { useAppDispatch } from "@/lib/redux/hooks";
+import axios from "axios";
 
 interface AuthContextType {
   error: string | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
-}
-
-interface LoginResponse {
-  access_token: string;
-}
-
-interface LoginVariables {
-  username: string;
-  password: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
-  const t = useTranslations();
+  const t = useTranslations("pages.auth");
 
   const isAuthenticated = Cookies.get("isAuthenticated") === "true";
 
@@ -72,15 +63,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
       await mutate("userData");
       router.push(webRoutes.portal.overview);
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        setError(t("auth.errors.invalidCredentials"));
-      } else if (error.response && error.response.status === 500) {
-        setError(t("auth.errors.internalServerError"));
-      } else if (error.message === "Network Error") {
-        setError(t("auth.errors.networkError"));
-      } else {
-        setError(t("auth.errors.defaultError"));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          setError(t("errors.invalidCredentials"));
+        } else if (error.response && error.response.status === 500) {
+          setError(t("errors.internalServerError"));
+        } else if (error.message === "Network Error") {
+          setError(t("errors.networkError"));
+        } else {
+          setError(t("errors.defaultError"));
+        }
       }
     }
   };

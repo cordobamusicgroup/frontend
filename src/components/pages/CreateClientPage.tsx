@@ -1,26 +1,39 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemText } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemText, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useCreateClient } from "@/lib/hooks/clients/useCreateClient";
-import CreateClientForm from "../organisms/CreateClientForm";
 import ErrorModal from "../molecules/modals/ErrorModal";
-import AddressDetailsForm from "../molecules/AddressDetailsForm";
 import BackPageButton from "../atoms/BackPageButton";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 import { useTranslations } from "next-intl";
-import { AddOutlined } from "@mui/icons-material";
-import ErrorBox from "../atoms/ErrorBox";
+import { AddOutlined, ErrorOutline, ExpandMore, FiberManualRecord } from "@mui/icons-material";
 import SuccessBox from "../atoms/SuccessBox";
+import ContractDetailsForm from "../molecules/forms/create/CreateContractForm";
+import ClientDetailsForm from "../molecules/forms/create/CreateClientForm";
+import { contractStatusOptions, contractTypeOptions, taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
+import dayjs from "dayjs";
+import ErrorBox from "../atoms/ErrorBox";
+import AddressDetailsForm from "../molecules/forms/create/CreateAddressForm";
 
 const validationSchema = Yup.object({
   clientName: Yup.string().required("Client nickname is required"),
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
-  type: Yup.string().oneOf(["PERSON", "BUSINESS"], "Invalid type").required("Type is required"),
-  taxIdType: Yup.string().oneOf(["COMPANY_NUMBER", "NATIONAL_ID", "PASSPORT", "RESIDENT_PERMIT", "ID_CARD", "DRIVERS_LICENSE"], "Invalid Tax ID Type").required("Tax ID Type is required"),
+  type: Yup.string()
+    .oneOf(
+      typeOptions.map((option) => option.value),
+      "Invalid type"
+    )
+    .required("Type is required"),
+  taxIdType: Yup.string()
+    .oneOf(
+      taxIdTypeOptions.map((option) => option.value),
+      "Invalid Tax ID Type"
+    )
+    .required("Tax ID Type is required"),
   taxId: Yup.string().required("Tax ID is required"),
   vatRegistered: Yup.boolean().required(),
   vatId: Yup.string().when("vatRegistered", {
@@ -33,6 +46,38 @@ const validationSchema = Yup.object({
   state: Yup.string().required("State is required"),
   countryId: Yup.number().required("Country is required"),
   zip: Yup.string().required("Zip is required"),
+  contractType: Yup.string()
+    .oneOf(
+      contractTypeOptions.map((option) => option.value),
+      "Invalid contract type"
+    )
+    .required("Contract type is required"),
+  contractStatus: Yup.string()
+    .oneOf(
+      contractStatusOptions.map((option) => option.value),
+      "Invalid contract status"
+    )
+    .required("Contract Status is required"),
+  startDate: Yup.date()
+    .required("Start date is required")
+    .test("isValidDate", "Invalid date", (value) => {
+      return value ? dayjs(value).isValid() : false;
+    })
+    .test("isFutureDate", "Start date cannot be in the past", (value) => {
+      return value ? dayjs(value).isAfter(dayjs().subtract(1, "day")) : false;
+    }),
+  endDate: Yup.date()
+    .optional()
+    .test("isValidDate", "Invalid date", (value) => {
+      return value ? dayjs(value).isValid() : false;
+    })
+    .test("isAfterStartDate", "End date must be after start date", function (value) {
+      const { startDate } = this.parent;
+      return value && startDate ? dayjs(value).isAfter(dayjs(startDate)) : false;
+    })
+    .test("isFutureDate", "End date cannot be in the past", (value) => {
+      return value ? dayjs(value).isAfter(dayjs().subtract(1, "day")) : false;
+    }),
 });
 
 const initialValues = {
@@ -49,12 +94,17 @@ const initialValues = {
   state: "",
   countryId: null,
   zip: "",
+  contractType: "",
+  contractStatus: "",
+  ppd: "",
+  docUrl: "",
+  startDate: dayjs(Date.now()),
 };
 
 const CreateClientPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const t = useTranslations();
-  dispatch(setPageTitle(t("portal.admin.pages.createClient")));
+  dispatch(setPageTitle(t("pages.clients.add")));
   const { createClient, createClientLoading } = useCreateClient();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -63,16 +113,32 @@ const CreateClientPage: React.FC = () => {
 
   const handleSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
     try {
-      const { street, city, state, countryId, zip, ...clientData } = values;
-
       const payload = {
-        ...clientData,
+        clientName: values.clientName,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        type: values.type,
+        taxIdType: values.taxIdType,
+        taxId: values.taxId,
+        vatRegistered: values.vatRegistered,
+        vatId: values.vatId,
         address: {
-          street,
-          city,
-          state,
-          countryId,
-          zip,
+          street: values.street,
+          city: values.city,
+          state: values.state,
+          countryId: values.countryId,
+          zip: values.zip,
+        },
+        contract: {
+          contractType: values.contractType,
+          status: values.contractStatus,
+          signed: values.contractSigned,
+          signedBy: values.contractSignedBy,
+          signedAt: values.contractSignedAt,
+          startDate: values.startDate,
+          endDate: values.endDate,
+          ppd: values.ppd,
+          docUrl: values.docUrl,
         },
       };
 
@@ -108,6 +174,7 @@ const CreateClientPage: React.FC = () => {
             <Button
               onClick={() => {
                 submitForm();
+                setSubmitAttempted(true);
               }}
               color="primary"
               variant="contained"
@@ -119,23 +186,49 @@ const CreateClientPage: React.FC = () => {
             </Button>
           </Box>
 
+          {submitAttempted && Object.keys(errors).length > 0 && (
+            <ErrorBox>
+              <List sx={{ padding: 0, margin: 0 }}>
+                {Object.values(errors)
+                  .filter((error) => typeof error === "string")
+                  .map((error, index) => (
+                    <ListItem key={index} disableGutters sx={{ padding: "1px 0" }}>
+                      <ListItemText primary={`• ${error}`} sx={{ margin: 0, padding: 0 }} />
+                    </ListItem>
+                  ))}
+              </List>
+            </ErrorBox>
+          )}
+
           <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>
 
           <Form onChange={handleInputChange}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
-                  Personal Details
-                </Typography>
-                <CreateClientForm isLoading={createClientLoading || isSubmitting} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography sx={{ width: "fit-content", color: "secondary.main", borderBottom: "4px solid", borderColor: "primary.main", borderRadius: "2px" }} variant="h6" mb={1}>
-                  Address
-                </Typography>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id="panel1a-header">
+                <Typography>Personal Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <ClientDetailsForm />
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel2a-content" id="panel2a-header">
+                <Typography>Address</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
                 <AddressDetailsForm />
-              </Grid>
-            </Grid>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel3a-content" id="panel3a-header">
+                <Typography>Contract Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <ContractDetailsForm />
+              </AccordionDetails>
+            </Accordion>
           </Form>
 
           <ErrorModal open={errorOpen} onClose={handleErrorClose} errorMessage={errorMessage} />

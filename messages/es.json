@@ -1,26 +1,48 @@
 {
-  "auth": {
-    "pagetitle": "Autenticación",
-    "username": "Usuario",
-    "password": "Contraseña",
-    "signIn": "Iniciar Sesión",
-    "forgot": "¿Olvidaste tu contraseña o nombre de usuario?",
-    "signIng": "Iniciando sesión...",
-    "missingFields": "Nombre de usuario y contraseña obligatorios",
-    "errors": {
-      "invalidCredentials": "Nombre de usuario o contraseña no válidos. Por favor, inténtelo de nuevo.",
-      "internalServerError": "Error interno del servidor. Vuelva a intentarlo más tarde.",
-      "networkError": "Error de red. Compruebe su conexión.",
-      "defaultError": "Se ha producido un error desconocido al iniciar sesión. Vuelva a intentarlo más tarde."
-    }
+  "menus": {
+    "overview": "Vista General",
+    "financial": {
+      "title": "Financiero",
+      "invoices": "Facturas",
+      "reports": "Informes"
+    },
+    "clients": "Clientes"
   },
-  "portal": {
-    "pages": {
-      "overview": "Inicio",
-      "financial": {
-        "title": "Financiero",
-        "invoices": "Facturas",
-        "reports": "Informes"
+  "pages": {
+    "auth": {
+      "pagetitle": "Autenticación",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "signIn": "Iniciar sesión",
+      "forgot": "¿Olvidó su contraseña o nombre de usuario?",
+      "signIng": "Iniciando sesión...",
+      "missingFields": "Se requiere nombre de usuario y contraseña",
+      "errors": {
+        "invalidCredentials": "Nombre de usuario o contraseña no válidos. Inténtalo de nuevo.",
+        "internalServerError": "Error interno del servidor. Inténtalo de nuevo más tarde.",
+        "networkError": "Error de red. Verifique su conexión.",
+        "defaultError": "Se produjo un error desconocido al iniciar sesión. Inténtalo nuevamente más tarde."
+      }
+    },
+    "overview": {
+      "title": "Vista General"
+    },
+    "clients": {
+      "title": "Clientes",
+      "createClient": "Crear Cliente",
+      "listError": "Error al cargar clientes",
+      "add": "Agregar cliente",
+      "table": {
+        "clientName": "Nombre del cliente",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "type": "Tipo",
+        "taxIdType": "Tipo de identificación fiscal",
+        "taxId": "Identificación fiscal",
+        "vatRegistered": "IVA registrado",
+        "vatNumber": "Número de IVA",
+        "actions": "Acciones",
+        "noRowsLabel": "No se encontraron clientes"
       }
     }
   },
@@ -31,7 +53,7 @@
     }
   },
   "localeswitcher": {
-    "en": "English",
-    "es": "Spanish"
+    "en": "Inglés",
+    "es": "Español"
   }
 }

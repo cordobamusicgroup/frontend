@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { VatStatusChip } from "../atoms/ClientChips";
 import ActionButtonsClient from "../molecules/ActionsButtonsClient";
+import { useTranslations } from "next-intl";
 
 interface ClientTableProps {
   clients: any[];
@@ -13,24 +14,25 @@ interface ClientTableProps {
 }
 
 const ClientTable: React.FC<ClientTableProps> = ({ clients, onEdit, onView, onDelete, loading }) => {
+  const clientTableIntl = useTranslations("pages.clients.table");
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
-    { field: "clientName", headerName: "Client Nickname", width: 200 },
-    { field: "firstName", headerName: "First Name", width: 150 },
-    { field: "lastName", headerName: "Last Name", width: 150 },
-    { field: "type", headerName: "Type", width: 150 },
-    { field: "taxIdType", headerName: "Tax ID Type", width: 180 },
-    { field: "taxId", headerName: "Tax ID", width: 180 },
+    { field: "clientName", headerName: clientTableIntl("clientName"), width: 200 },
+    { field: "firstName", headerName: clientTableIntl("firstName"), width: 150 },
+    { field: "lastName", headerName: clientTableIntl("lastName"), width: 150 },
+    { field: "type", headerName: clientTableIntl("type"), width: 150 },
+    { field: "taxIdType", headerName: clientTableIntl("taxIdType"), width: 180 },
+    { field: "taxId", headerName: clientTableIntl("taxId"), width: 180 },
     {
       field: "vatRegistered",
-      headerName: "VAT Registered",
+      headerName: clientTableIntl("vatRegistered"),
       renderCell: (params) => <VatStatusChip isRegistered={params.value} />,
       width: 150,
     },
-    { field: "vatId", headerName: "VAT ID", width: 180 },
+    { field: "vatNumber", headerName: clientTableIntl("vatNumber"), width: 180 },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: clientTableIntl("actions"),
       width: 150,
       renderCell: (params) => <ActionButtonsClient onEdit={() => onEdit(params.row)} onView={() => onView(params.row)} onDelete={() => onDelete(params.row)} />,
       sortable: false,
@@ -49,12 +51,12 @@ const ClientTable: React.FC<ClientTableProps> = ({ clients, onEdit, onView, onDe
     taxIdType: client.taxIdType,
     taxId: client.taxId,
     vatRegistered: client.vatRegistered,
-    vatId: client.vatId,
+    vatNumber: client.vatId,
   }));
 
   return (
     <Box sx={{ height: 600, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} disableColumnSelector disableColumnResize disableRowSelectionOnClick density="compact" loading={loading} localeText={{ noRowsLabel: "No clients found" }} />
+      <DataGrid rows={rows} columns={columns} disableColumnSelector disableColumnResize disableRowSelectionOnClick density="compact" loading={loading} localeText={{ noRowsLabel: clientTableIntl("noRowsLabel") }} />
     </Box>
   );
 };

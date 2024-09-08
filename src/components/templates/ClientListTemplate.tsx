@@ -17,14 +17,14 @@ interface ClientListTemplateProps {
 
 const ClientListTemplate: React.FC<ClientListTemplateProps> = ({ clients, onCreate, onEdit, onView, onDelete, loading }) => {
   const dispatch = useAppDispatch();
-  const t = useTranslations();
-  dispatch(setPageTitle(t("portal.admin.pages.manageClients")));
+  const t = useTranslations("pages.clients");
+  dispatch(setPageTitle(t("title")));
 
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
         <Button variant="contained" color="primary" startIcon={<Add />} onClick={onCreate}>
-          Add new client
+          {t("add")}
         </Button>
       </Box>
       <Box sx={{ display: "flex", height: "600px", width: "100%" }}>
