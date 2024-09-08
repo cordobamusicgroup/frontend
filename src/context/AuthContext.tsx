@@ -1,79 +1,97 @@
 "use client";
 
-import { createContext, useReducer, useContext, ReactNode, useEffect, useCallback, useState } from "react";
-import apiRoutes from "@/lib/routes/apiRoutes";
-import { useRouter } from "next/navigation";
+import React, { createContext, useContext, ReactNode, useState } from "react";
+import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
-import { apiRequest } from "@/lib/apiHelper";
-import { AuthState, User, authReducer, initialState } from "@/lib/reducers/authReducer";
-import { useGlobal } from "./GlobalContext";
+import { useRouter } from "next/navigation";
+import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import apiRoutes from "@/lib/routes/apiRoutes";
+import { useTranslations } from "next-intl";
+import webRoutes from "@/lib/routes/webRoutes";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import axios from "axios";
 
 interface AuthContextType {
+  error: string | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { setLoading, loading } = useGlobal();
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { apiRequest } = useApiRequest();
+  const t = useTranslations("pages.auth");
 
-  const getUserData = async () => {
-    try {
-      const userData = await apiRequest({
-        url: apiRoutes.me,
-        method: "get",
-        requiereAuth: true,
-      });
-      localStorage.setItem("user", JSON.stringify(userData.data));
-      return userData.data;
-    } catch (error) {
-      console.error("Error getting user data:", error);
-      throw new Error("Error getting user data");
-    }
+  const isAuthenticated = Cookies.get("isAuthenticated") === "true";
+
+  const fetchUserData = async () => {
+    const response = await apiRequest({
+      url: apiRoutes.me,
+      method: "get",
+      requiereAuth: true,
+    });
+    return response.data;
   };
 
+  useSWR(isAuthenticated ? "userData" : null, fetchUserData, {
+    onSuccess: (data) => {
+      dispatch(setUserData(data));
+    },
+    onError: (error) => {
+      console.error("Error fetching user data:", error);
+    },
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
+  });
+
   const login = async (username: string, password: string) => {
-    setLoading(true);
     try {
-      console.log(loading);
       const response = await apiRequest({
         url: apiRoutes.login,
         method: "post",
         data: { username, password },
         requiereAuth: false,
       });
-      const { access_token, refresh_token } = response.data;
-      Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" }); // Expira en 60 minutos
-      const userData = await getUserData();
-      router.push("/portal");
-    } catch (error: any) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          throw new Error("Invalid username or password. Please try again.");
+      const { access_token } = response.data;
+      Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
+      Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
+      await mutate("userData");
+      router.push(webRoutes.portal.overview);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          setError(t("errors.invalidCredentials"));
+        } else if (error.response && error.response.status === 500) {
+          setError(t("errors.internalServerError"));
+        } else if (error.message === "Network Error") {
+          setError(t("errors.networkError"));
         } else {
-          throw new Error(`Login failed with status code: ${error.response.status}`);
+          setError(t("errors.defaultError"));
         }
-      } else {
-        throw new Error("An error occurred while logging in. Please try again later.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
-  const logout = useCallback(() => {
+  const logout = async () => {
+    await mutate("userData", null, { revalidate: false });
+    dispatch(clearUserData());
     Cookies.remove("access_token");
-    router.push("/auth");
-  }, [router]);
+    Cookies.set("isAuthenticated", "false", { secure: true, sameSite: "Strict" });
+    router.push(apiRoutes.login);
+  };
 
-  return <AuthContext.Provider value={{ login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ error, login, logout, setError }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

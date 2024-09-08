@@ -1,19 +1,35 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 import { protectedRouteConfigs } from "./lib/routes/protectedRoutes";
+import webRoutes from "./lib/routes/webRoutes";
+import { strict } from "assert";
 
-/**
- * Middleware function that handles authentication and authorization for protected routes.
- * @param request - The NextRequest object representing the incoming request.
- * @returns A NextResponse object or calls the NextResponse.next() function to continue processing the request.
- */
-export function middleware(request: NextRequest) {
+const encoder = new TextEncoder();
+const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
+
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
-  const userRole = request.cookies.get("user_role")?.value;
-  /*
-  // Early return if the request is for the login page to avoid infinite redirects
-  if (request.nextUrl.pathname === "/auth/login") {
-    return NextResponse.next();
+  const lastUrl = request.cookies.get("last_url")?.value || webRoutes.portal.overview;
+  let isAuthenticated = false;
+
+  if (token) {
+    try {
+      await jwtVerify(token, JWT_SECRET);
+      isAuthenticated = true;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Redirige al login si no está autenticado y no está en la página de login
+  if (!isAuthenticated && request.nextUrl.pathname !== webRoutes.login) {
+    return NextResponse.redirect(new URL(webRoutes.login, request.url));
+  }
+
+  // Redirige al último URL si está autenticado y está en la página de login o en la raíz
+  if (isAuthenticated && (request.nextUrl.pathname === webRoutes.login || request.nextUrl.pathname === "/")) {
+    return NextResponse.redirect(new URL(lastUrl, request.url));
   }
 
   const matchedRoute = protectedRouteConfigs.find((route) => {
@@ -22,16 +38,32 @@ export function middleware(request: NextRequest) {
   });
 
   if (matchedRoute) {
-    // Check if the user has the required role for the matched route
+    const userRole = JSON.parse(request.cookies.get("user_role")?.value || "null");
     if (matchedRoute.roles !== "ALL" && (!userRole || !matchedRoute.roles.includes(userRole))) {
-      return NextResponse.redirect(new URL("/auth/login", request.url));
+      return NextResponse.redirect(new URL(webRoutes.login, request.url));
     }
-  } else if (!token) {
-    // Redirect to login if no token is present and the request is not for the login page
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }*/
+  }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Configura last_url solo si no está en la página de login
+  if (request.nextUrl.pathname !== webRoutes.login) {
+    response.cookies.set("last_url", request.nextUrl.pathname, {
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+      httpOnly: false,
+    });
+  }
+
+  response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
+    path: "/",
+    sameSite: "strict",
+    secure: true,
+    httpOnly: false,
+  });
+
+  return response;
 }
 
 export const config = {

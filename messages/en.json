@@ -1,0 +1,59 @@
+{
+  "menus": {
+    "overview": "Overview",
+    "financial": {
+      "title": "Financial",
+      "invoices": "Invoices",
+      "reports": "Reports"
+    },
+    "clients": "Clients"
+  },
+  "pages": {
+    "auth": {
+      "pagetitle": "Authentication",
+      "username": "Username",
+      "password": "Password",
+      "signIn": "Sign In",
+      "forgot": "Forgot your password or username?",
+      "signIng": "Signing in...",
+      "missingFields": "Username and password required",
+      "errors": {
+        "invalidCredentials": "Invalid username or password. Please try again.",
+        "internalServerError": "Internal server error. Please try again later.",
+        "networkError": "Network error. Check your connection.",
+        "defaultError": "An unknown error occurred while signing in. Please try again later."
+      }
+    },
+    "overview": {
+      "title": "Overview"
+    },
+    "clients": {
+      "title": "Clients",
+      "createClient": "Create Client",
+      "listError": "Error loading clients",
+      "add": "Add Client",
+      "table": {
+        "clientName": "Client Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "type": "Type",
+        "taxIdType": "Tax ID Type",
+        "taxId": "Tax ID",
+        "vatRegistered": "VAT Registered",
+        "vatNumber": "VAT Number",
+        "actions": "Actions",
+        "noRowsLabel": "No clients found"
+      }
+    }
+  },
+  "modals": {
+    "error": {
+      "title": "Something went wrong",
+      "closeButton": "Close"
+    }
+  },
+  "localeswitcher": {
+    "en": "English",
+    "es": "Spanish"
+  }
+}

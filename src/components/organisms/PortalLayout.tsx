@@ -1,28 +1,26 @@
 "use client";
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBarComponent from "../molecules/header/AppBar";
-import DrawerComponent from "../molecules/header/Drawer";
-import MainContent from "./MainContent";
+import VerticalMenu from "../molecules/header/VerticalMenu";
+import MainContent from "../molecules/MainContent";
+import Header from "./header/HeaderApp";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 
 interface PortalLayoutProps {
   children: ReactNode;
-  pageTitle: string;
 }
 
-const PortalLayout: React.FC<PortalLayoutProps> = ({ children, pageTitle }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(!open);
-  };
+const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
+  const isOpen = useAppSelector((state) => state.pageData.openMenu);
+  const dispatch = useAppDispatch();
 
   return (
     <div>
       <CssBaseline />
-      <AppBarComponent open={open} handleDrawerOpen={handleDrawerOpen} pageTitle={pageTitle} />
-      <DrawerComponent open={open} />
-      <MainContent open={open}>{children}</MainContent>
+      <Header />
+      <VerticalMenu />
+      <MainContent open={isOpen}>{children}</MainContent>
     </div>
   );
 };
