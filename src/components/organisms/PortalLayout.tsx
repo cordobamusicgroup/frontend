@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import VerticalMenu from "../molecules/header/VerticalMenu";
 import MainContent from "../molecules/MainContent";
