@@ -1,8 +1,6 @@
 // menuItems.tsx
 import React from "react";
 import { AccountBalance, AccountCircle, ExitToApp } from "@mui/icons-material";
-import { useAppDispatch } from "../redux/hooks";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 interface MenuItemType {
@@ -12,8 +10,6 @@ interface MenuItemType {
 }
 
 export const useUserMenuItems = (): MenuItemType[] => {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
   const auth = useAuth();
 
   return [

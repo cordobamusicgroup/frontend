@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { Metadata } from "next";
 import PageOverview from "@/components/pages/PageOverview";
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {

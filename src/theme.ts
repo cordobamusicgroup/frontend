@@ -1,7 +1,15 @@
 "use client";
 
 import { createTheme } from "@mui/material/styles";
-import { esES } from "@mui/x-data-grid/locales";
+
+declare module "@mui/material/styles" {
+  interface Palette {
+    inverted: Palette["primary"];
+  }
+  interface PaletteOptions {
+    inverted?: PaletteOptions["primary"];
+  }
+}
 
 const theme = createTheme({
   palette: {
@@ -10,6 +18,10 @@ const theme = createTheme({
     },
     secondary: {
       main: "#001B33", // Color secundario
+    },
+    inverted: {
+      main: "#ffffff", // Blanco como fondo para el modo invertido
+      contrastText: "#09365F", // Texto primario en el modo invertido
     },
   },
   typography: {

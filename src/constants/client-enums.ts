@@ -23,9 +23,14 @@ export const contractTypeOptions = [
   { label: "Other", value: "OTHER" },
 ];
 
+export const CreateClientContractType = [
+  { label: "Distribution Non-Exclusive", value: "DISTRIBUTION_NONEXCLUSIVE" },
+  { label: "Distribution Exclusive", value: "DISTRIBUTION_EXCLUSIVE" },
+];
+
 export const contractStatusOptions = [
   { label: "Active", value: "ACTIVE" },
-  { label: "Inactive", value: "INACTIVE" },
+  { label: "Terminated", value: "TERMINATED" },
   { label: "Expired", value: "EXPIRED" },
-  { label: "Pending", value: "PENDING" },
+  { label: "Draft", value: "DRAFT" },
 ];

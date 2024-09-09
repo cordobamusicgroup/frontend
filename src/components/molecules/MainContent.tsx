@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { styled } from "@mui/material/styles";
-import VerticalMenuHeader from "./header/VerticalMenuHeader";
 
 interface MainContentProps {
   open: boolean;
@@ -13,7 +12,9 @@ interface MainContentProps {
  */
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ open?: boolean }>(({ theme, open }) => ({
   flexGrow: 1,
+  backgroundColor: "#fcfcfc",
   padding: theme.spacing(3),
+  minHeight: "calc(100vh - 64px)",
   marginTop: 64,
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,

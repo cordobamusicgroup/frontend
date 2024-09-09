@@ -24,8 +24,6 @@ const StyledAppBar = styled(AppBar)<{ isOpen?: boolean }>(({ theme, isOpen }) =>
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const isOpen = useAppSelector((state) => state.pageData.openMenu);
-  const pageTitle = useAppSelector((state) => state.pageData.pageTitle);
-  const theme = useTheme();
 
   const handleToggleDrawer = () => {
     dispatch(toggleMenu());
@@ -33,20 +31,9 @@ const Header: React.FC = () => {
 
   return (
     <StyledAppBar position="fixed" isOpen={isOpen}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", background: "linear-gradient(28deg, rgba(9,54,95,1) 17%, rgba(5,42,76,1) 57%, rgba(0,27,51,1) 100%)" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <IconButton isOpen={isOpen} onClick={handleToggleDrawer} />
-          <Typography
-            sx={{
-              fontSize: "20px", // Tamaño de fuente predeterminado para pantallas grandes
-              [theme.breakpoints.down("sm")]: {
-                fontSize: "16px", // Tamaño de fuente en pantallas móviles
-              },
-            }}
-            noWrap
-          >
-            {pageTitle}
-          </Typography>
         </Box>
         <UserMenu />
       </Toolbar>
