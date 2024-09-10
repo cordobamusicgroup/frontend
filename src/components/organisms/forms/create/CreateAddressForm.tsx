@@ -1,28 +1,20 @@
 import React from "react";
-import { Autocomplete, TextField } from "@mui/material";
-import { Field, useFormikContext } from "formik";
+import { Autocomplete } from "@mui/material";
 import { useCountries } from "@/lib/hooks/useCountries";
+import { useFormContext } from "react-hook-form";
 import TextFieldForm from "@/components/atoms/TextFieldForm";
 
-interface AddressFormValues {
-  street: string;
-  city: string;
-  state: string;
-  countryId: number | null;
-  zip: string;
-}
-
 const AddressDetailsForm: React.FC = () => {
-  const { setFieldValue, errors, touched } = useFormikContext<AddressFormValues>();
+  const { setValue, watch } = useFormContext();
   const { countries, countriesLoading } = useCountries();
 
   return (
     <>
-      <Field required name="street" label="Street" component={TextFieldForm} />
-      <Field required name="city" label="City" component={TextFieldForm} />
-      <Field required name="state" label="State" component={TextFieldForm} />
-      <Autocomplete options={countries || []} getOptionLabel={(option) => option.name} loading={countriesLoading} onChange={(event, value) => setFieldValue("countryId", value ? value.id : null)} renderInput={(params) => <TextField required {...params} label="Country" margin="normal" fullWidth error={touched.countryId && Boolean(errors.countryId)} variant="standard" />} />
-      <Field required name="zip" label="Zip" component={TextFieldForm} />
+      <TextFieldForm required name="street" label="Street" />
+      <TextFieldForm required name="city" label="City" />
+      <TextFieldForm required name="state" label="State" />
+      <Autocomplete options={countries || []} getOptionLabel={(option) => option.name} loading={countriesLoading} onChange={(event, value) => setValue("countryId", value ? value.id : null)} renderInput={(params) => <TextFieldForm {...params} required name="countryId" label="Country" />} />
+      <TextFieldForm required name="zip" label="Zip" />
     </>
   );
 };

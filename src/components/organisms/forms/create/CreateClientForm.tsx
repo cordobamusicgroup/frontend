@@ -1,42 +1,49 @@
 import React from "react";
-import { FormControlLabel, MenuItem, Switch } from "@mui/material";
-import { Field, useFormikContext } from "formik";
-import TextFieldForm from "../../../atoms/TextFieldForm";
+import { FormControlLabel, Input, MenuItem, Switch, TextField } from "@mui/material";
+import TextFieldForm from "../../../atoms/TextFieldForm"; // Tu componente TextFieldForm ya ajustado
 import { taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
-import { FormikValues } from "formik"; // Import FormikValues type
+import { Controller, useFormContext } from "react-hook-form";
 
 const ClientDetailsForm: React.FC = () => {
-  const { values, setFieldValue } = useFormikContext<FormikValues>(); // Provide the type for values
+  const { setValue, watch, control } = useFormContext();
+  const vatRegistered = watch("vatRegistered");
 
   const handleVatToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFieldValue("vatRegistered", event.target.checked);
+    setValue("vatRegistered", event.target.checked);
     if (!event.target.checked) {
-      setFieldValue("vatId", "");
+      setValue("vatId", "");
     }
   };
+
   return (
     <>
-      <Field required name="clientName" label="Client Nickname" component={TextFieldForm} />
-      <Field required name="firstName" label="First Name" component={TextFieldForm} />
-      <Field required name="lastName" label="Last Name" component={TextFieldForm} />
-      <Field required name="type" label="Type" select component={TextFieldForm}>
+      <TextFieldForm name="clientName" label="Client Name" />
+
+      <TextFieldForm name="firstName" label="First Name" />
+
+      <TextFieldForm name="lastName" label="Last Name" />
+
+      <TextFieldForm name="type" label="Type" select>
         {typeOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}
-      </Field>
-      <Field required name="taxIdType" label="Tax ID Type" select component={TextFieldForm}>
+      </TextFieldForm>
+
+      <TextFieldForm name="taxIdType" label="Tax ID Type" select>
         {taxIdTypeOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}
-      </Field>
-      <Field required name="taxId" label="Tax ID" component={TextFieldForm} />
-      <FormControlLabel control={<Switch required checked={values.vatRegistered} onChange={handleVatToggle} color="primary" />} label="VAT Registered" />
+      </TextFieldForm>
 
-      {values.vatRegistered && <Field required name="vatId" label="VAT ID" component={TextFieldForm} />}
+      <TextFieldForm name="taxId" label="Tax ID" />
+
+      <Controller name="vatRegistered" control={control} defaultValue={false} render={({ field }) => <FormControlLabel control={<Switch checked={vatRegistered} onChange={handleVatToggle} color="primary" />} label="VAT Registered" />} />
+
+      {vatRegistered && <TextFieldForm name="vatId" label="VAT ID" />}
     </>
   );
 };
