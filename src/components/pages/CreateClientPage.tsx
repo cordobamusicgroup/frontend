@@ -14,11 +14,9 @@ import AddressDetailsForm from "../organisms/forms/create/CreateAddressForm";
 import BasicButton from "../atoms/BasicButton";
 import FormErrorPopup from "../molecules/FormErrorPopUp";
 import CustomPageHeader from "../molecules/header/CustomPageHeader";
-import { CreateClientFormHandlerSubmit } from "../utils/forms/CreateClientFormHandler";
 import { CreateClientValidationSchema } from "../utils/forms/CreateClientValidationSchema";
-import { CreateClientInitialValues } from "../utils/forms/CreateClientInitialValues";
 import ErrorBox from "../molecules/ErrorBox";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 const CreateClientPage: React.FC = () => {
   const t = useTranslations();
