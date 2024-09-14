@@ -92,18 +92,18 @@ export const CreateClientValidationSchema = Yup.object({
       otherwise: (schema) => schema.nullable(),
     }),
 
-  contractSignedBy: Yup.string().when("contractSigned", {
-    is: true,
-    then: (schema) => schema.required("Signed by is required when contract is active"),
-    otherwise: (schema) => schema.nullable(),
+  contractSignedBy: Yup.string().when("contractStatus", {
+    is: "DRAFT",
+    then: (schema) => schema.nullable(),
+    otherwise: (schema) => schema.required("Signed by is required"),
   }),
 
   contractSignedAt: Yup.date()
-    .transform((value, originalValue) => (originalValue === "" ? null : value)) // Transforma "" en null
-    .nullable() // Permite que null sea un valor válido
-    .when("contractSigned", {
-      is: true,
-      then: (schema) => schema.required("Signed at is required when contract is active").test("isValidDate", "Invalid date", (value) => (value ? dayjs(value).isValid() : false)),
-      otherwise: (schema) => schema.nullable(),
+    .transform((value, originalValue) => (originalValue === "" ? null : value))
+    .nullable()
+    .when("contractStatus", {
+      is: "DRAFT",
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.required("Signed at is required").test("isValidDate", "Invalid date", (value) => (value ? dayjs(value).isValid() : false)),
     }),
 });

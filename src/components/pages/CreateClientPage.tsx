@@ -22,9 +22,10 @@ const CreateClientPage: React.FC = () => {
   const t = useTranslations();
   const theme = useTheme();
   const { createClient, createClientLoading } = useCreateClient();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const [errorOpen, setErrorOpen] = useState(false);
-  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null); // Un solo mensaje de error de la API
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
 
   // Configuración de useForm con yupResolver para validación
   const methods = useForm({

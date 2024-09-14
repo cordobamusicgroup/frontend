@@ -9,6 +9,8 @@ export const useClients = () => {
 
   // Function to fetch clients
   const fetchClients = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // TODO - Delay for testing purposes, remove in production
+
     const response = await apiRequest({
       url: apiRoutes.clients,
       method: "get",
@@ -20,7 +22,8 @@ export const useClients = () => {
   // Function to delete multiple clients
   const deleteClients = async (ids: number[]): Promise<void> => {
     try {
-      setIsDeleting(true); // Activar estado de eliminación
+      setIsDeleting(true);
+
       await apiRequest({
         url: apiRoutes.clients,
         method: "delete",
@@ -29,7 +32,7 @@ export const useClients = () => {
       });
 
       // Optimistically update the client list after deletion
-      clientsMutate(); // Re-fetch the clients list to reflect the changes
+      clientsMutate(undefined, true); // Re-fetch the clients list to reflect the changes
     } catch (error) {
       console.error("Failed to delete clients", error);
       throw error;

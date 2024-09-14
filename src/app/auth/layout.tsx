@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import RootLayout from "../../layout";
 import { getTranslations } from "next-intl/server";
+import RootLayout from "../layout";
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
   const t = await getTranslations({ locale, namespace: "pages.auth" });

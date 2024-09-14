@@ -4,28 +4,29 @@ import { IconButton } from "@mui/material";
 interface ActionButtonProps {
   onClick: () => void;
 }
+
 const EditActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   return (
-    <IconButton sx={{ color: "#8e8e8e" }} onClick={onClick}>
-      <Edit />
+    <IconButton sx={{ color: "gray" }} onClick={onClick} size="small">
+      <Edit sx={{ fontSize: 20 }} />
     </IconButton>
   );
 };
 
 const ViewActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   return (
-    <IconButton sx={{ color: "#8e8e8e" }} onClick={onClick}>
-      <Visibility />
+    <IconButton sx={{ color: "gray" }} onClick={onClick} size="small">
+      <Visibility sx={{ fontSize: 20 }} />
     </IconButton>
   );
 };
 
 const DeleteActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   return (
-    <IconButton sx={{ color: "#8e8e8e" }} onClick={onClick}>
-      <Delete />
+    <IconButton sx={{ color: "gray" }} onClick={onClick} size="small">
+      <Delete sx={{ fontSize: 20 }} />
     </IconButton>
   );
 };
 
-export {EditActionButton, ViewActionButton, DeleteActionButton};
+export { EditActionButton, ViewActionButton, DeleteActionButton };

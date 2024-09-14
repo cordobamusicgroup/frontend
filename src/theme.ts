@@ -1,6 +1,9 @@
 "use client";
 
 import { createTheme } from "@mui/material/styles";
+import { esES } from "@mui/x-data-grid/locales";
+import { esES as pickersEsES } from "@mui/x-date-pickers/locales";
+import { esES as coreEsES } from "@mui/material/locale";
 
 declare module "@mui/material/styles" {
   interface Palette {
