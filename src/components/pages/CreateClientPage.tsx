@@ -1,16 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import { Box, CircularProgress, Typography, List, ListItem, ListItemText, useTheme, Grid, Paper } from "@mui/material";
-import { useForm, FormProvider, set } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useCreateClient } from "@/lib/hooks/clients/useCreateClient";
+import { useClients } from "@/lib/hooks/clients/useClients"; // Cambia el hook importado
 import BackPageButton from "../atoms/BackPageButton";
 import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
 import SuccessBox from "../molecules/SuccessBox";
-import ContractDetailsForm from "../organisms/forms/create/CreateContractForm";
-import ClientDetailsForm from "../organisms/forms/create/CreateClientForm";
-import AddressDetailsForm from "../organisms/forms/create/CreateAddressForm";
+import ContractDetailsForm from "../organisms/forms/create/ContractDetailsForm";
+import ClientDetailsForm from "../organisms/forms/create/ClientDetailsForm";
+import AddressDetailsForm from "../organisms/forms/create/AddressDetailsForm";
 import BasicButton from "../atoms/BasicButton";
 import FormErrorPopup from "../molecules/FormErrorPopUp";
 import CustomPageHeader from "../molecules/header/CustomPageHeader";
@@ -21,7 +21,7 @@ import axios from "axios";
 const CreateClientPage: React.FC = () => {
   const t = useTranslations();
   const theme = useTheme();
-  const { createClient, createClientLoading } = useCreateClient();
+  const { createClient, loading } = useClients(); // Usamos el hook combinado
 
   const [errorOpen, setErrorOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -29,7 +29,7 @@ const CreateClientPage: React.FC = () => {
 
   // Configuración de useForm con yupResolver para validación
   const methods = useForm({
-    mode: "onSubmit",
+    mode: "all",
     resolver: yupResolver(CreateClientValidationSchema),
     reValidateMode: "onChange",
   });
@@ -70,11 +70,10 @@ const CreateClientPage: React.FC = () => {
       },
     };
     try {
-      await createClient(payload);
+      await createClient(payload); // Usamos el método del hook combinado
       setSuccessMessage("The client was successfully created.");
       setApiErrorMessage(null); // Limpiar errores de la API al éxito
-
-      //reset();
+      reset(); // Reseteamos el formulario
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response?.data) {
         scrollToTop();
@@ -112,7 +111,7 @@ const CreateClientPage: React.FC = () => {
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Creating New Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={createClientLoading} startIcon={<AddOutlined />} endIcon={createClientLoading ? <CircularProgress size={20} /> : null}>
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={loading} startIcon={<AddOutlined />} endIcon={loading ? <CircularProgress size={20} /> : null}>
           Create Client
         </BasicButton>
       </CustomPageHeader>

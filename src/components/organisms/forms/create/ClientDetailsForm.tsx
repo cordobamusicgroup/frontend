@@ -17,12 +17,12 @@ const ClientDetailsForm: React.FC = () => {
 
   return (
     <>
-      <TextFieldForm name="clientName" label="Client Name" />
+      <TextFieldForm name="clientId" label="Client ID" disabled />
 
+      <TextFieldForm name="clientName" label="Client Name" />
       <TextFieldForm name="firstName" label="First Name" />
 
       <TextFieldForm name="lastName" label="Last Name" />
-
       <TextFieldForm name="type" label="Type" select>
         {typeOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>

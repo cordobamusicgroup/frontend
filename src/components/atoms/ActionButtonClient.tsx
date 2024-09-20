@@ -13,14 +13,6 @@ const EditActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   );
 };
 
-const ViewActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
-  return (
-    <IconButton sx={{ color: "gray" }} onClick={onClick} size="small">
-      <Visibility sx={{ fontSize: 20 }} />
-    </IconButton>
-  );
-};
-
 const DeleteActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   return (
     <IconButton sx={{ color: "gray" }} onClick={onClick} size="small">
@@ -29,4 +21,4 @@ const DeleteActionButton: React.FC<ActionButtonProps> = ({ onClick }) => {
   );
 };
 
-export { EditActionButton, ViewActionButton, DeleteActionButton };
+export { EditActionButton, DeleteActionButton };

@@ -34,3 +34,8 @@ export const contractStatusOptions = [
   { label: "Expired", value: "EXPIRED" },
   { label: "Draft", value: "DRAFT" },
 ];
+
+export const AccessTypeDMB = [
+  { label: "Standard", value: "STANDARD" },
+  { label: "Advanced", value: "ADVANCED" },
+];

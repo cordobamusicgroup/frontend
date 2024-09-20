@@ -44,7 +44,7 @@ const DatePickerForm: React.FC<DatePickerFormProps> = ({ name, label, defaultVal
         }}
         onChange={(value) => {
           // Establece el nuevo valor en el formulario
-          setValue(name, value || "", { shouldValidate: true });
+          setValue(name, value, { shouldValidate: true });
           clearErrors(name); // Borra el error cuando cambia el valor
           trigger(name); // Vuelve a validar el campo
         }}

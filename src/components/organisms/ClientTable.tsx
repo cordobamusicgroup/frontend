@@ -1,20 +1,19 @@
-import React from "react";
-import { Box, CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { VatStatusChip } from "../atoms/ClientChips";
 import ActionButtonsClient from "../molecules/ActionsButtonsClient";
 import { useTranslations } from "next-intl";
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import "@styles/grid-cmg.css";
-import LoadingSpinner from "../atoms/LoadingSpinner";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useClients } from "@/lib/hooks/clients/useClients";
+import webRoutes from "@/lib/routes/webRoutes";
 
 interface ClientTableProps {
-  clients: any[];
-  onEdit: (client: any) => void;
-  onView: (client: any) => void;
-  onDelete: (client: any) => void;
-  loading: boolean;
+  setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
 
 const clientTypeMap: { [key: string]: string } = {
@@ -31,9 +30,32 @@ const clientTaxIdTypeMap: { [key: string]: string } = {
   DRIVERS_LICENSE: "clientTaxIdType.DRIVERS_LICENSE",
 };
 
-const ClientTable: React.FC<ClientTableProps> = ({ clients, onEdit, onView, onDelete, loading }) => {
+const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const clientTableIntl = useTranslations("pages.clients.table");
   const enumsIntl = useTranslations("enums");
+  const router = useRouter();
+  const { data = [], loading, deleteClients, error } = useClients();
+
+  const handleEdit = (client: any): void => {
+    router.push(`${webRoutes.admin.editClient}/${client.id}`);
+  };
+
+  const handleDelete = async (clientId: number): Promise<void> => {
+    try {
+      await deleteClients([clientId]);
+      setNotification({ message: "Client deleted successfully", type: "success" });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setNotification({ message: error.response?.data.message, type: "error" });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
+      setNotification({ message: "Failed to load clients", type: "error" });
+    }
+  }, [error, setNotification]);
 
   const columns = [
     { field: "id", headerName: "ID", width: 50, sortable: false, filter: false, resizable: false },
@@ -72,11 +94,11 @@ const ClientTable: React.FC<ClientTableProps> = ({ clients, onEdit, onView, onDe
       width: 150,
       sortable: false,
       flex: 1,
-      cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => onEdit(params.data)} onView={() => onView(params.data)} onDelete={() => onDelete(params.data)} />,
+      cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
     },
   ];
 
-  const rowData = clients.map((client) => ({
+  const rowData = data.map((client: any) => ({
     id: client.id,
     clientName: client.clientName,
     firstName: client.firstName,
@@ -104,8 +126,6 @@ const ClientTable: React.FC<ClientTableProps> = ({ clients, onEdit, onView, onDe
           suppressMovableColumns={true}
           pagination={true}
           paginationPageSize={20}
-          loadingOverlayComponent={() => <LoadingSpinner size={30} />}
-          domLayout="normal"
         />
       </div>
     </Box>

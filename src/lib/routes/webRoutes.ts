@@ -11,6 +11,7 @@ const webRoutes = {
     overview: "/admin",
     clients: "/portal/admin/clients",
     createClient: "/portal/admin/clients/create",
+    editClient: "/portal/admin/clients/edit",
   },
 };
 
