@@ -8,9 +8,7 @@ import BackPageButton from "../atoms/BackPageButton";
 import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
 import SuccessBox from "../molecules/SuccessBox";
-import ContractDetailsForm from "../organisms/forms/create/ContractDetailsForm";
-import ClientDetailsForm from "../organisms/forms/create/ClientDetailsForm";
-import AddressDetailsForm from "../organisms/forms/create/AddressDetailsForm";
+import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
 import BasicButton from "../atoms/BasicButton";
 import FormErrorPopup from "../molecules/FormErrorPopUp";
 import CustomPageHeader from "../molecules/header/CustomPageHeader";
@@ -18,6 +16,9 @@ import { CreateClientValidationSchema } from "../utils/forms/CreateClientValidat
 import ErrorBox from "../molecules/ErrorBox";
 import axios from "axios";
 import dayjs from "dayjs";
+import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
+import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
+import ClientFormLayout from "../organisms/ClientFormLayout";
 
 type Props = {
   clientId: string;
@@ -67,11 +68,12 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
         zip: data.address?.zip,
         contractUUID: data.contract.uuid,
         contractType: data.contract?.contractType,
+        
         contractStatus: data.contract?.status,
         startDate: dayjs(data.contract?.startDate),
         endDate: dayjs(data.contract?.endDate),
         contractSignedBy: data.contract?.signedBy,
-        contractSignedAt: dayjs(data.contract?.signedAt),
+        contractSignedAt: dayjs(data.contract.signedAt),
         ppd: data.contract?.ppd,
         docUrl: data.contract?.docUrl,
       };
@@ -174,62 +176,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
       <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
       <FormProvider {...methods}>
-        <form onChange={handleInputChange} onSubmit={handleSubmit(onSubmit)}>
-          <Paper elevation={1} variant="outlined" square={false} sx={{ paddingX: 2, paddingY: 3 }}>
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  sx={{
-                    width: "fit-content",
-                    color: "secondary.main",
-                    borderBottom: "2px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "2px",
-                  }}
-                  variant="h6"
-                  mb={1}
-                >
-                  Personal Details
-                </Typography>
-                <ClientDetailsForm />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  sx={{
-                    width: "fit-content",
-                    color: "secondary.main",
-                    borderBottom: "2px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "2px",
-                  }}
-                  variant="h6"
-                  mb={1}
-                >
-                  Address
-                </Typography>
-                <AddressDetailsForm />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  sx={{
-                    width: "fit-content",
-                    color: "secondary.main",
-                    borderBottom: "2px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "2px",
-                  }}
-                  variant="h6"
-                  mb={1}
-                >
-                  Contract Details
-                </Typography>
-                <ContractDetailsForm />
-              </Grid>
-            </Grid>
-          </Paper>
-        </form>
+        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} loading={loading} />
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>

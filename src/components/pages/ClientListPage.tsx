@@ -15,7 +15,7 @@ import webRoutes from "@/lib/routes/webRoutes";
 
 const ClientListPage: React.FC = () => {
   const router = useRouter();
-  const t = useTranslations("intl.pages.clients");
+  const t = useTranslations("pages.clients");
 
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { FormControlLabel, Input, MenuItem, Switch, TextField } from "@mui/material";
-import TextFieldForm from "../../../atoms/TextFieldForm"; // Tu componente TextFieldForm ya ajustado
 import { taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
 import { Controller, useFormContext } from "react-hook-form";
+import TextFieldForm from "@/components/atoms/TextFieldForm";
 
 const ClientDetailsForm: React.FC = () => {
   const { setValue, watch, control } = useFormContext();

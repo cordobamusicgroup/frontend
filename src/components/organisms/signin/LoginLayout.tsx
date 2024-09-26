@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useContext } from "react";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,7 @@ import ErrorModal from "@/components/molecules/modals/ErrorModal";
 /**
  * Renders a sign-in box component.
  */
-function SignInBox() {
+function LoginLayout() {
   const { login, error, setError } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -56,4 +57,4 @@ function SignInBox() {
   );
 }
 
-export default SignInBox;
+export default LoginLayout;

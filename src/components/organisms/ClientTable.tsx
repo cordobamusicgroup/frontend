@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { VatStatusChip } from "../atoms/ClientChips";
 import ActionButtonsClient from "../molecules/ActionsButtonsClient";
@@ -9,8 +9,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "@styles/grid-cmg.css";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useClients } from "@/lib/hooks/clients/useClients";
 import webRoutes from "@/lib/routes/webRoutes";
+import { useClients } from "@/lib/hooks/useClients";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -92,7 +92,10 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
       field: "actions",
       headerName: clientTableIntl("actions"),
       width: 150,
+      minWidth: 100,
       sortable: false,
+      filter: false,
+      resizable: false,
       flex: 1,
       cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
     },
@@ -118,7 +121,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
           rowData={rowData}
           defaultColDef={{
             sortable: true,
-            filter: false,
+            filter: true,
             resizable: false,
           }}
           animateRows={false}
