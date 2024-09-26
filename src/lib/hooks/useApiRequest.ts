@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 
+// Configuración global de Axios
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
@@ -17,23 +18,27 @@ interface ApiParams {
   requiereAuth?: boolean;
 }
 
+interface ApiRequestResponse<T = any> {
+  data: T | null;
+  error: string | null;
+  loading: boolean;
+}
+
 /**
- * Hook to make an API request using Axios and manage loading state.
+ * Custom hook to make an API request using Axios and manage loading, error, and data state.
  *
- * @param url - The URL to send the request to.
- * @param method - The HTTP method to use for the request.
- * @param data - The data to send with the request.
- * @param params - The query parameters to include in the request URL.
- * @param headers - The headers to include in the request.
- * @param isFormData - Indicates whether the request data is of type FormData.
- * @param requiereAuth - Indicates whether the request requires authentication.
- * @returns A Promise that resolves to the AxiosResponse containing the response data.
- * @throws If an error occurs during the request.
+ * @returns An object containing apiRequest function, loading state, and error state.
  */
 export const useApiRequest = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const apiRequest = async ({ url, method, data, params, headers, isFormData = false, requiereAuth = true }: ApiParams): Promise<AxiosResponse<any>> => {
+  const apiRequest = useCallback(async <T = any>({ url, method, data, params, headers, isFormData = false, requiereAuth = true }: ApiParams): Promise<ApiRequestResponse<T>> => {
+    setLoading(true);
+    setError(null);
+
     const token = requiereAuth ? Cookies.get("access_token") : null;
+
     const config: AxiosRequestConfig = {
       url,
       method,
@@ -48,13 +53,16 @@ export const useApiRequest = () => {
     };
 
     try {
-      const response = await api.request(config);
-      return response;
-    } catch (error: any) {
-      console.error(`Error ${method}ing data to ${url}:`, error.message);
-      throw error;
+      const response = await api.request<T>(config);
+      return { data: response.data, error: null, loading: false };
+    } catch (err: any) {
+      console.error(`Error ${method}ing data to ${url}:`, err.message || err);
+      setError(err.message || "Unknown error occurred");
+      return { data: null, error: err.message, loading: false };
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  return { apiRequest };
+  return { apiRequest, loading, error };
 };
