@@ -1,7 +1,7 @@
 import React from "react";
 import { List, Divider, styled } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { useMenus } from "@/lib/hooks/useMenus"; // Importamos el nuevo hook
+import { usePortalMenus } from "@/lib/hooks/useMenus"; // Importamos el nuevo hook
 import VerticalMenuItem from "./VerticalMenuItem";
 import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
 
@@ -23,7 +23,7 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
   const openSubMenu = useAppSelector((state) => state.pageData.openSubMenu);
 
   // Obtenemos los ítems del menú basados en el rol del usuario
-  const menuItems = useMenus(user?.role);
+  const menuItems = usePortalMenus(user?.role);
 
   const handleSubMenuClick = (text: string) => {
     dispatch(toggleSubMenu(text));

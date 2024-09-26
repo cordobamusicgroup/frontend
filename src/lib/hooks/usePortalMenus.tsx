@@ -23,7 +23,7 @@ export interface MenuItemType {
  * @param userRole - The role of the current user (e.g., "ADMIN", "USER").
  * @returns Filtered menu items based on the user's role.
  */
-export const useMenus = (userRole: string): MenuItemType[] => {
+export const usePortalMenus = (userRole: string): MenuItemType[] => {
   const router = useRouter();
 
   // All menu items (both admin and normal users)
