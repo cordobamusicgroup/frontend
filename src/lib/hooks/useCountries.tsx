@@ -11,7 +11,7 @@ export const useCountries = () => {
       method: "get",
       requiereAuth: true,
     });
-    return response.data;
+    return response;
   };
 
   const {
