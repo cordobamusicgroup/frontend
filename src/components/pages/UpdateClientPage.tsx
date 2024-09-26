@@ -11,7 +11,7 @@ import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
 import BasicButton from "../atoms/BasicButton";
 import FormErrorPopup from "../molecules/FormErrorPopUp";
 import CustomPageHeader from "../molecules/header/CustomPageHeader";
-import { CreateClientValidationSchema } from "../utils/forms/CreateClientValidationSchema";
+import { ClientValidationSchema } from "../utils/forms/ClientValidationSchema";
 import ErrorBox from "../molecules/ErrorBox";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -38,7 +38,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   // Inicializar el formulario sin defaultValues
   const methods = useForm({
     mode: "onSubmit",
-    resolver: yupResolver(CreateClientValidationSchema),
+    resolver: yupResolver(ClientValidationSchema),
     reValidateMode: "onChange",
   });
 
@@ -68,7 +68,6 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
         zip: data.address?.zip,
         contractUUID: data.contract.uuid,
         contractType: data.contract?.contractType,
-        
         contractStatus: data.contract?.status,
         startDate: dayjs(data.contract?.startDate),
         endDate: dayjs(data.contract?.endDate),
@@ -76,6 +75,10 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
         contractSignedAt: dayjs(data.contract.signedAt),
         ppd: data.contract?.ppd,
         docUrl: data.contract?.docUrl,
+        dmbAccessType: data.dmb?.accessType,
+        dmbStatus: data.dmb?.status,
+        dmbSubclientName: data.dmb?.subclientName,
+        dmbUsername: data.dmb?.username,
       };
 
       // Establecer los valores en el formulario
@@ -115,15 +118,21 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
         ppd: formData.ppd ? parseFloat(formData.ppd) : null,
         docUrl: formData.docUrl,
       },
+      dmb: {
+        accessType: formData.dmbAccessType,
+        status: formData.dmbStatus,
+        subclientName: formData.dmbSubclientName,
+        username: formData.dmbUsername,
+      },
     };
 
     try {
       await updateClient(payload);
+      scrollToTop();
       setSuccessMessage("The client was successfully updated.");
       setApiErrorMessage(null);
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response?.data) {
-        scrollToTop();
         setApiErrorMessage(error.response.data.message);
         setSuccessMessage(null);
       } else {

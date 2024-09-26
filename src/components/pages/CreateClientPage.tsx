@@ -11,7 +11,7 @@ import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
 import BasicButton from "../atoms/BasicButton";
 import FormErrorPopup from "../molecules/FormErrorPopUp";
 import CustomPageHeader from "../molecules/header/CustomPageHeader";
-import { CreateClientValidationSchema } from "../utils/forms/CreateClientValidationSchema";
+import { ClientValidationSchema } from "../utils/forms/ClientValidationSchema";
 import ErrorBox from "../molecules/ErrorBox";
 import axios from "axios";
 import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
@@ -32,7 +32,7 @@ const CreateClientPage: React.FC = () => {
   // Configuración de useForm con yupResolver para validación
   const methods = useForm({
     mode: "all",
-    resolver: yupResolver(CreateClientValidationSchema),
+    resolver: yupResolver(ClientValidationSchema),
     reValidateMode: "onChange",
   });
 

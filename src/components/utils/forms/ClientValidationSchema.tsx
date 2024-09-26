@@ -2,40 +2,65 @@ import * as Yup from "yup";
 import dayjs from "dayjs";
 import { typeOptions, taxIdTypeOptions, contractTypeOptions, contractStatusOptions } from "@/constants/backend.enums";
 
-// Validación para comprobar si el valor es un Dayjs válido
+/**
+ * Validates if a value is a valid Dayjs object.
+ * @param {any} value - The value to be checked.
+ * @returns {boolean} - Returns true if the value is a valid Dayjs object, otherwise false.
+ */
 const isValidDayjs = (value: any) => {
-  // Asegurarse de que 'value' es un objeto Dayjs antes de llamar 'isValid'
   return dayjs.isDayjs(value) && value.isValid();
 };
 
-// Validación para comprobar si la fecha está en el futuro
+/**
+ * Checks if the date is in the future (after today).
+ * @param {any} value - The date to be checked.
+ * @returns {boolean} - Returns true if the date is in the future, otherwise false.
+ */
 const isFutureDate = (value: any) => {
   return value && value.isAfter(dayjs().subtract(1, "day"));
 };
 
-// Validación para comprobar si una fecha es posterior a otro campo
+/**
+ * Validates that the current date field is after another date field.
+ * @param {string} field - The field name to compare against.
+ * @returns {function} - Returns a Yup test function that validates if one date is after another.
+ */
 const isAfterField = (field: string) =>
   function (this: any, value: any) {
     const compareTo = this.parent[field];
     return value && compareTo && dayjs.isDayjs(value) && dayjs.isDayjs(compareTo) && value.isAfter(compareTo);
   };
 
-// Validación para comprobar si una fecha es anterior a otro campo
+/**
+ * Validates that the current date field is before another date field.
+ * @param {string} field - The field name to compare against.
+ * @returns {function} - Returns a Yup test function that validates if one date is before another.
+ */
 const isBeforeField = (field: string) =>
   function (this: any, value: any) {
     const compareTo = this.parent[field];
     return value && compareTo && dayjs.isDayjs(value) && dayjs.isDayjs(compareTo) && value.isBefore(compareTo);
   };
 
-// Transformación de fecha para asegurar un valor Dayjs válido o null
-// Transformación de fecha para asegurar un valor Dayjs válido o null
+/**
+ * Transforms a date field to ensure it is either a valid Dayjs object or null.
+ * @param {any} value - The current value.
+ * @param {any} originalValue - The original value provided to the field.
+ * @returns {Dayjs|null} - Returns a valid Dayjs object if possible, otherwise null.
+ */
 const transformDate = (value: any, originalValue: any) => {
   if (!originalValue || originalValue === "") return null;
   const parsedDate = dayjs(originalValue);
   return parsedDate.isValid() ? parsedDate : null;
 };
 
-// Función de ayuda para validar condicionalmente un campo requerido
+/**
+ * Conditionally requires a field based on another field's value.
+ * @param {string} field - The name of the field to check.
+ * @param {any} condition - The condition that, if met, requires the field.
+ * @param {string} message - The error message to display if the field is required but not provided.
+ * @returns {Yup.StringSchema} - Returns a Yup schema that conditionally requires the field.
+ */
 const requireIf = (field: string, condition: any, message: string) => {
   return Yup.string().when(field, {
     is: condition,
@@ -44,7 +69,12 @@ const requireIf = (field: string, condition: any, message: string) => {
   });
 };
 
-// Función para crear campos con .oneOf basado en las opciones
+/**
+ * Creates a Yup schema that validates if a field's value matches one of the provided options.
+ * @param {Array<Object>} options - The list of valid options.
+ * @param {string} message - The error message to display if the value is invalid.
+ * @returns {Yup.StringSchema} - Returns a Yup schema that validates the field against the options.
+ */
 const oneOfOptions = (options: any[], message: string) => {
   return Yup.string()
     .oneOf(
@@ -54,14 +84,16 @@ const oneOfOptions = (options: any[], message: string) => {
     .required(message);
 };
 
-// Creación del esquema de validación
-export const CreateClientValidationSchema = Yup.object({
+/**
+ * Validation schema for client and contract-related data.
+ */
+export const ClientValidationSchema = Yup.object({
   clientId: Yup.string().nullable(),
   clientName: Yup.string().required("Client nickname is required"),
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
 
-  // Uso de la función para validar "oneOf" con opciones
+  // Validating type with options
   type: oneOfOptions(typeOptions, "Invalid type"),
   taxIdType: oneOfOptions(taxIdTypeOptions, "Invalid Tax ID Type"),
 
@@ -73,7 +105,7 @@ export const CreateClientValidationSchema = Yup.object({
   city: Yup.string().required("City is required"),
   state: Yup.string().required("State is required"),
 
-  // Validación y transformación de countryId
+  // Validating and transforming countryId
   countryId: Yup.number()
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .nullable()
@@ -82,7 +114,7 @@ export const CreateClientValidationSchema = Yup.object({
   zip: Yup.string().required("Zip is required"),
   contractUUID: Yup.string().nullable(),
 
-  // Uso de la función para validar "oneOf" con opciones
+  // Validating contractType and contractStatus with options
   contractType: oneOfOptions(contractTypeOptions, "Invalid contract type"),
   contractStatus: oneOfOptions(contractStatusOptions, "Invalid contract status"),
 
