@@ -1,9 +1,9 @@
 import React from "react";
 import { List, Divider, styled } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { usePortalMenus } from "@/lib/hooks/useMenus"; // Importamos el nuevo hook
 import VerticalMenuItem from "./VerticalMenuItem";
 import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
+import { usePortalMenus } from "@/lib/hooks/usePortalMenus";
 
 interface VerticalDrawerListProps {
   open: boolean;

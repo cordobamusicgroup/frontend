@@ -9,6 +9,8 @@ interface MenuItemType {
   onClick: () => void;
 }
 
+// TODO: [CMGDEV-8]  Refactorizar este hook para que sea más legible y mantenible a largo plazo
+
 export const useUserMenuItems = (): MenuItemType[] => {
   const auth = useAuth();
 
