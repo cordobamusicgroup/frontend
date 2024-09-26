@@ -38,7 +38,7 @@ export const useClients = (clientId?: string) => {
         params: searchTerm ? { searchTerm } : {}, // Pass search parameters if searching
         requiereAuth: true,
       });
-      return response.data;
+      return response;
     } catch (err) {
       setError("Error fetching clients");
       throw err;
@@ -81,7 +81,7 @@ export const useClients = (clientId?: string) => {
 
         // Revalidate the list of clients
         await mutate("clients");
-        return response.data;
+        return response;
       } catch (err) {
         setError("Error creating client");
         throw err;
@@ -116,7 +116,7 @@ export const useClients = (clientId?: string) => {
 
         // Revalidate the client data
         await dataMutate();
-        return response.data;
+        return response;
       } catch (err) {
         setError("Error updating client");
         throw err;

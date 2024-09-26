@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Box, CircularProgress, Typography, List, ListItem, ListItemText, useTheme, Grid, Paper } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useClients } from "@/lib/hooks/clients/useClients"; // Cambia el hook importado
 import BackPageButton from "../atoms/BackPageButton";
 import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
@@ -19,6 +18,7 @@ import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
 import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
 import DmbDetailsForm from "../molecules/forms/DmbDetailsForm";
 import ClientFormLayout from "../organisms/ClientFormLayout";
+import { useClients } from "@/lib/hooks/useClients";
 
 const CreateClientPage: React.FC = () => {
   const t = useTranslations();

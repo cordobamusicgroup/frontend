@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { List, Divider, styled } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { usePortalMenuItems } from "@/lib/hooks/usePortalMenu";
-import { usePortalAdminMenuItems } from "@/lib/hooks/useAdminMenu";
+import { useMenus } from "@/lib/hooks/useMenus"; // Importamos el nuevo hook
 import VerticalMenuItem from "./VerticalMenuItem";
 import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
 
@@ -19,26 +18,33 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
 }));
 
 const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
-  const user = useAppSelector((state) => state.user.userData);
+  const user = useAppSelector((state) => state.user.userData); // Obtenemos los datos del usuario desde Redux
   const dispatch = useAppDispatch();
   const openSubMenu = useAppSelector((state) => state.pageData.openSubMenu);
-  const menuItems = usePortalMenuItems(user?.role);
-  const adminMenuItems = usePortalAdminMenuItems(user?.role);
+
+  // Obtenemos los ítems del menú basados en el rol del usuario
+  const menuItems = useMenus(user?.role);
 
   const handleSubMenuClick = (text: string) => {
     dispatch(toggleSubMenu(text));
   };
 
+  // Separar los ítems de admin de los ítems generales
+  const adminItems = menuItems.filter((item) => item.roles.includes("ADMIN"));
+  const generalItems = menuItems.filter((item) => !item.roles.includes("ADMIN"));
+
   return (
     <List>
-      {menuItems.map((item) => (
+      {/* Renderizamos los ítems generales del menú */}
+      {generalItems.map((item) => (
         <VerticalMenuItem key={item.text} item={item} open={open} isSubMenuOpen={openSubMenu === item.text} onClick={() => (item.subMenuItems && item.subMenuItems.length > 0 ? handleSubMenuClick(item.text) : item.onClick?.())} onSubMenuClick={() => handleSubMenuClick(item.text)} />
       ))}
 
-      {adminMenuItems.length > 0 && (
+      {/* Si hay ítems de administrador, mostramos el divisor "Admin Menu" y los ítems */}
+      {adminItems.length > 0 && (
         <>
           {open && <StyledDivider>Admin Menu</StyledDivider>}
-          {adminMenuItems.map((item) => (
+          {adminItems.map((item) => (
             <VerticalMenuItem key={item.text} item={item} open={open} isSubMenuOpen={openSubMenu === item.text} onClick={() => (item.subMenuItems && item.subMenuItems.length > 0 ? handleSubMenuClick(item.text) : item.onClick?.())} onSubMenuClick={() => handleSubMenuClick(item.text)} />
           ))}
         </>

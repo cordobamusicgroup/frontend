@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { MenuItem, InputAdornment, Box, FormControlLabel, Switch } from "@mui/material";
 import { Controller, set, useFormContext } from "react-hook-form";
-import { contractStatusOptions, CreateClientContractType } from "@/constants/client-enums";
 import DatePickerForm from "@/components/atoms/DatePickerForm";
+import { contractStatusOptions, CreateClientContractType } from "@/constants/backend.enums";
 import TextFieldForm from "@/components/atoms/TextFieldForm";
 
 const ContractDetailsForm: React.FC = () => {

@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         data: { username, password },
         requiereAuth: false,
       });
-      const { access_token } = response.data;
+      const { access_token } = response;
       // Set cookies for authentication
       Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
       Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });

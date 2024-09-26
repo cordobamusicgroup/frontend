@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Box, CircularProgress, Typography, Grid, Paper, useTheme, List, ListItem, ListItemText } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useClients } from "@/lib/hooks/clients/useClients";
 import BackPageButton from "../atoms/BackPageButton";
 import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
@@ -19,6 +18,7 @@ import dayjs from "dayjs";
 import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
 import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
 import ClientFormLayout from "../organisms/ClientFormLayout";
+import { useClients } from "@/lib/hooks/useClients";
 
 type Props = {
   clientId: string;

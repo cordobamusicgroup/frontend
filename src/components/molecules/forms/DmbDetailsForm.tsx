@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { MenuItem, InputAdornment, Box, FormControlLabel, Switch } from "@mui/material";
 import { Controller, set, useFormContext } from "react-hook-form";
-import { AccessTypeDMB, contractStatusOptions, CreateClientContractType, StatusDMB } from "@/constants/client-enums";
 import DatePickerForm from "@/components/atoms/DatePickerForm";
 import TextFieldForm from "@/components/atoms/TextFieldForm";
+import { AccessTypeDMB, StatusDMB } from "@/constants/backend.enums";
 
 const DmbDetailsForm: React.FC = () => {
   const { setValue, watch, getValues, control } = useFormContext();

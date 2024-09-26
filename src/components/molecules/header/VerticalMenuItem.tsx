@@ -1,8 +1,8 @@
 import React from "react";
 import { ListItem, ListItemIcon, ListItemText, Collapse, List } from "@mui/material";
 import { ExpandLess, ExpandMore, SubdirectoryArrowRight as SubdirectoryArrowRightIcon } from "@mui/icons-material";
-import { MenuItemType } from "@/lib/hooks/usePortalMenu";
-
+import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import { MenuItemType } from "@/lib/hooks/useMenus";
 interface VerticalMenuItemProps {
   item: MenuItemType;
   open: boolean;
@@ -25,7 +25,7 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
             {item.subMenuItems.map((subItem) => (
               <ListItem button key={subItem.text} onClick={subItem.onClick} sx={{ pl: 4 }}>
                 <ListItemIcon>
-                  <SubdirectoryArrowRightIcon />
+                  <ArrowForwardOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary={subItem.text} />
               </ListItem>

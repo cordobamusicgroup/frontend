@@ -1,6 +1,6 @@
 import * as Yup from "yup";
-import { typeOptions, taxIdTypeOptions, contractTypeOptions, contractStatusOptions } from "@/constants/client-enums";
 import dayjs from "dayjs";
+import { typeOptions, taxIdTypeOptions, contractTypeOptions, contractStatusOptions } from "@/constants/backend.enums";
 
 // Validación para comprobar si el valor es un Dayjs válido
 const isValidDayjs = (value: any) => {

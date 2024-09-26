@@ -19,7 +19,7 @@ interface ApiParams {
 }
 
 interface ApiRequestResponse<T = any> {
-  data: T | null;
+  result: T | null;
   error: string | null;
   loading: boolean;
 }
@@ -33,7 +33,7 @@ export const useApiRequest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const apiRequest = useCallback(async <T = any>({ url, method, data, params, headers, isFormData = false, requiereAuth = true }: ApiParams): Promise<ApiRequestResponse<T>> => {
+  const apiRequest = useCallback(async <T = any>({ url, method, data, params, headers, isFormData = false, requiereAuth = true }: ApiParams): Promise<T> => {
     setLoading(true);
     setError(null);
 
@@ -54,11 +54,12 @@ export const useApiRequest = () => {
 
     try {
       const response = await api.request<T>(config);
-      return { data: response.data, error: null, loading: false };
+      // Retorna solo los datos de la respuesta, sin encapsular en otro objeto
+      return response.data;
     } catch (err: any) {
       console.error(`Error ${method}ing data to ${url}:`, err.message || err);
       setError(err.message || "Unknown error occurred");
-      return { data: null, error: err.message, loading: false };
+      throw err;
     } finally {
       setLoading(false);
     }
