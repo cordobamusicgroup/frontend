@@ -1,76 +1,66 @@
 import { useRouter } from "next/navigation";
 import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon } from "@mui/icons-material";
-import webRoutes from "../routes/webRoutes";
+import { Roles } from "@/constants/roles";
+import routes from "../routes/routes";
 
 export interface SubMenuType {
   text: string;
   onClick: () => void;
-  roles: string[];
+  roles: Roles[];
 }
 
 export interface MenuItemType {
   text: string;
   icon: React.ReactNode;
-  roles: string[];
+  roles: Roles[];
   onClick?: () => void;
   subMenuItems?: SubMenuType[];
 }
 
-/**
- * Hook to generate menu items based on user role.
- * Combines both admin and portal menu items into a single source.
- *
- * @param userRole - The role of the current user (e.g., "ADMIN", "USER").
- * @returns Filtered menu items based on the user's role.
- */
-export const usePortalMenus = (userRole: string): MenuItemType[] => {
+export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
   const router = useRouter();
 
-  // All menu items (both admin and normal users)
   const allMenuItems: MenuItemType[] = [
     {
       text: "Overview",
       icon: <HomeIcon />,
-      roles: ["ALL"], // Accessible by all roles
-      onClick: () => router.push(webRoutes.portal.overview),
+      roles: [Roles.All],
+      onClick: () => router.push(routes.web.portal.overview),
     },
     {
       text: "Financial",
       icon: <AttachMoneyIcon />,
-      roles: ["ALL"],
+      roles: [Roles.All],
       subMenuItems: [
         {
           text: "Invoices",
-          onClick: () => router.push(webRoutes.portal.financial.invoices),
-          roles: ["ALL"],
+          onClick: () => router.push(routes.web.portal.financial.invoices),
+          roles: [Roles.All],
         },
         {
           text: "Reports",
-          onClick: () => router.push(webRoutes.portal.financial.reports),
-          roles: ["ALL"],
+          onClick: () => router.push(routes.web.portal.financial.reports),
+          roles: [Roles.All],
         },
       ],
     },
-    // Admin-specific menu items
     {
       text: "Clients",
       icon: <GroupIcon />,
-      roles: ["ADMIN"], // Only accessible by ADMIN
-      onClick: () => router.push(webRoutes.admin.clients),
+      roles: [Roles.Admin],
+      onClick: () => router.push(routes.web.admin.clients.root),
     },
     {
       text: "Settings",
       icon: <SettingsIcon />,
-      roles: ["ADMIN"], // Only accessible by ADMIN
-      onClick: () => router.push(webRoutes.admin.clients),
+      roles: [Roles.Admin],
+      onClick: () => router.push(routes.web.admin.clients.root),
     },
   ];
 
-  // Filter menu items by the user's role, allowing "ALL" or specific roles
-  const filterItemsByRole = <T extends { roles: string[] }>(items: T[], role: string): T[] => {
-    return items.filter((item) => item.roles.includes("ALL") || item.roles.includes(role));
+  const filterItemsByRole = <T extends { roles: Roles[] }>(items: T[], role: Roles): T[] => {
+    return items.filter((item) => item.roles.includes(Roles.All) || item.roles.includes(role));
   };
 
-  // Filter the items based on userRole
   return filterItemsByRole(allMenuItems, userRole);
 };

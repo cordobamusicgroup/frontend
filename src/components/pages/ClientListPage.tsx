@@ -11,7 +11,7 @@ import BasicButton from "../atoms/BasicButton";
 import SuccessBox from "../molecules/SuccessBox";
 import ErrorBox from "../molecules/ErrorBox";
 import theme from "@/theme";
-import webRoutes from "@/lib/routes/webRoutes";
+import routes from "@/lib/routes/routes";
 
 const ClientListPage: React.FC = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ const ClientListPage: React.FC = () => {
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const handleCreateClient = (): void => {
-    router.push(webRoutes.admin.createClient);
+    router.push(routes.web.admin.clients.create);
   };
 
   return (

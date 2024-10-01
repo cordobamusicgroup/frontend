@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import VerticalMenuItem from "./VerticalMenuItem";
 import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
 import { usePortalMenus } from "@/lib/hooks/usePortalMenus";
+import { Roles } from "@/constants/roles";
 
 interface VerticalDrawerListProps {
   open: boolean;
@@ -30,8 +31,8 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
   };
 
   // Separar los ítems de admin de los ítems generales
-  const adminItems = menuItems.filter((item) => item.roles.includes("ADMIN"));
-  const generalItems = menuItems.filter((item) => !item.roles.includes("ADMIN"));
+  const adminItems = menuItems.filter((item) => item.roles.includes(Roles.Admin));
+  const generalItems = menuItems.filter((item) => !item.roles.includes(Roles.Admin));
 
   return (
     <List>

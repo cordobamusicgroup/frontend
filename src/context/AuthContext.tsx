@@ -6,11 +6,10 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import apiRoutes from "@/lib/routes/apiRoutes";
 import { useTranslations } from "next-intl";
-import webRoutes from "@/lib/routes/webRoutes";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import axios from "axios";
+import routes from "@/lib/routes/routes";
 
 interface AuthContextType {
   error: string | null;
@@ -27,6 +26,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest(); // Hook with SWR and Axios integration
   const t = useTranslations("pages.auth");
+  const api = routes.api;
+  const web = routes.web;
 
   const isAuthenticated = Cookies.get("isAuthenticated") === "true";
 
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const fetchUserData = async () => {
     const response = await apiRequest({
-      url: apiRoutes.me,
+      url: api.auth.me,
       method: "get",
       requiereAuth: true,
     });
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (username: string, password: string) => {
     try {
       const response = await apiRequest({
-        url: apiRoutes.login,
+        url: api.auth.login,
         method: "post",
         data: { username, password },
         requiereAuth: false,
@@ -69,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
       Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
       await mutate("userData"); // Revalidate user data after login
-      router.push(webRoutes.portal.overview); // Redirect to the overview page
+      router.push(web.portal.overview); // Redirect to the overview page
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
@@ -93,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch(clearUserData()); // Clear user data from Redux
     Cookies.remove("access_token");
     Cookies.set("isAuthenticated", "false", { secure: true, sameSite: "Strict" });
-    router.push(apiRoutes.login); // Redirect to login page
+    router.push(web.login); // Redirect to login page
   };
 
   return <AuthContext.Provider value={{ error, login, logout, setError }}>{children}</AuthContext.Provider>;

@@ -1,7 +1,7 @@
 import useSWR, { mutate } from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import apiRoutes from "@/lib/routes/apiRoutes";
+import routes from "../routes/routes";
 
 type Client = any; // Replace 'any' with your actual client type
 
@@ -27,10 +27,10 @@ export const useClients = (clientId?: string) => {
   const fetcher = useCallback(async () => {
     try {
       const url = clientId
-        ? `${apiRoutes.clients}/${clientId}` // Fetch a specific client by ID
+        ? `${routes.api.clients.root}/${clientId}` // Fetch a specific client by ID
         : searchTerm
-        ? apiRoutes.clientsSearch // Search clients by a search term
-        : apiRoutes.clients; // Fetch all clients
+        ? routes.api.clients.search // Search clients by a search term
+        : routes.api.clients.root; // Fetch all clients
 
       const response = await apiRequest({
         url,
@@ -73,7 +73,7 @@ export const useClients = (clientId?: string) => {
       setError(null);
       try {
         const response = await apiRequest({
-          url: apiRoutes.clients,
+          url: routes.api.clients.root,
           method: "post",
           requiereAuth: true,
           data: clientData,
@@ -108,7 +108,7 @@ export const useClients = (clientId?: string) => {
       setError(null);
       try {
         const response = await apiRequest({
-          url: `${apiRoutes.clients}/${clientId}`,
+          url: `${routes.api.clients.root}/${clientId}`,
           method: "put",
           requiereAuth: true,
           data: clientData,
@@ -140,7 +140,7 @@ export const useClients = (clientId?: string) => {
       setError(null);
       try {
         await apiRequest({
-          url: apiRoutes.clients,
+          url: routes.api.clients.root,
           method: "delete",
           requiereAuth: true,
           data: { ids },

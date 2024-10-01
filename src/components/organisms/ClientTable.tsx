@@ -9,8 +9,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import "@styles/grid-cmg.css";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import webRoutes from "@/lib/routes/webRoutes";
 import { useClients } from "@/lib/hooks/useClients";
+import routes from "@/lib/routes/routes";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -34,10 +34,11 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const clientTableIntl = useTranslations("pages.clients.table");
   const enumsIntl = useTranslations("enums");
   const router = useRouter();
+  const web = routes.web;
   const { data = [], loading, deleteClients, error } = useClients();
 
   const handleEdit = (client: any): void => {
-    router.push(`${webRoutes.admin.editClient}/${client.id}`);
+    router.push(`${web.admin.clients.edit}/${client.id}`);
   };
 
   const handleDelete = async (clientId: number): Promise<void> => {
