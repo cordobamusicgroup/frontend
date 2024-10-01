@@ -11,7 +11,7 @@ interface FullScreenLoaderProps {
 
 const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({ open }) => {
   const [showMessage, setShowMessage] = useState(false);
-  const timer = useRef<NodeJS.Timeout>();
+  const timer = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     if (open) {
