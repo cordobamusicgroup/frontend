@@ -2,7 +2,7 @@ import React from "react";
 import { ListItem, ListItemIcon, ListItemText, Collapse, List } from "@mui/material";
 import { ExpandLess, ExpandMore, SubdirectoryArrowRight as SubdirectoryArrowRightIcon } from "@mui/icons-material";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
-import { MenuItemType } from "@/lib/hooks/useMenus";
+import { MenuItemType } from "@/lib/hooks/usePortalMenus";
 interface VerticalMenuItemProps {
   item: MenuItemType;
   open: boolean;
