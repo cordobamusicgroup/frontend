@@ -8,6 +8,7 @@ import ReduxProvider from "@/context/ReduxContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { FormProvider, useForm } from "react-hook-form";
 
 export const metadata: Metadata = {
   title: {
@@ -23,6 +24,7 @@ export const runtime = "edge";
 export default async function RootLayout({ children }: RootLayoutProps) {
   const locale = await getLocale();
   const messages = await getMessages();
+  
 
   return (
     <html lang={locale}>
@@ -30,7 +32,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <ReduxProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <AuthProvider>
-              <StyleProviders>{children}</StyleProviders>
+                <StyleProviders>{children}</StyleProviders>
             </AuthProvider>
           </NextIntlClientProvider>
         </ReduxProvider>

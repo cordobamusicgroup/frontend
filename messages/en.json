@@ -55,5 +55,19 @@
   "localeswitcher": {
     "en": "English",
     "es": "Spanish"
+  },
+  "enums": {
+    "clientType": {
+      "PERSON": "Individual",
+      "BUSINESS": "Company"
+    },
+    "clientTaxIdType": {
+      "COMPANY_NUMBER": "Company Number",
+      "NATIONAL_ID": "National ID",
+      "PASSPORT": "Passport",
+      "RESIDENT_PERMIT": "Resident Permit",
+      "ID_CARD": "ID Card",
+      "DRIVERS_LICENSE": "Driver's License"
+    }
   }
 }

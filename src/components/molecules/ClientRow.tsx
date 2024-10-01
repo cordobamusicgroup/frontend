@@ -20,7 +20,7 @@ function ClientRow({ client, onEdit, onView, onDelete }: ClientRowProps) {
     taxId: client.taxId,
     vatRegistered: <VatStatusChip isRegistered={client.vatRegistered} />,
     vatId: client.vatId,
-    actions: <ActionButtonsClient onEdit={() => onEdit(client)} onView={() => onView(client)} onDelete={() => onDelete(client)} />,
+    actions: <ActionButtonsClient onEdit={() => onEdit(client)} onDelete={() => onDelete(client)} />,
   };
 }
 

@@ -1,11 +1,10 @@
 "use client";
-import React, { useState, ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import VerticalMenu from "../molecules/header/VerticalMenu";
 import MainContent from "../molecules/MainContent";
 import Header from "./header/HeaderApp";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface PortalLayoutProps {
   children: ReactNode;
@@ -13,8 +12,6 @@ interface PortalLayoutProps {
 
 const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
   const isOpen = useAppSelector((state) => state.pageData.openMenu);
-  const dispatch = useAppDispatch();
-
   return (
     <div>
       <CssBaseline />

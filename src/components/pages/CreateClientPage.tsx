@@ -1,240 +1,145 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, CircularProgress, Typography, Grid, List, ListItem, ListItemText, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { useCreateClient } from "@/lib/hooks/clients/useCreateClient";
-import ErrorModal from "../molecules/modals/ErrorModal";
+import { Box, CircularProgress, Typography, List, ListItem, ListItemText, useTheme, Grid, Paper } from "@mui/material";
+import { useForm, FormProvider } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import BackPageButton from "../atoms/BackPageButton";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 import { useTranslations } from "next-intl";
-import { AddOutlined, ErrorOutline, ExpandMore, FiberManualRecord } from "@mui/icons-material";
-import SuccessBox from "../atoms/SuccessBox";
-import ContractDetailsForm from "../molecules/forms/create/CreateContractForm";
-import ClientDetailsForm from "../molecules/forms/create/CreateClientForm";
-import { contractStatusOptions, contractTypeOptions, taxIdTypeOptions, typeOptions } from "@/constants/client-enums";
-import dayjs from "dayjs";
-import ErrorBox from "../atoms/ErrorBox";
-import AddressDetailsForm from "../molecules/forms/create/CreateAddressForm";
-
-const validationSchema = Yup.object({
-  clientName: Yup.string().required("Client nickname is required"),
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
-  type: Yup.string()
-    .oneOf(
-      typeOptions.map((option) => option.value),
-      "Invalid type"
-    )
-    .required("Type is required"),
-  taxIdType: Yup.string()
-    .oneOf(
-      taxIdTypeOptions.map((option) => option.value),
-      "Invalid Tax ID Type"
-    )
-    .required("Tax ID Type is required"),
-  taxId: Yup.string().required("Tax ID is required"),
-  vatRegistered: Yup.boolean().required(),
-  vatId: Yup.string().when("vatRegistered", {
-    is: true,
-    then: (schema) => schema.required("VAT ID is required when VAT Registered is true"),
-    otherwise: (schema) => schema.nullable().notRequired(),
-  }),
-  street: Yup.string().required("Street is required"),
-  city: Yup.string().required("City is required"),
-  state: Yup.string().required("State is required"),
-  countryId: Yup.number().required("Country is required"),
-  zip: Yup.string().required("Zip is required"),
-  contractType: Yup.string()
-    .oneOf(
-      contractTypeOptions.map((option) => option.value),
-      "Invalid contract type"
-    )
-    .required("Contract type is required"),
-  contractStatus: Yup.string()
-    .oneOf(
-      contractStatusOptions.map((option) => option.value),
-      "Invalid contract status"
-    )
-    .required("Contract Status is required"),
-  startDate: Yup.date()
-    .required("Start date is required")
-    .test("isValidDate", "Invalid date", (value) => {
-      return value ? dayjs(value).isValid() : false;
-    })
-    .test("isFutureDate", "Start date cannot be in the past", (value) => {
-      return value ? dayjs(value).isAfter(dayjs().subtract(1, "day")) : false;
-    }),
-  endDate: Yup.date()
-    .optional()
-    .test("isValidDate", "Invalid date", (value) => {
-      return value ? dayjs(value).isValid() : false;
-    })
-    .test("isAfterStartDate", "End date must be after start date", function (value) {
-      const { startDate } = this.parent;
-      return value && startDate ? dayjs(value).isAfter(dayjs(startDate)) : false;
-    })
-    .test("isFutureDate", "End date cannot be in the past", (value) => {
-      return value ? dayjs(value).isAfter(dayjs().subtract(1, "day")) : false;
-    }),
-});
-
-const initialValues = {
-  clientName: "",
-  firstName: "",
-  lastName: "",
-  type: "",
-  taxIdType: "",
-  taxId: "",
-  vatRegistered: false,
-  vatId: "",
-  street: "",
-  city: "",
-  state: "",
-  countryId: null,
-  zip: "",
-  contractType: "",
-  contractStatus: "",
-  ppd: "",
-  docUrl: "",
-  startDate: dayjs(Date.now()),
-};
+import { AddOutlined } from "@mui/icons-material";
+import SuccessBox from "../molecules/SuccessBox";
+import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
+import BasicButton from "../atoms/BasicButton";
+import FormErrorPopup from "../molecules/FormErrorPopUp";
+import CustomPageHeader from "../molecules/header/CustomPageHeader";
+import { ClientValidationSchema } from "../utils/forms/ClientValidationSchema";
+import ErrorBox from "../molecules/ErrorBox";
+import axios from "axios";
+import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
+import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
+import DmbDetailsForm from "../molecules/forms/DmbDetailsForm";
+import ClientFormLayout from "../organisms/ClientFormLayout";
+import { useClients } from "@/lib/hooks/useClients";
 
 const CreateClientPage: React.FC = () => {
-  const dispatch = useAppDispatch();
   const t = useTranslations();
-  dispatch(setPageTitle(t("pages.clients.add")));
-  const { createClient, createClientLoading } = useCreateClient();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const theme = useTheme();
+  const { createClient, loading } = useClients(); // Usamos el hook combinado
+
   const [errorOpen, setErrorOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
+  // Configuración de useForm con yupResolver para validación
+  const methods = useForm({
+    mode: "all",
+    resolver: yupResolver(ClientValidationSchema),
+    reValidateMode: "onChange",
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = methods;
+
+  const onSubmit = async (data: any) => {
+    const payload = {
+      clientName: data.clientName,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      type: data.type,
+      taxIdType: data.taxIdType,
+      taxId: data.taxId,
+      vatRegistered: data.vatRegistered,
+      vatId: data.vatId,
+      address: {
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        countryId: data.countryId,
+        zip: data.zip,
+      },
+      contract: {
+        contractType: data.contractType,
+        status: data.contractStatus,
+        signed: data.contractSigned,
+        signedBy: data.contractSignedBy,
+        signedAt: data.contractSignedAt,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        ppd: parseFloat(data.ppd),
+        docUrl: data.docUrl,
+      },
+      dmb: {
+        accessType: data.dmbAccessType,
+        status: data.dmbStatus,
+        subclientName: data.dmbSubclientName,
+        username: data.dmbUsername,
+      },
+    };
     try {
-      const payload = {
-        clientName: values.clientName,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        type: values.type,
-        taxIdType: values.taxIdType,
-        taxId: values.taxId,
-        vatRegistered: values.vatRegistered,
-        vatId: values.vatId,
-        address: {
-          street: values.street,
-          city: values.city,
-          state: values.state,
-          countryId: values.countryId,
-          zip: values.zip,
-        },
-        contract: {
-          contractType: values.contractType,
-          status: values.contractStatus,
-          signed: values.contractSigned,
-          signedBy: values.contractSignedBy,
-          signedAt: values.contractSignedAt,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          ppd: values.ppd,
-          docUrl: values.docUrl,
-        },
-      };
-
-      await createClient(payload);
+      await createClient(payload); // Usamos el método del hook combinado
       setSuccessMessage("The client was successfully created.");
-      resetForm();
+      setApiErrorMessage(null); // Limpiar errores de la API al éxito
+      reset(); // Reseteamos el formulario
     } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
+      if (axios.isAxiosError(error) && error.response?.data) {
+        scrollToTop();
+        setApiErrorMessage(error.response.data.message);
+        setSuccessMessage(null);
       } else {
-        setErrorMessage("An unexpected error occurred.");
+        setApiErrorMessage("An unexpected error occurred.");
       }
-      setErrorOpen(true);
-    } finally {
-      setSubmitting(false);
     }
+
+    console.log("Form Submitted with data:", payload);
   };
 
-  const handleErrorClose = () => {
-    setErrorOpen(false);
+  const handleClientSubmit = handleSubmit(
+    (data) => {
+      onSubmit(data); // Llama a la función onSubmit si no hay errores
+    },
+    (errors) => {
+      if (Object.keys(errors).length > 0) {
+        setErrorOpen(true); // Abre el popup si hay errores
+      }
+    }
+  );
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleInputChange = () => {
-    setSuccessMessage(null);
-  };
+  const handleErrorClose = () => setErrorOpen(false);
+
+  const handleInputChange = () => setSuccessMessage(null);
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-      {({ isSubmitting, submitForm, errors, handleChange }) => (
-        <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
-          <Box sx={{ display: "flex", justifyContent: "right", alignItems: "center", marginBottom: "20px", gap: 2 }}>
-            <BackPageButton />
-            <Button
-              onClick={() => {
-                submitForm();
-                setSubmitAttempted(true);
-              }}
-              color="primary"
-              variant="contained"
-              disabled={createClientLoading || isSubmitting}
-              startIcon={<AddOutlined />}
-              endIcon={createClientLoading || isSubmitting ? <CircularProgress size={20} /> : null}
-            >
-              Create Client
-            </Button>
-          </Box>
+    <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
+      <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
+        <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Creating New Client</Typography>
+        <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={loading} startIcon={<AddOutlined />} endIcon={loading ? <CircularProgress size={20} /> : null}>
+          Create Client
+        </BasicButton>
+      </CustomPageHeader>
 
-          {submitAttempted && Object.keys(errors).length > 0 && (
-            <ErrorBox>
-              <List sx={{ padding: 0, margin: 0 }}>
-                {Object.values(errors)
-                  .filter((error) => typeof error === "string")
-                  .map((error, index) => (
-                    <ListItem key={index} disableGutters sx={{ padding: "1px 0" }}>
-                      <ListItemText primary={`• ${error}`} sx={{ margin: 0, padding: 0 }} />
-                    </ListItem>
-                  ))}
-              </List>
-            </ErrorBox>
-          )}
+      <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>
+      <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
-          <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>
-
-          <Form onChange={handleInputChange}>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id="panel1a-header">
-                <Typography>Personal Details</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <ClientDetailsForm />
-              </AccordionDetails>
-            </Accordion>
-
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel2a-content" id="panel2a-header">
-                <Typography>Address</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <AddressDetailsForm />
-              </AccordionDetails>
-            </Accordion>
-
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel3a-content" id="panel3a-header">
-                <Typography>Contract Details</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <ContractDetailsForm />
-              </AccordionDetails>
-            </Accordion>
-          </Form>
-
-          <ErrorModal open={errorOpen} onClose={handleErrorClose} errorMessage={errorMessage} />
-        </Box>
-      )}
-    </Formik>
+      <FormProvider {...methods}>
+        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} loading={loading} />
+      </FormProvider>
+      <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
+        <List sx={{ padding: 0, margin: 0 }}>
+          {Object.values(errors).map((error) => (
+            <ListItem key={error.ref?.toString()} disableGutters sx={{ padding: "1px 0" }}>
+              <ListItemText primary={`• ${error.message}`} sx={{ margin: 0, padding: 0 }} />
+            </ListItem>
+          ))}
+        </List>
+      </FormErrorPopup>
+    </Box>
   );
 };
 
