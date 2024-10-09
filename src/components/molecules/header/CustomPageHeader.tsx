@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 
 interface CustomPageHeaderProps {
   background: string;
-  color: string;
+  color?: string;
   children: React.ReactNode;
 }
 

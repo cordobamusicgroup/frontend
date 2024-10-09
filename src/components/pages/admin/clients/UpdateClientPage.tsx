@@ -3,21 +3,21 @@ import React, { useState, useEffect } from "react";
 import { Box, CircularProgress, Typography, Grid, Paper, useTheme, List, ListItem, ListItemText } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import BackPageButton from "../atoms/BackPageButton";
+import BackPageButton from "../../../atoms/BackPageButton";
 import { useTranslations } from "next-intl";
-import { AddOutlined } from "@mui/icons-material";
-import SuccessBox from "../molecules/SuccessBox";
-import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
-import BasicButton from "../atoms/BasicButton";
-import FormErrorPopup from "../molecules/FormErrorPopUp";
-import CustomPageHeader from "../molecules/header/CustomPageHeader";
-import { ClientValidationSchema } from "../utils/forms/ClientValidationSchema";
-import ErrorBox from "../molecules/ErrorBox";
+import { AddOutlined, CachedOutlined } from "@mui/icons-material";
+import SuccessBox from "../../../molecules/SuccessBox";
+import AddressDetailsForm from "../../../molecules/forms/AddressDetailsForm";
+import BasicButton from "../../../atoms/BasicButton";
+import FormErrorPopup from "../../../molecules/FormErrorPopUp";
+import CustomPageHeader from "../../../molecules/header/CustomPageHeader";
+import { ClientValidationSchema } from "../../../utils/forms/ClientValidationSchema";
+import ErrorBox from "../../../molecules/ErrorBox";
 import axios from "axios";
 import dayjs from "dayjs";
-import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
-import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
-import ClientFormLayout from "../organisms/ClientFormLayout";
+import ClientDetailsForm from "../../../molecules/forms/ClientDetailsForm";
+import ContractDetailsForm from "../../../molecules/forms/ContractDetailsForm";
+import ClientFormLayout from "../../../organisms/clients/ClientFormLayout";
 import { useClients } from "@/lib/hooks/useClients";
 
 type Props = {
@@ -27,7 +27,7 @@ type Props = {
 const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   const t = useTranslations();
   const theme = useTheme();
-  const { data, updateClient, loading, error } = useClients(clientId);
+  const { clientData, updateClient, loading, error } = useClients(clientId);
   const [errorOpen, setErrorOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
@@ -50,35 +50,35 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
 
   // Guardar los datos originales cuando se cargan
   useEffect(() => {
-    if (data) {
+    if (clientData) {
       const formattedData = {
-        clientId: data.id,
-        clientName: data.clientName,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        type: data.type,
-        taxIdType: data.taxIdType,
-        taxId: data.taxId,
-        vatRegistered: data.vatRegistered,
-        vatId: data.vatId,
-        street: data.address?.street,
-        city: data.address?.city,
-        state: data.address?.state,
-        countryId: data.address?.countryId,
-        zip: data.address?.zip,
-        contractUUID: data.contract.uuid,
-        contractType: data.contract?.contractType,
-        contractStatus: data.contract?.status,
-        startDate: dayjs(data.contract?.startDate),
-        endDate: dayjs(data.contract?.endDate),
-        contractSignedBy: data.contract?.signedBy,
-        contractSignedAt: dayjs(data.contract.signedAt),
-        ppd: data.contract?.ppd,
-        docUrl: data.contract?.docUrl,
-        dmbAccessType: data.dmb?.accessType,
-        dmbStatus: data.dmb?.status,
-        dmbSubclientName: data.dmb?.subclientName,
-        dmbUsername: data.dmb?.username,
+        clientId: clientData.id,
+        clientName: clientData.clientName,
+        firstName: clientData.firstName,
+        lastName: clientData.lastName,
+        type: clientData.type,
+        taxIdType: clientData.taxIdType,
+        taxId: clientData.taxId,
+        vatRegistered: clientData.vatRegistered,
+        vatId: clientData.vatId,
+        street: clientData.address?.street,
+        city: clientData.address?.city,
+        state: clientData.address?.state,
+        countryId: clientData.address?.countryId,
+        zip: clientData.address?.zip,
+        contractUUID: clientData.contract.uuid,
+        contractType: clientData.contract?.contractType,
+        contractStatus: clientData.contract?.status,
+        startDate: dayjs(clientData.contract?.startDate),
+        endDate: dayjs(clientData.contract?.endDate),
+        contractSignedBy: clientData.contract?.signedBy,
+        contractSignedAt: dayjs(clientData.contract.signedAt),
+        ppd: clientData.contract?.ppd,
+        docUrl: clientData.contract?.docUrl,
+        dmbAccessType: clientData.dmb?.accessType,
+        dmbStatus: clientData.dmb?.status,
+        dmbSubclientName: clientData.dmb?.subclientName,
+        dmbUsername: clientData.dmb?.username,
       };
 
       // Establecer los valores en el formulario
@@ -87,7 +87,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
       // Guardar los datos originales para referencia
       setOriginalData(formattedData);
     }
-  }, [data, reset]);
+  }, [clientData, reset]);
 
   const onSubmit = async (formData: any) => {
     // Aquí enviamos todos los datos sin comparación, ya que el backend se encargará de procesarlos
@@ -163,7 +163,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   const handleInputChange = () => setSuccessMessage(null);
 
   // Mostrar loader mientras los datos están cargando
-  if (loading || !data) {
+  if (loading || !clientData) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <CircularProgress />
@@ -176,7 +176,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Edit Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={loading} startIcon={<AddOutlined />} endIcon={loading ? <CircularProgress size={20} /> : null}>
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={loading} startIcon={<CachedOutlined />} endIcon={loading ? <CircularProgress size={20} /> : null}>
           Update Client
         </BasicButton>
       </CustomPageHeader>

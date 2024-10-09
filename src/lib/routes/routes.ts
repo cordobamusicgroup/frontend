@@ -12,9 +12,12 @@ const routes = {
       me: "/auth/me",
     },
     clients: {
-        root: "/clients",
-        search: "/clients/search",
+      root: "/clients",
     },
+    labels: {
+      root: "/labels",
+    },
+
     countries: "/countries",
   },
   web: {
@@ -33,6 +36,12 @@ const routes = {
         create: "/portal/admin/clients/create",
         edit: "/portal/admin/clients/edit",
         search: "/portal/admin/clients/search",
+      },
+      labels: {
+        root: "/portal/admin/labels",
+        create: "/portal/admin/labels/create",
+        edit: "/portal/admin/labels/edit",
+        search: "/portal/admin/labels/search",
       },
     },
   },

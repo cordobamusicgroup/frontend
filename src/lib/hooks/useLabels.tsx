@@ -3,16 +3,16 @@ import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import routes from "../routes/routes";
 
-type Client = any; // Replace 'any' with your actual client type
+type Label = any; // Replace 'any' with your actual client type
 
 /**
  * Custom hook to handle client data operations, including fetching, creating, updating, and deleting clients.
  *
- * @param {string} [clientId] - Optional client ID to fetch a specific client. If not provided, the hook will fetch all clients.
+ * @param {string} [labelId] - Optional client ID to fetch a specific client. If not provided, the hook will fetch all clients.
  *
  * @returns {object} - An object containing the client data, error status, loading status, and methods to create, update, and delete clients.
  */
-export const useClients = (clientId?: string) => {
+export const useLabels = (labelId?: string) => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
 
@@ -25,9 +25,9 @@ export const useClients = (clientId?: string) => {
    */
   const fetcher = useCallback(async () => {
     try {
-      const url = clientId
-        ? `${routes.api.clients.root}/${clientId}` // Fetch a specific client by ID
-        : routes.api.clients.root; // Fetch all clients
+      const url = labelId
+        ? `${routes.api.labels.root}/${labelId}` // Fetch a specific client by ID
+        : routes.api.labels.root; // Fetch all clients
 
       const response = await apiRequest({
         url,
@@ -36,10 +36,10 @@ export const useClients = (clientId?: string) => {
       });
       return response;
     } catch (err) {
-      setError("Error fetching clients");
+      setError("Error fetching labels");
       throw err;
     }
-  }, [apiRequest, clientId]);
+  }, [apiRequest, labelId]);
 
   /**
    * SWR hook to handle caching and data fetching.
@@ -49,7 +49,7 @@ export const useClients = (clientId?: string) => {
     data,
     error: fetchError,
     mutate: dataMutate,
-  } = useSWR<Client | Client[]>(clientId ? `client-${clientId}` : "clients", fetcher, {
+  } = useSWR<Label | Label[]>(labelId ? `label-${labelId}` : "labels", fetcher, {
     revalidateOnFocus: false, // Disable revalidation when window regains focus
     shouldRetryOnError: false, // Disable automatic retries on error
   });
@@ -58,28 +58,27 @@ export const useClients = (clientId?: string) => {
    * Function to create a new client by sending a POST request to the API.
    * After a successful creation, the client list is revalidated.
    *
-   * @param {Client} clientData - The data of the client to be created.
+   * @param {Label} clientData - The data of the client to be created.
    *
    * @returns {Promise<any>} - Returns the newly created client data.
    *
    * @throws {Error} - Throws an error if the creation request fails.
    */
-  const createClient = useCallback(
-    async (clientData: Client) => {
+  const createLabel = useCallback(
+    async (labelData: Label) => {
       setError(null);
       try {
         const response = await apiRequest({
-          url: routes.api.clients.root,
+          url: routes.api.labels.root,
           method: "post",
           requiereAuth: true,
-          data: clientData,
+          data: labelData,
         });
 
-        // Revalidate the list of clients
-        await mutate("clients");
+        await mutate("labels");
         return response;
       } catch (err) {
-        setError("Error creating client");
+        setError("Error creating label");
         throw err;
       }
     },
@@ -90,35 +89,35 @@ export const useClients = (clientId?: string) => {
    * Function to update an existing client by sending a PUT request to the API.
    * Requires a valid clientId. After a successful update, the client data is revalidated.
    *
-   * @param {Client} clientData - The updated data of the client.
+   * @param {Label} clientData - The updated data of the client.
    *
    * @returns {Promise<any>} - Returns the updated client data.
    *
    * @throws {Error} - Throws an error if the update request fails or if no clientId is provided.
    */
-  const updateClient = useCallback(
-    async (clientData: Client) => {
-      if (!clientId) {
-        throw new Error("Client ID is required to update client");
+  const updateLabel = useCallback(
+    async (labelData: Label) => {
+      if (!labelId) {
+        throw new Error("Label ID is required to update label");
       }
       setError(null);
       try {
         const response = await apiRequest({
-          url: `${routes.api.clients.root}/${clientId}`,
+          url: `${routes.api.labels.root}/${labelId}`,
           method: "put",
           requiereAuth: true,
-          data: clientData,
+          data: labelData,
         });
 
         // Revalidate the client data
         await dataMutate();
         return response;
       } catch (err) {
-        setError("Error updating client");
+        setError("Error updating label");
         throw err;
       }
     },
-    [apiRequest, clientId, dataMutate]
+    [apiRequest, labelId, dataMutate]
   );
 
   /**
@@ -131,21 +130,21 @@ export const useClients = (clientId?: string) => {
    *
    * @throws {Error} - Throws an error if the deletion request fails.
    */
-  const deleteClients = useCallback(
+  const deleteLabels = useCallback(
     async (ids: number[]) => {
       setError(null);
       try {
         await apiRequest({
-          url: routes.api.clients.root,
+          url: routes.api.labels.root,
           method: "delete",
           requiereAuth: true,
           data: { ids },
         });
 
         // Revalidate the list of clients
-        await mutate("clients");
+        await mutate("labels");
       } catch (err) {
-        setError("Error deleting clients");
+        setError("Error deleting labels");
         throw err;
       }
     },
@@ -153,12 +152,12 @@ export const useClients = (clientId?: string) => {
   );
 
   return {
-    clientData: data, // Client data fetched from the API
+    data, // Client data fetched from the API
     error: error || fetchError, // Error message, if any
     loading: !data && !error, // Loading state: true when data is being fetched
-    createClient, // Function to create a client
-    updateClient, // Function to update a client
-    deleteClients, // Function to delete clients
+    createLabel, // Function to create a client
+    updateLabel, // Function to update a client
+    deleteLabels, // Function to delete clients
     mutate: dataMutate, // Expose mutate to manually trigger revalidation
   };
 };

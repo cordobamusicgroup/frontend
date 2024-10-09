@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon } from "@mui/icons-material";
+import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon, LibraryMusic } from "@mui/icons-material";
 import { Roles } from "@/constants/roles";
 import routes from "../routes/routes";
 
@@ -49,6 +49,12 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       icon: <GroupIcon />,
       roles: [Roles.Admin],
       onClick: () => router.push(routes.web.admin.clients.root),
+    },
+    {
+      text: "Labels",
+      icon: <LibraryMusic />,
+      roles: [Roles.Admin],
+      onClick: () => router.push(routes.web.admin.labels.root),
     },
     {
       text: "Settings",

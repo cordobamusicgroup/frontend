@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, TextField } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
-import { VatStatusChip } from "../atoms/ClientChips";
-import ActionButtonsClient from "../molecules/ActionsButtonsClient";
+import { VatStatusChip } from "../../atoms/ClientChips";
+import ActionButtonsClient from "../../molecules/ActionsButtonsClient";
 import { useTranslations } from "next-intl";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -35,7 +35,14 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const enumsIntl = useTranslations("enums");
   const router = useRouter();
   const web = routes.web;
-  const { data = [], loading, deleteClients, error } = useClients();
+  const { clientData = [], loading, deleteClients, error } = useClients();
+
+  const gridRef = useRef<any>(null);
+  const [quickFilterText, setQuickFilterText] = useState<string>("");
+
+  const onQuickFilterChange = useCallback(() => {
+    gridRef.current!.api.setGridOption("quickFilterText", quickFilterText);
+  }, [quickFilterText]);
 
   const handleEdit = (client: any): void => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
@@ -102,7 +109,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     },
   ];
 
-  const rowData = data.map((client: any) => ({
+  const rowData = clientData.map((client: any) => ({
     id: client.id,
     clientName: client.clientName,
     firstName: client.firstName,
@@ -116,8 +123,21 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
 
   return (
     <Box sx={{ height: 600, width: "100%" }}>
+      <Box mt={2} mb={2}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search" // Traducción adecuada según corresponda
+          value={quickFilterText} // Vincular con el estado
+          onChange={(e) => {
+            setQuickFilterText(e.target.value); // Actualiza el estado al escribir
+            onQuickFilterChange(); // Aplica el filtro cuando cambia
+          }}
+        />
+      </Box>
       <div className="ag-grid-theme-builder" style={{ height: "600px", width: "100%" }}>
         <AgGridReact
+          ref={gridRef}
           columnDefs={columns}
           rowData={rowData}
           defaultColDef={{

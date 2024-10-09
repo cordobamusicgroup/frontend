@@ -1,9 +1,9 @@
 import React from "react";
 import { Grid, Paper, Typography } from "@mui/material";
-import AddressDetailsForm from "../molecules/forms/AddressDetailsForm";
-import ClientDetailsForm from "../molecules/forms/ClientDetailsForm";
-import ContractDetailsForm from "../molecules/forms/ContractDetailsForm";
-import DmbDetailsForm from "../molecules/forms/DmbDetailsForm";
+import AddressDetailsForm from "../../molecules/forms/AddressDetailsForm";
+import ClientDetailsForm from "../../molecules/forms/ClientDetailsForm";
+import ContractDetailsForm from "../../molecules/forms/ContractDetailsForm";
+import DmbDetailsForm from "../../molecules/forms/DmbDetailsForm";
 
 type Props = {
   handleSubmit: () => void;

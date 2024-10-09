@@ -44,6 +44,10 @@
         "actions": "Actions",
         "noRowsLabel": "No clients found"
       }
+    },
+    "labels": {
+      "title": "Labels",
+      "createLabel": "Create Label"
     }
   },
   "modals": {

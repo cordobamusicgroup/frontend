@@ -45,3 +45,14 @@ export const StatusDMB = [
   { label: "Inactive", value: "INACTIVE" },
   { label: "Pending", value: "PENDING" },
 ];
+
+export const LabelStatus = [
+  { label: "Active", value: "ACTIVE" },
+  { label: "Disabled", value: "DISABLED" },
+];
+
+export const LabelRegistrationStatus = [
+  { label: "Unregistered", value: "UNREGISTERED" },
+  { label: "Registered", value: "REGISTERED" },
+  { label: "Pending", value: "PENDING" },
+];
