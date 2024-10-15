@@ -1,9 +1,29 @@
+"use client";
+
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import loaderReducer from "@/lib/redux/slices/loaderSlice";
 import userReducer from "@/lib/redux/slices/userSlice";
 import pageDataSlice from "./slices/pageDataSlice";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // Esto utiliza localStorage como almacenamiento
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+
+// Función para crear un storage condicionalmente solo en el cliente
+const createNoopStorage = () => {
+  return {
+    getItem(_key: any) {
+      return Promise.resolve(null);
+    },
+    setItem(_key: any, value: any) {
+      return Promise.resolve(value);
+    },
+    removeItem(_key: any) {
+      return Promise.resolve();
+    },
+  };
+};
+
+// Crear un almacenamiento de noop en el servidor y localStorage en el cliente
+const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
 
 const pageDataPersistConfig = {
   key: "pageData",
@@ -14,7 +34,7 @@ const pageDataPersistConfig = {
 const rootReducer = combineReducers({
   loader: loaderReducer, // No persistido
   user: userReducer, // Persistir el estado de user
-  pageData: persistReducer(pageDataPersistConfig, pageDataSlice), // Persistir el estado de menu
+  pageData: persistReducer(pageDataPersistConfig, pageDataSlice), // Persistir el estado de pageData
 });
 
 // Configurar la store sin envolver el root reducer completo en persistReducer

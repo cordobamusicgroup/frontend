@@ -154,8 +154,8 @@ export const useClients = (clientId?: string) => {
 
   return {
     clientData: data, // Client data fetched from the API
-    error: error || fetchError, // Error message, if any
-    loading: !data && !error, // Loading state: true when data is being fetched
+    clientError: error || fetchError, // Error message, if any
+    clientLoading: !data && !error, // Loading state: true when data is being fetched
     createClient, // Function to create a client
     updateClient, // Function to update a client
     deleteClients, // Function to delete clients

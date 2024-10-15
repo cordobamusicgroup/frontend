@@ -152,9 +152,9 @@ export const useLabels = (labelId?: string) => {
   );
 
   return {
-    data, // Client data fetched from the API
-    error: error || fetchError, // Error message, if any
-    loading: !data && !error, // Loading state: true when data is being fetched
+    labelData: data, // Client data fetched from the API
+    labelError: error || fetchError, // Error message, if any
+    labelLoading: !data && !error, // Loading state: true when data is being fetched
     createLabel, // Function to create a client
     updateLabel, // Function to update a client
     deleteLabels, // Function to delete clients

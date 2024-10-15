@@ -23,25 +23,25 @@ const routes = {
   web: {
     login: "/auth/login",
     portal: {
-      overview: "/portal",
+      overview: "/",
       financial: {
-        invoices: "/portal/financial/invoices",
-        reports: "/portal/financial/reports",
+        invoices: "/financial/invoices",
+        reports: "/financial/reports",
       },
     },
     admin: {
       overview: "/admin",
       clients: {
-        root: "/portal/admin/clients",
-        create: "/portal/admin/clients/create",
-        edit: "/portal/admin/clients/edit",
-        search: "/portal/admin/clients/search",
+        root: "/admin/clients",
+        create: "/admin/clients/create",
+        edit: "/admin/clients/edit",
+        search: "/admin/clients/search",
       },
       labels: {
-        root: "/portal/admin/labels",
-        create: "/portal/admin/labels/create",
-        edit: "/portal/admin/labels/edit",
-        search: "/portal/admin/labels/search",
+        root: "/admin/labels",
+        create: "/admin/labels/create",
+        edit: "/admin/labels/edit",
+        search: "/admin/labels/search",
       },
     },
   },

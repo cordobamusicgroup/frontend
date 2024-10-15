@@ -29,9 +29,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(web.login, request.url));
   }
 
-  // Redirigir al último URL si está autenticado y está en la página de login o raíz
-  if (isAuthenticated && (currentPath === web.login || currentPath === "/")) {
-    const redirectUrl = lastUrl !== "/" ? lastUrl : web.portal.overview;
+  // Redirigir al último URL si está autenticado y está en la página de login
+  if (isAuthenticated && currentPath === web.login) {
+    const redirectUrl = lastUrl || web.portal.overview;
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
