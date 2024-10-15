@@ -1,14 +1,11 @@
 import React from "react";
 import { getTranslations } from "next-intl/server";
-import CreateLabelPage from "@/components/global/pages/admin/labels/CreateLabelPage";
+import CreateLabelPage from "@/components/admin/labels/pages/CreateLabelPage";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: "pages.labels" });
-
-  return {
-    title: t("createLabel"),
-  };
-}
+export const metadata: Metadata = {
+  title: "Create Label",
+};
 
 export default function CreateLabel() {
   return <CreateLabelPage />;
