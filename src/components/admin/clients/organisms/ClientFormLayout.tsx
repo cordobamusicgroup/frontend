@@ -8,10 +8,9 @@ import DmbDetailsForm from "../molecules/DmbDetailsForm";
 type Props = {
   handleSubmit: () => void;
   onChange: () => void;
-  loading: boolean;
 };
 
-const ClientFormLayout: React.FC<Props> = ({ handleSubmit, onChange, loading }) => {
+const ClientFormLayout: React.FC<Props> = ({ handleSubmit, onChange }) => {
   return (
     <form onChange={onChange} onSubmit={handleSubmit}>
       <Paper elevation={1} variant="outlined" square={false} sx={{ paddingX: 2, paddingY: 3 }}>

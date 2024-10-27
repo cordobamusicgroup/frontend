@@ -2,6 +2,7 @@ import useSWR, { mutate } from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import routes from "../routes/routes";
+import axios from "axios";
 
 type Client = any; // Replace 'any' with your actual client type
 
@@ -15,6 +16,8 @@ type Client = any; // Replace 'any' with your actual client type
 export const useClients = (clientId?: string) => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
+  const [clientFetchLoading, setClientFetchLoading] = useState<boolean>(false); // Estado de carga para el fetch
+  const [clientLoading, setClientLoading] = useState<boolean>(false); // Estado de carga para create, update, delete
 
   /**
    * Fetcher function to retrieve client data based on whether a specific clientId is provided or a search term is specified.
@@ -24,6 +27,7 @@ export const useClients = (clientId?: string) => {
    * @throws {Error} - Throws an error if the fetch request fails.
    */
   const fetcher = useCallback(async () => {
+    setClientFetchLoading(true); // Inicia el estado de carga para el fetch
     try {
       const url = clientId
         ? `${routes.api.clients.root}/${clientId}` // Fetch a specific client by ID
@@ -36,8 +40,11 @@ export const useClients = (clientId?: string) => {
       });
       return response;
     } catch (err) {
-      setError("Error fetching clients");
+      const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error fetching clients" : "Unknown error occurred";
+      setError(errorMessage);
       throw err;
+    } finally {
+      setClientFetchLoading(false); // Termina el estado de carga para el fetch
     }
   }, [apiRequest, clientId]);
 
@@ -66,6 +73,7 @@ export const useClients = (clientId?: string) => {
    */
   const createClient = useCallback(
     async (clientData: Client) => {
+      setClientLoading(true); // Inicia el estado de carga para la creación
       setError(null);
       try {
         const response = await apiRequest({
@@ -79,8 +87,11 @@ export const useClients = (clientId?: string) => {
         await mutate("clients");
         return response;
       } catch (err) {
-        setError("Error creating client");
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error creating client" : "Unknown error occurred";
+        setError(errorMessage);
         throw err;
+      } finally {
+        setClientLoading(false); // Termina el estado de carga para la creación
       }
     },
     [apiRequest]
@@ -101,6 +112,7 @@ export const useClients = (clientId?: string) => {
       if (!clientId) {
         throw new Error("Client ID is required to update client");
       }
+      setClientLoading(true); // Inicia el estado de carga para la actualización
       setError(null);
       try {
         const response = await apiRequest({
@@ -114,8 +126,11 @@ export const useClients = (clientId?: string) => {
         await dataMutate();
         return response;
       } catch (err) {
-        setError("Error updating client");
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error updating client" : "Unknown error occurred";
+        setError(errorMessage);
         throw err;
+      } finally {
+        setClientLoading(false); // Termina el estado de carga para la actualización
       }
     },
     [apiRequest, clientId, dataMutate]
@@ -127,35 +142,35 @@ export const useClients = (clientId?: string) => {
    *
    * @param {number[]} ids - Array of client IDs to be deleted.
    *
-   * @returns {Promise<void>} - Returns nothing upon success.
+   * @returns {Promise<boolean>} - Returns true on success, false on error.
    *
    * @throws {Error} - Throws an error if the deletion request fails.
    */
-  const deleteClients = useCallback(
-    async (ids: number[]) => {
-      setError(null);
-      try {
-        await apiRequest({
-          url: routes.api.clients.root,
-          method: "delete",
-          requiereAuth: true,
-          data: { ids },
-        });
-
-        // Revalidate the list of clients
-        await mutate("clients");
-      } catch (err) {
-        setError("Error deleting clients");
-        throw err;
-      }
-    },
-    [apiRequest]
-  );
+  const deleteClients = async (ids: number[]): Promise<boolean> => {
+    setClientLoading(true); // Inicia el estado de carga para la eliminación
+    try {
+      await apiRequest({
+        url: routes.api.clients.root,
+        method: "delete",
+        requiereAuth: true,
+        data: { ids },
+      });
+      await mutate("clients"); // Revalidar lista de clientes tras eliminación
+      return true; // Retorna éxito
+    } catch (err) {
+      const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error deleting clients" : "Unknown error occurred";
+      setError(errorMessage); // Guardamos el error en el estado local
+      return false; // Error
+    } finally {
+      setClientLoading(false); // Termina el estado de carga para la eliminación
+    }
+  };
 
   return {
     clientData: data, // Client data fetched from the API
     clientError: error || fetchError, // Error message, if any
-    clientLoading: !data && !error, // Loading state: true when data is being fetched
+    clientFetchLoading, // Estado de carga para fetch (obtener datos)
+    clientLoading, // Estado de carga para create, update, delete
     createClient, // Function to create a client
     updateClient, // Function to update a client
     deleteClients, // Function to delete clients

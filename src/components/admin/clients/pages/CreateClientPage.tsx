@@ -126,7 +126,7 @@ const CreateClientPage: React.FC = () => {
       <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
       <FormProvider {...methods}>
-        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} loading={clientLoading} />
+        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} />
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>

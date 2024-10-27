@@ -19,6 +19,7 @@ import FormErrorPopup from "@/components/global/molecules/FormErrorPopUp";
 import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader";
+import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 
 type Props = {
   clientId: string;
@@ -36,7 +37,7 @@ const getUpdatedFields = (formData: any, originalData: any) => {
 const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   const t = useTranslations();
   const theme = useTheme();
-  const { clientData, updateClient, clientLoading, clientError } = useClients(clientId);
+  const { clientData, updateClient, clientFetchLoading, clientLoading, clientError } = useClients(clientId);
   const [errorOpen, setErrorOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
@@ -99,10 +100,46 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   }, [clientData, reset]);
 
   const onSubmit = async (formData: any) => {
+    // Mapea los datos del formulario a la estructura que espera la API
     const updatedFields = getUpdatedFields(formData, originalData);
 
+    const mappedData = {
+      clientName: updatedFields.clientName,
+      firstName: updatedFields.firstName,
+      lastName: updatedFields.lastName,
+      type: updatedFields.type,
+      taxIdType: updatedFields.taxIdType,
+      taxId: updatedFields.taxId,
+      vatRegistered: updatedFields.vatRegistered,
+      vatId: updatedFields.vatId,
+      address: {
+        street: updatedFields.street,
+        city: updatedFields.city,
+        state: updatedFields.state,
+        countryId: updatedFields.countryId,
+        zip: updatedFields.zip,
+      },
+      contract: {
+        uuid: updatedFields.contractUUID, // Mapeo inverso a uuid
+        contractType: updatedFields.contractType,
+        status: updatedFields.contractStatus,
+        startDate: updatedFields.startDate,
+        endDate: updatedFields.endDate,
+        signedBy: updatedFields.contractSignedBy,
+        signedAt: updatedFields.contractSignedAt,
+        ppd: parseFloat(updatedFields.ppd),
+        docUrl: updatedFields.docUrl,
+      },
+      dmb: {
+        accessType: updatedFields.dmbAccessType,
+        status: updatedFields.dmbStatus,
+        subclientName: updatedFields.dmbSubclientName,
+        username: updatedFields.dmbUsername,
+      },
+    };
+
     try {
-      await updateClient(updatedFields); // Solo los campos actualizados
+      await updateClient(mappedData); // Aquí llamas a la API con la estructura correcta
       scrollToTop();
       setSuccessMessage("The client was successfully updated.");
       setApiErrorMessage(null);
@@ -136,16 +173,16 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
 
   const handleErrorClose = () => setErrorOpen(false);
 
-  if (clientLoading || !clientData) {
+  if (!clientData) {
     return <FormSkeletonLoader />;
   }
-
+  
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Edit Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<CachedOutlined />} endIcon={clientLoading ? <CircularProgress size={20} /> : null}>
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<CachedOutlined />} endIcon={clientLoading ? <LoadingSpinner size={20} /> : null}>
           Update Client
         </BasicButton>
       </CustomPageHeader>
@@ -154,7 +191,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
       <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
       <FormProvider {...methods}>
-        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} loading={clientLoading} />
+        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} />
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>

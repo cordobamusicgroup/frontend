@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, Skeleton, TextField } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { useTranslations } from "next-intl";
 import "ag-grid-community/styles/ag-grid.css";
@@ -11,6 +11,10 @@ import { useClients } from "@/lib/hooks/useClients";
 import routes from "@/lib/routes/routes";
 import { VatStatusChip } from "@/components/global/atoms/ClientChips";
 import ActionButtonsClient from "@/components/global/molecules/ActionsButtonsClient";
+import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader";
+import { Form } from "react-hook-form";
+import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
+import FullScreenLoader from "@/components/global/molecules/FullScreenLoader";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -35,10 +39,11 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const enumsIntl = useTranslations("enums");
   const router = useRouter();
   const web = routes.web;
-  const { clientData = [], clientLoading, deleteClients, clientError } = useClients();
+  const { clientData = [], clientFetchLoading, deleteClients, clientError } = useClients();
 
   const gridRef = useRef<any>(null);
   const [quickFilterText, setQuickFilterText] = useState<string>("");
+  const loadingCellRenderer = useCallback(() => <FormSkeletonLoader />, []);
 
   const onQuickFilterChange = useCallback(() => {
     gridRef.current!.api.setGridOption("quickFilterText", quickFilterText);
@@ -48,20 +53,17 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
   };
 
+  // Función para manejar la eliminación de clientes
   const handleDelete = async (clientId: number): Promise<void> => {
-    try {
-      await deleteClients([clientId]);
+    if (await deleteClients([clientId])) {
       setNotification({ message: "Client deleted successfully", type: "success" });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setNotification({ message: error.response?.data.message, type: "error" });
-      }
     }
   };
 
+  // Manejo global de errores usando useEffect, observando el estado del error desde el hook
   useEffect(() => {
     if (clientError) {
-      setNotification({ message: "Failed to load clients", type: "error" });
+      setNotification({ message: clientError, type: "error" });
     }
   }, [clientError, setNotification]);
 
@@ -146,7 +148,9 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
             resizable: false,
           }}
           animateRows={false}
-          loading={clientLoading}
+          loading={clientFetchLoading}
+          loadingOverlayComponent={LoadingSpinner}
+          loadingOverlayComponentParams={{ size: 30 }}
           suppressMovableColumns={true}
           pagination={true}
           paginationPageSize={20}
