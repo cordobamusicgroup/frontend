@@ -10,6 +10,7 @@ const routes = {
     auth: {
       login: "/auth/login",
       me: "/auth/me",
+      forgotPassword: "/auth/forgot-password",
     },
     clients: {
       root: "/clients",

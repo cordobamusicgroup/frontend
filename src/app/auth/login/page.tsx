@@ -4,10 +4,5 @@ import Container from "@mui/material/Container";
 import LoginLayout from "@/components/auth/LoginLayout";
 
 export default function SignIn() {
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <LoginLayout />
-    </Container>
-  );
+  return <LoginLayout />;
 }

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Link, Grid, Typography } from "@mui/material";
-import { useTranslations } from "next-intl";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import ForgotPassword from "./ForgotPassword"; // Importa el componente ForgotPassword
 
 interface LoginFormProps {
   handleSubmit: (username: string, password: string) => void;
@@ -22,8 +22,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginForm: React.FC<LoginFormProps> = ({ handleSubmit, loading }) => {
-  const t = useTranslations("pages.auth");
   const [error, setError] = useState<string | null>(null);
+  const [openForgotPassword, setOpenForgotPassword] = useState<boolean>(false); // Estado para manejar la apertura del Dialog de forgot password
 
   const {
     register,
@@ -38,28 +38,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ handleSubmit, loading }) => {
     handleSubmit(username, password);
   };
 
+  // Función para manejar la apertura del dialog de Forgot Password
+  const handleOpenForgotPassword = () => {
+    setOpenForgotPassword(true);
+  };
+
+  // Función para manejar el cierre del dialog de Forgot Password
+  const handleCloseForgotPassword = () => {
+    setOpenForgotPassword(false);
+  };
+
   return (
-    <Box component="form" onSubmit={handleFormSubmit(onSubmit)} sx={{ mt: 3 }}>
-      <TextField margin="normal" fullWidth id="username" label={t("username")} {...register("username")} error={!!errors.username} helperText={errors.username?.message} autoFocus />
-      <TextField margin="normal" fullWidth id="password" label={t("password")} type="password" {...register("password")} error={!!errors.password} helperText={errors.password?.message} />
-      {error && (
-        <Typography variant="body2" color="error" align="center">
-          {error}
-        </Typography>
-      )}
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
-          {loading ? t("signIng") : t("signIn")}
-        </Button>
-      </Box>
-      <Grid container justifyContent="center" sx={{ mt: 2 }}>
-        <Grid item>
-          <Link href="#" variant="body2">
-            {t("forgot")}
-          </Link>
+    <>
+      <Box component="form" onSubmit={handleFormSubmit(onSubmit)} sx={{ mt: 3 }}>
+        <TextField margin="normal" fullWidth id="username" label="Username" {...register("username")} error={!!errors.username} helperText={errors.username?.message} autoFocus />
+        <TextField margin="normal" fullWidth id="password" label="Password" type="password" {...register("password")} error={!!errors.password} helperText={errors.password?.message} />
+        {error && (
+          <Typography variant="body2" color="error" align="center">
+            {error}
+          </Typography>
+        )}
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
+            {loading ? "Signing In..." : "Sign In"}
+          </Button>
+        </Box>
+        <Grid container justifyContent="center" sx={{ mt: 2 }}>
+          <Grid item>
+            <Link href="#" variant="body2" onClick={handleOpenForgotPassword}>
+              Forgot password?
+            </Link>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+
+      {/* Componente ForgotPassword */}
+      <ForgotPassword open={openForgotPassword} onClose={handleCloseForgotPassword} />
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode, useState } from "react";
+import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import axios from "axios";
 import routes from "@/lib/routes/routes";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   error: string | null;
@@ -31,16 +32,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = Cookies.get("isAuthenticated") === "true";
 
+  useEffect(() => {
+    // Obtener el token de la cookie
+    const accessToken = Cookies.get("access_token");
+
+    if (accessToken) {
+      // Decodificar el token para obtener la fecha de expiración
+      const decodedToken: any = jwtDecode(accessToken); // El tipo `any` debe reemplazarse con la estructura de tu token
+      const expirationTime = decodedToken.exp * 1000; // Convertir exp a milisegundos
+
+      // Calcular el tiempo restante
+      const timeRemaining = expirationTime - Date.now();
+
+      // Si el token sigue válido, configurar un timeout para el logout
+      if (timeRemaining > 0) {
+        const timeoutId = setTimeout(() => {
+          logout(); // Hacer logout cuando el token expire
+        }, timeRemaining);
+
+        // Limpiar el timeout si el componente se desmonta
+        return () => clearTimeout(timeoutId);
+      } else {
+        // Si el token ya ha expirado, hacer logout inmediatamente
+        logout();
+      }
+    }
+  }, []);
+
   /**
    * Fetch user data on authentication using the API
    */
   const fetchUserData = async () => {
-    const response = await apiRequest({
-      url: api.auth.me,
-      method: "get",
-      requiereAuth: true,
-    });
-    return response; // Directly return response as apiRequest already handles data extraction
+    try {
+      const response = await apiRequest({
+        url: api.auth.me,
+        method: "get",
+        requiereAuth: true,
+      });
+      return response;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        logout(); // Opcional, para asegurar que se limpie todo
+      }
+      throw error;
+    }
   };
 
   useSWR(isAuthenticated ? "userData" : null, fetchUserData, {
@@ -67,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       const { access_token } = response;
       // Set cookies for authentication
-      Cookies.set("access_token", access_token, { expires: 1 / 24, secure: true, sameSite: "Strict" });
+      Cookies.set("access_token", access_token, { secure: true, sameSite: "Strict", expires: 1 / 24 });
       Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
       await mutate("userData"); // Revalidate user data after login
       router.push(web.portal.overview); // Redirect to the overview page

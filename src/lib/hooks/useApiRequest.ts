@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
 // Configuración global de Axios
@@ -56,9 +56,11 @@ export const useApiRequest = () => {
       const response = await api.request<T>(config);
       // Retorna solo los datos de la respuesta, sin encapsular en otro objeto
       return response.data;
-    } catch (err: any) {
-      console.error(`Error ${method}ing data to ${url}:`, err.message || err);
-      setError(err.message || "Unknown error occurred");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data.message || "An error occurred");
+        throw err;
+      }
       throw err;
     } finally {
       setLoading(false);
