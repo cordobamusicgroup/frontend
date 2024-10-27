@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, Skeleton, TextField } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { LabelSpecialStoreStatus, LabelStatusChip, VatStatusChip } from "../../../global/atoms/ClientChips";
 import ActionButtonsClient from "../../../global/molecules/ActionsButtonsClient";
@@ -12,6 +12,9 @@ import { useRouter } from "next/navigation";
 import { useClients } from "@/lib/hooks/useClients";
 import routes from "@/lib/routes/routes";
 import { useLabels } from "@/lib/hooks/useLabels";
+import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
+import Loading from "@/app/(portal)/loading";
+import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
 
 interface LabelsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -20,7 +23,7 @@ interface LabelsTableProps {
 const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
   const router = useRouter();
   const web = routes.web;
-  const { labelData = [], labelLoading, deleteLabels, labelError } = useLabels();
+  const { labelData = [], labelFetchLoading, deleteLabels, labelError } = useLabels();
   const { clientData = [], clientLoading, deleteClients, clientError } = useClients();
 
   const gridRef = useRef<any>(null);
@@ -38,35 +41,40 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
     try {
       await deleteLabels([labelId]);
       setNotification({ message: "Label deleted successfully", type: "success" });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setNotification({ message: error.response?.data.message, type: "error" });
-      }
+    } catch (error: any) {
+      const errorMessage = error?.response.data.message || "An error occurred while deleting the client.";
+      setNotification({ message: errorMessage, type: "error" });
     }
   };
 
   useEffect(() => {
     if (labelError) {
-      setNotification({ message: "Failed to load labels", type: "error" });
+      setNotification({ message: labelError, type: "error" });
     }
     if (clientError) {
-      setNotification({ message: "Failed to load client data", type: "error" });
+      setNotification({ message: clientError, type: "error" });
     }
   }, [labelError, clientError, setNotification]);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70, sortable: false, filter: true, resizable: false },
-    { field: "labelName", headerName: "Label Name", width: 200 },
+    { field: "labelName", headerName: "Label Name", width: 400 },
     {
       field: "client",
       headerName: "Client Name",
       width: 300,
-      valueFormatter: (params: any) => {
-        // Encuentra el cliente correspondiente usando el clientId
+      align: "center",
+      cellRenderer: (params: any) => {
+        // Si el valor es "loading", renderiza el componente de React con el spinner
+        if (clientLoading) {
+          return <TableSkeletonLoader />;
+        }
+
         const client = clientData.find((client: any) => client.id === params.data.clientId);
-        return client ? `${client.clientName} (${client.id})` : "Unknown Client"; // Devuelve el nombre o un valor por defecto
+        return client ? `${client.clientName} (${client.id})` : "loading";
       },
     },
+
     {
       field: "labelStatus",
       headerName: "Status",
@@ -139,7 +147,11 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
             resizable: false,
           }}
           animateRows={false}
-          loading={labelLoading}
+          loading={labelFetchLoading}
+          loadingOverlayComponent={LoadingSpinner}
+          loadingOverlayComponentParams={{ size: 30 }}
+          loadingCellRenderer={Skeleton}
+          loadingCellRendererParams={{ height: 25 }}
           suppressMovableColumns={true}
           pagination={true}
           paginationPageSize={20}

@@ -76,10 +76,17 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
   }, [labelData, originalData, reset]);
 
   const onSubmit = async (formData: any) => {
+    // Mapea los datos del formulario a la estructura que espera la API
     const updatedFields = getUpdatedFields(formData, originalData);
 
+    const mappedData = {
+      name: updatedFields.labelName,
+      clientId: updatedFields.clientId,
+      status: updatedFields.labelStatus,
+    };
+
     try {
-      await updateLabel(updatedFields); // Lógica para actualizar el label
+      await updateLabel(mappedData); // Aquí llamas a la API con la estructura correcta
       scrollToTop();
       setSuccessMessage("The label was successfully updated.");
       setApiErrorMessage(null);
@@ -113,7 +120,7 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
 
   const handleErrorClose = () => setErrorOpen(false);
 
-  if (labelLoading || !labelData) {
+  if (!labelData) {
     return <FormSkeletonLoader />;
   }
 

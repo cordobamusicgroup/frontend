@@ -2,8 +2,12 @@ import useSWR, { mutate } from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import routes from "../routes/routes";
+import axios from "axios";
+import { set } from "react-hook-form";
 
 type Label = any; // Replace 'any' with your actual client type
+
+// TODO: #Labels, #Clients : Modificar manejo de errores en los hooks de useClients y useLabels
 
 /**
  * Custom hook to handle client data operations, including fetching, creating, updating, and deleting clients.
@@ -15,6 +19,8 @@ type Label = any; // Replace 'any' with your actual client type
 export const useLabels = (labelId?: string) => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
+  const [labelFetchLoading, setlabelFetchLoading] = useState<boolean>(false); // Estado de carga para el fetch
+  const [labelLoading, setlabelLoading] = useState<boolean>(false); // Estado de carga para create, update, delete
 
   /**
    * Fetcher function to retrieve client data based on whether a specific clientId is provided or a search term is specified.
@@ -24,6 +30,7 @@ export const useLabels = (labelId?: string) => {
    * @throws {Error} - Throws an error if the fetch request fails.
    */
   const fetcher = useCallback(async () => {
+    setlabelFetchLoading(true); // Inicia el estado de carga para el fetch
     try {
       const url = labelId
         ? `${routes.api.labels.root}/${labelId}` // Fetch a specific client by ID
@@ -38,6 +45,8 @@ export const useLabels = (labelId?: string) => {
     } catch (err) {
       setError("Error fetching labels");
       throw err;
+    } finally {
+      setlabelFetchLoading(false); // Termina el estado de carga para el fetch
     }
   }, [apiRequest, labelId]);
 
@@ -67,6 +76,7 @@ export const useLabels = (labelId?: string) => {
   const createLabel = useCallback(
     async (labelData: Label) => {
       setError(null);
+      setlabelLoading(true);
       try {
         const response = await apiRequest({
           url: routes.api.labels.root,
@@ -80,6 +90,8 @@ export const useLabels = (labelId?: string) => {
       } catch (err) {
         setError("Error creating label");
         throw err;
+      } finally {
+        setlabelLoading(false);
       }
     },
     [apiRequest]
@@ -97,6 +109,7 @@ export const useLabels = (labelId?: string) => {
    */
   const updateLabel = useCallback(
     async (labelData: Label) => {
+      setlabelLoading(true);
       if (!labelId) {
         throw new Error("Label ID is required to update label");
       }
@@ -115,6 +128,8 @@ export const useLabels = (labelId?: string) => {
       } catch (err) {
         setError("Error updating label");
         throw err;
+      } finally {
+        setlabelLoading(false);
       }
     },
     [apiRequest, labelId, dataMutate]
@@ -132,6 +147,7 @@ export const useLabels = (labelId?: string) => {
    */
   const deleteLabels = useCallback(
     async (ids: number[]) => {
+      setlabelLoading(true);
       setError(null);
       try {
         await apiRequest({
@@ -144,8 +160,11 @@ export const useLabels = (labelId?: string) => {
         // Revalidate the list of clients
         await mutate("labels");
       } catch (err) {
-        setError("Error deleting labels");
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error deleting client" : "Unknown error occurred";
+        setError(errorMessage);
         throw err;
+      } finally {
+        setlabelLoading(false);
       }
     },
     [apiRequest]
@@ -154,7 +173,8 @@ export const useLabels = (labelId?: string) => {
   return {
     labelData: data, // Client data fetched from the API
     labelError: error || fetchError, // Error message, if any
-    labelLoading: !data && !error, // Loading state: true when data is being fetched
+    labelFetchLoading, // Loading status for fetching data
+    labelLoading,
     createLabel, // Function to create a client
     updateLabel, // Function to update a client
     deleteLabels, // Function to delete clients
