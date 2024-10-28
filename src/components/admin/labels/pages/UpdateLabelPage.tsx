@@ -100,16 +100,13 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
     }
   };
 
-  const handleLabelSubmit = useCallback(
-    handleSubmit(
-      (data) => onSubmit(data),
-      (errors) => {
-        if (Object.keys(errors).length > 0) {
-          setErrorOpen(true);
-        }
+  const handleFormSubmit = handleSubmit(
+    (data) => onSubmit(data),
+    (errors) => {
+      if (Object.keys(errors).length > 0) {
+        setErrorOpen(true);
       }
-    ),
-    [onSubmit]
+    }
   );
 
   const handleInputChange = useCallback(() => setSuccessMessage(null), []);
@@ -129,7 +126,7 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Edit Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleLabelSubmit} color="primary" variant="contained" disabled={labelLoading} startIcon={<CachedOutlined />} endIcon={labelLoading ? <CircularProgress size={20} /> : null}>
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleFormSubmit} color="primary" variant="contained" disabled={labelLoading} startIcon={<CachedOutlined />} endIcon={labelLoading ? <CircularProgress size={20} /> : null}>
           Update Client
         </BasicButton>
       </CustomPageHeader>
@@ -138,7 +135,7 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
       <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
       <FormProvider {...methods}>
-        <LabelFormLayout handleSubmit={handleLabelSubmit} onChange={handleInputChange} loading={labelLoading} />
+        <LabelFormLayout handleSubmit={handleFormSubmit} onChange={handleInputChange} loading={labelLoading} />
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>

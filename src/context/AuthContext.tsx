@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import axios from "axios";
 import routes from "@/lib/routes/routes";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface AuthContextType {
   error: string | null;
@@ -25,43 +25,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { apiRequest } = useApiRequest(); // Hook with SWR and Axios integration
+  const { apiRequest } = useApiRequest();
   const t = useTranslations("pages.auth");
-  const api = routes.api;
-  const web = routes.web;
+  const { api, web } = routes;
 
   const isAuthenticated = Cookies.get("isAuthenticated") === "true";
+  const accessToken = Cookies.get("access_token");
 
   useEffect(() => {
-    // Obtener el token de la cookie
-    const accessToken = Cookies.get("access_token");
-
     if (accessToken) {
-      // Decodificar el token para obtener la fecha de expiración
-      const decodedToken: any = jwtDecode(accessToken); // El tipo `any` debe reemplazarse con la estructura de tu token
-      const expirationTime = decodedToken.exp * 1000; // Convertir exp a milisegundos
-
-      // Calcular el tiempo restante
+      const decodedToken = jwtDecode<JwtPayload>(accessToken);
+      const expirationTime = decodedToken?.exp ? decodedToken.exp * 1000 : 0;
       const timeRemaining = expirationTime - Date.now();
 
-      // Si el token sigue válido, configurar un timeout para el logout
       if (timeRemaining > 0) {
-        const timeoutId = setTimeout(() => {
-          logout(); // Hacer logout cuando el token expire
-        }, timeRemaining);
-
-        // Limpiar el timeout si el componente se desmonta
+        const timeoutId = setTimeout(logout, timeRemaining);
         return () => clearTimeout(timeoutId);
       } else {
-        // Si el token ya ha expirado, hacer logout inmediatamente
         logout();
       }
     }
-  }, []);
+  }, [accessToken]);
 
-  /**
-   * Fetch user data on authentication using the API
-   */
   const fetchUserData = async () => {
     try {
       const response = await apiRequest({
@@ -72,26 +57,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return response;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        logout(); // Opcional, para asegurar que se limpie todo
+        logout();
       }
       throw error;
     }
   };
 
   useSWR(isAuthenticated ? "userData" : null, fetchUserData, {
-    onSuccess: (data) => {
-      dispatch(setUserData(data)); // Store user data in Redux
-    },
-    onError: (error) => {
-      console.error("Error fetching user data:", error);
-    },
+    onSuccess: (data) => dispatch(setUserData(data)),
+    onError: (error) => console.error("Error fetching user data:", error),
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
 
-  /**
-   * Handle user login and store token in cookies
-   */
   const login = async (username: string, password: string) => {
     try {
       const response = await apiRequest({
@@ -101,43 +79,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         requiereAuth: false,
       });
       const { access_token } = response;
-      // Set cookies for authentication
-      Cookies.set("access_token", access_token, { secure: true, sameSite: "Strict", expires: 1 / 24 });
-      Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
-      await mutate("userData"); // Revalidate user data after login
-      router.push(web.portal.overview); // Redirect to the overview page
+      setAuthCookies(access_token);
+      await mutate("userData");
+      router.push(web.portal.overview);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 401) {
-          setError(t("errors.invalidCredentials"));
-        } else if (error.response && error.response.status === 500) {
-          setError(t("errors.internalServerError"));
-        } else if (error.message === "Network Error") {
-          setError(t("errors.networkError"));
-        } else {
-          setError(t("errors.defaultError"));
-        }
-      }
+      handleAuthError(error);
     }
   };
 
-  /**
-   * Handle user logout by clearing cookies and resetting the user state
-   */
   const logout = async () => {
-    await mutate("userData", null, { revalidate: false }); // Clear user data cache
-    dispatch(clearUserData()); // Clear user data from Redux
+    await mutate("userData", null, { revalidate: false });
+    dispatch(clearUserData());
+    clearAuthCookies();
+    router.push(web.login);
+  };
+
+  const setAuthCookies = (token: string) => {
+    Cookies.set("access_token", token, { secure: true, sameSite: "Strict", expires: 1 / 24 });
+    Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
+  };
+
+  const clearAuthCookies = () => {
     Cookies.remove("access_token");
     Cookies.set("isAuthenticated", "false", { secure: true, sameSite: "Strict" });
-    router.push(web.login); // Redirect to login page
+  };
+
+  const handleAuthError = (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+      switch (error.response?.status) {
+        case 401:
+          setError(t("errors.invalidCredentials"));
+          break;
+        case 500:
+          setError(t("errors.internalServerError"));
+          break;
+        default:
+          setError(error.message === "Network Error" ? t("errors.networkError") : t("errors.defaultError"));
+      }
+    }
   };
 
   return <AuthContext.Provider value={{ error, login, logout, setError }}>{children}</AuthContext.Provider>;
 };
 
-/**
- * Custom hook to access authentication context
- */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

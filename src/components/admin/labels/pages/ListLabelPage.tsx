@@ -28,7 +28,7 @@ const LabelsListPage: React.FC = () => {
       <CustomPageHeader background={"#24793B"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Manage Labels</Typography>
         <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleCreateLabel} color="primary" variant="contained" startIcon={<PersonAdd />}>
-          "Create Label"
+          Create Label
         </BasicButton>
       </CustomPageHeader>
 

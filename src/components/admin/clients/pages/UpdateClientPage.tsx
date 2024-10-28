@@ -153,16 +153,13 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
     }
   };
 
-  const handleClientSubmit = useCallback(
-    handleSubmit(
-      (data) => onSubmit(data),
-      (errors) => {
-        if (Object.keys(errors).length > 0) {
-          setErrorOpen(true);
-        }
+  const handleFormSubmit = handleSubmit(
+    (data) => onSubmit(data),
+    (errors) => {
+      if (Object.keys(errors).length > 0) {
+        setErrorOpen(true);
       }
-    ),
-    [onSubmit]
+    }
   );
 
   const handleInputChange = useCallback(() => setSuccessMessage(null), []);
@@ -176,13 +173,13 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   if (!clientData) {
     return <FormSkeletonLoader />;
   }
-  
+
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Edit Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<CachedOutlined />} endIcon={clientLoading ? <LoadingSpinner size={20} /> : null}>
+        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleFormSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<CachedOutlined />} endIcon={clientLoading ? <LoadingSpinner size={20} /> : null}>
           Update Client
         </BasicButton>
       </CustomPageHeader>
@@ -191,7 +188,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
       <Box>{apiErrorMessage && <ErrorBox>{apiErrorMessage}</ErrorBox>}</Box>
 
       <FormProvider {...methods}>
-        <ClientFormLayout handleSubmit={handleClientSubmit} onChange={handleInputChange} />
+        <ClientFormLayout handleSubmit={handleFormSubmit} onChange={handleInputChange} />
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>
