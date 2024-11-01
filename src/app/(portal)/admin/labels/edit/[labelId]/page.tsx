@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Update Label",
 };
 
-export default function EditLabel({ params }: { params: { labelId: string } }) {
+export default async function EditLabel(props: { params: Promise<{ labelId: string }> }) {
+  const params = await props.params;
   return <UpdateLabelPage labelId={params.labelId} />;
 }

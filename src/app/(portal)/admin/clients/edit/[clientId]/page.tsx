@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Update Client",
 };
 
-export default function EditClient({ params }: { params: { clientId: string } }) {
+export default async function EditClient(props: { params: Promise<{ clientId: string }> }) {
+  const params = await props.params;
   return <UpdateClientPage clientId={params.clientId} />;
 }
