@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Box, CircularProgress, Typography, Grid, Paper, useTheme, List, ListItem, ListItemText, Skeleton } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useTranslations } from "next-intl";
 import { AddOutlined, CachedOutlined } from "@mui/icons-material";
 
 import { ClientValidationSchema } from "../utils/ClientValidationSchema";
@@ -35,7 +34,6 @@ const getUpdatedFields = (formData: any, originalData: any) => {
 };
 
 const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
-  const t = useTranslations();
   const theme = useTheme();
   const { clientData, updateClient, clientFetchLoading, clientLoading, clientError } = useClients(clientId);
   const [errorOpen, setErrorOpen] = useState(false);

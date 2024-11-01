@@ -1,13 +1,9 @@
-import { getTranslations } from "next-intl/server";
 import PageOverview from "@/components/global/pages/PageOverview";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: "pages.overview" });
-
-  return {
-    title: t("title"),
-  };
-}
+export const metadata: Metadata = {
+  title: "Overview",
+};
 
 export default function Overview() {
   return <PageOverview />;

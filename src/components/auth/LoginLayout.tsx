@@ -43,7 +43,7 @@ function LoginLayout() {
     >
       <LoginLogo />
       <LoginForm handleSubmit={handleSubmit} loading={loading} />
-      <ErrorModal open={!!error} errorMessage={error || ""} />
+      <ErrorModal open={!!error} onClose={() => setError(null)} errorMessage={error || ""} />
       <FullScreenLoader open={loading} />
     </Box>
   );

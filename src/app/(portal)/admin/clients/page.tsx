@@ -1,14 +1,10 @@
 import React from "react";
-import { getTranslations } from "next-intl/server";
 import ClientListPage from "@/components/admin/clients/pages/ClientListPage";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: "pages.clients" });
-
-  return {
-    title: t("title"),
-  };
-}
+export const metadata: Metadata = {
+  title: "Clients",
+};
 
 export default function ManageClients() {
   return <ClientListPage />;

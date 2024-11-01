@@ -1,19 +1,20 @@
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import RootLayout from "../layout";
+import { CssBaseline } from "@mui/material";
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: "pages.auth" });
-
-  return {
-    title: t("pagetitle"),
-  };
-}
+export const metadata: Metadata = {
+  title: "Authentication",
+};
 
 export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <RootLayout>{children}</RootLayout>;
+  return (
+    <RootLayout>
+      <CssBaseline />
+      {children}
+    </RootLayout>
+  );
 }

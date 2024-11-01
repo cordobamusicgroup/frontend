@@ -56,12 +56,6 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       roles: [Roles.Admin],
       onClick: () => router.push(routes.web.admin.labels.root),
     },
-    {
-      text: "Settings",
-      icon: <SettingsIcon />,
-      roles: [Roles.Admin],
-      onClick: () => router.push(routes.web.admin.clients.root),
-    },
   ];
 
   const filterItemsByRole = <T extends { roles: Roles[] }>(items: T[], role: Roles): T[] => {

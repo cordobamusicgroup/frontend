@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Skeleton, TextField } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
-import { useTranslations } from "next-intl";
+import { Box, Button, IconButton, InputAdornment, Menu, MenuItem, Skeleton, TextField, Typography } from "@mui/material";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "@styles/grid-cmg.css";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useClients } from "@/lib/hooks/useClients";
 import routes from "@/lib/routes/routes";
 import { VatStatusChip } from "@/components/global/atoms/ClientChips";
@@ -15,52 +12,51 @@ import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader
 import { Form } from "react-hook-form";
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 import FullScreenLoader from "@/components/global/molecules/FullScreenLoader";
+import GridTables from "@/components/global/molecules/GridTables";
+import { ClearIcon } from "@mui/x-date-pickers/icons";
+import { MoreVert, Search } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+import { RowSelectedEvent, SelectionChangedEvent } from "@ag-grid-community/core";
+import { AgGridReact } from "ag-grid-react";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
 
-const clientTypeMap: { [key: string]: string } = {
-  PERSON: "clientType.PERSON",
-  BUSINESS: "clientType.BUSINESS",
-};
-
-const clientTaxIdTypeMap: { [key: string]: string } = {
-  COMPANY_NUMBER: "clientTaxIdType.COMPANY_NUMBER",
-  NATIONAL_ID: "clientTaxIdType.NATIONAL_ID",
-  PASSPORT: "clientTaxIdType.PASSPORT",
-  RESIDENT_PERMIT: "clientTaxIdType.RESIDENT_PERMIT",
-  ID_CARD: "clientTaxIdType.ID_CARD",
-  DRIVERS_LICENSE: "clientTaxIdType.DRIVERS_LICENSE",
-};
-
 const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
-  const clientTableIntl = useTranslations("pages.clients.table");
-  const enumsIntl = useTranslations("enums");
   const router = useRouter();
   const web = routes.web;
-  const { clientData = [], clientFetchLoading, deleteClients, clientError } = useClients();
+  const { clientData = [], clientFetchLoading, deleteClients, clientError, clientLoading } = useClients();
+  const gridRef = useRef<AgGridReact>(null);
 
-  const gridRef = useRef<any>(null);
+  const searchTextRef = useRef<HTMLInputElement | null>(null); // Ref para el valor del TextField
   const [quickFilterText, setQuickFilterText] = useState<string>("");
-  const loadingCellRenderer = useCallback(() => <FormSkeletonLoader />, []);
-
-  const onQuickFilterChange = useCallback(() => {
-    gridRef.current!.api.setGridOption("quickFilterText", quickFilterText);
-  }, [quickFilterText]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]); // Almacena las filas seleccionadas
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Controla el menú desplegable
 
   const handleEdit = (client: any): void => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
   };
 
-  // Función para manejar la eliminación de clientes
   const handleDelete = async (clientId: number): Promise<void> => {
     if (await deleteClients([clientId])) {
       setNotification({ message: "Client deleted successfully", type: "success" });
     }
   };
 
-  // Manejo global de errores usando useEffect, observando el estado del error desde el hook
+  const handleBulkDelete = async () => {
+    if (gridRef.current) {
+      // Verificación de existencia de gridRef.current
+      const selectedData = gridRef.current.api.getSelectedRows();
+      const selectedIds = selectedData.map((row) => row.id);
+      if (selectedIds.length && (await deleteClients(selectedIds))) {
+        setNotification({ message: `${selectedIds.length} clients deleted successfully`, type: "success" });
+        setSelectedRows([]);
+        gridRef.current.api.deselectAll(); // Deselecciona después de eliminar
+      }
+    }
+  };
+
   useEffect(() => {
     if (clientError) {
       setNotification({ message: clientError, type: "error" });
@@ -68,39 +64,31 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   }, [clientError, setNotification]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 50, sortable: false, filter: false, resizable: false },
-    { field: "clientName", headerName: clientTableIntl("clientName"), width: 200 },
-    { field: "firstName", headerName: clientTableIntl("firstName"), width: 150 },
-    { field: "lastName", headerName: clientTableIntl("lastName"), width: 150 },
+    { field: "id", headerName: "ID", width: 80, sortable: false, filter: false, resizable: false },
+    { field: "clientName", headerName: "Client Name", width: 200 },
+    { field: "firstName", headerName: "First Name", width: 150 },
+    { field: "lastName", headerName: "Last Name", width: 150 },
     {
       field: "type",
-      headerName: clientTableIntl("type"),
+      headerName: "Type",
       width: 100,
-      valueFormatter: (params: any) => {
-        const key = clientTypeMap[params.value] || params.value;
-        return enumsIntl(key);
-      },
     },
     {
       field: "taxIdType",
-      headerName: clientTableIntl("taxIdType"),
+      headerName: "Tax ID Type",
       width: 150,
-      valueFormatter: (params: any) => {
-        const key = clientTaxIdTypeMap[params.value] || params.value;
-        return enumsIntl(key);
-      },
     },
-    { field: "taxId", headerName: clientTableIntl("taxId"), width: 180 },
+    { field: "taxId", headerName: "Tax ID", width: 180 },
     {
       field: "vatRegistered",
-      headerName: clientTableIntl("vatRegistered"),
+      headerName: "VAT Registered",
       width: 180,
       cellRenderer: (params: any) => <VatStatusChip isRegistered={params.value} />,
     },
-    { field: "vatNumber", headerName: clientTableIntl("vatNumber"), width: 180 },
+    { field: "vatNumber", headerName: "VAT Number", width: 180 },
     {
       field: "actions",
-      headerName: clientTableIntl("actions"),
+      headerName: "Actions",
       width: 150,
       minWidth: 100,
       sortable: false,
@@ -123,39 +111,52 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     vatNumber: client.vatId,
   }));
 
+  const applyFilter = () => {
+    setQuickFilterText(searchTextRef.current?.value || ""); // Aplica el filtro usando el valor del ref
+  };
+
+  const resetFilter = () => {
+    if (searchTextRef.current) {
+      searchTextRef.current.value = ""; // Limpia el valor visible del TextField sin cambiar el estado
+    }
+    setQuickFilterText(""); // Restablece el filtro
+  };
+
+  // Abre el menú de acciones
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Cierra el menú de acciones
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Box sx={{ height: 600, width: "100%" }}>
       <Box mt={2} mb={2}>
         <TextField
-          fullWidth
+          size="medium" // Tamaño más compacto
           variant="outlined"
-          placeholder="Search" // Traducción adecuada según corresponda
-          value={quickFilterText} // Vincular con el estado
-          onChange={(e) => {
-            setQuickFilterText(e.target.value); // Actualiza el estado al escribir
-            onQuickFilterChange(); // Aplica el filtro cuando cambia
+          placeholder="Search"
+          inputRef={searchTextRef}
+          onKeyDown={(e) => e.key === "Enter" && applyFilter()} // Aplica filtro al presionar Enter
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={applyFilter} aria-label="search">
+                  <Search />
+                </IconButton>
+                <IconButton onClick={resetFilter} aria-label="clear">
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
+        <Button onClick={handleBulkDelete}>Delete</Button>
       </Box>
-      <div className="ag-grid-theme-builder" style={{ height: "600px", width: "100%" }}>
-        <AgGridReact
-          ref={gridRef}
-          columnDefs={columns}
-          rowData={rowData}
-          defaultColDef={{
-            sortable: true,
-            filter: true,
-            resizable: false,
-          }}
-          animateRows={false}
-          loading={clientFetchLoading}
-          loadingOverlayComponent={LoadingSpinner}
-          loadingOverlayComponentParams={{ size: 30 }}
-          suppressMovableColumns={true}
-          pagination={true}
-          paginationPageSize={20}
-        />
-      </div>
+      <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={clientFetchLoading || clientLoading} quickFilterText={quickFilterText} />
     </Box>
   );
 };

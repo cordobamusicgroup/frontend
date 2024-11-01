@@ -3,7 +3,6 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useTranslations } from "next-intl";
 
 interface ErrorModalProps {
   open: boolean;
@@ -26,19 +25,17 @@ const style = {
 };
 
 const ErrorModal: React.FC<ErrorModalProps> = ({ open, onClose, errorMessage }) => {
-  const t = useTranslations();
-
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2" color="error">
-          {t("modals.error.title")}
+          Something went wrong
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           {errorMessage}
         </Typography>
         <Button onClick={onClose} sx={{ mt: 2 }} variant="contained" color="error">
-          {t("modals.error.closeButton")}
+          Close
         </Button>
       </Box>
     </Modal>

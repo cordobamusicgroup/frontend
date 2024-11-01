@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { AddOutlined, PersonAdd } from "@mui/icons-material";
@@ -15,7 +14,6 @@ import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 
 const LabelsListPage: React.FC = () => {
   const router = useRouter();
-  const t = useTranslations("pages.labels");
 
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
 

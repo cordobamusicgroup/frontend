@@ -1,38 +1,22 @@
 import useSWR, { mutate } from "swr";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import routes from "../routes/routes";
 import axios from "axios";
 
-type Client = any; // Replace 'any' with your actual client type
+type Client = any;
 
-/**
- * Custom hook to handle client data operations, including fetching, creating, updating, and deleting clients.
- *
- * @param {string} [clientId] - Optional client ID to fetch a specific client. If not provided, the hook will fetch all clients.
- *
- * @returns {object} - An object containing the client data, error status, loading status, and methods to create, update, and delete clients.
- */
 export const useClients = (clientId?: string) => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
-  const [clientFetchLoading, setClientFetchLoading] = useState<boolean>(false); // Estado de carga para el fetch
-  const [clientLoading, setClientLoading] = useState<boolean>(false); // Estado de carga para create, update, delete
+  const [clientFetchLoading, setClientFetchLoading] = useState<boolean>(false);
+  const [clientLoading, setClientLoading] = useState<boolean>(false);
 
-  /**
-   * Fetcher function to retrieve client data based on whether a specific clientId is provided or a search term is specified.
-   *
-   * @returns {Promise<any>} - Returns the client data from the API.
-   *
-   * @throws {Error} - Throws an error if the fetch request fails.
-   */
   const fetcher = useCallback(async () => {
-    setClientFetchLoading(true); // Inicia el estado de carga para el fetch
+    setError(null); // Limpiar error al iniciar
+    setClientFetchLoading(true);
     try {
-      const url = clientId
-        ? `${routes.api.clients.root}/${clientId}` // Fetch a specific client by ID
-        : routes.api.clients.root; // Fetch all clients
-
+      const url = clientId ? `${routes.api.clients.root}/${clientId}` : routes.api.clients.root;
       const response = await apiRequest({
         url,
         method: "get",
@@ -44,37 +28,23 @@ export const useClients = (clientId?: string) => {
       setError(errorMessage);
       throw err;
     } finally {
-      setClientFetchLoading(false); // Termina el estado de carga para el fetch
+      setClientFetchLoading(false);
     }
   }, [apiRequest, clientId]);
 
-  /**
-   * SWR hook to handle caching and data fetching.
-   * It fetches data using the provided fetcher and manages cache and revalidation automatically.
-   */
   const {
     data,
     error: fetchError,
     mutate: dataMutate,
   } = useSWR<Client | Client[]>(clientId ? `client-${clientId}` : "clients", fetcher, {
-    revalidateOnFocus: false, // Disable revalidation when window regains focus
-    shouldRetryOnError: false, // Disable automatic retries on error
+    revalidateOnFocus: false,
+    shouldRetryOnError: false,
   });
 
-  /**
-   * Function to create a new client by sending a POST request to the API.
-   * After a successful creation, the client list is revalidated.
-   *
-   * @param {Client} clientData - The data of the client to be created.
-   *
-   * @returns {Promise<any>} - Returns the newly created client data.
-   *
-   * @throws {Error} - Throws an error if the creation request fails.
-   */
   const createClient = useCallback(
     async (clientData: Client) => {
-      setClientLoading(true); // Inicia el estado de carga para la creación
-      setError(null);
+      setClientLoading(true);
+      setError(null); // Limpiar error al iniciar
       try {
         const response = await apiRequest({
           url: routes.api.clients.root,
@@ -82,8 +52,6 @@ export const useClients = (clientId?: string) => {
           requiereAuth: true,
           data: clientData,
         });
-
-        // Revalidate the list of clients
         await mutate("clients");
         return response;
       } catch (err) {
@@ -91,29 +59,19 @@ export const useClients = (clientId?: string) => {
         setError(errorMessage);
         throw err;
       } finally {
-        setClientLoading(false); // Termina el estado de carga para la creación
+        setClientLoading(false);
       }
     },
     [apiRequest]
   );
 
-  /**
-   * Function to update an existing client by sending a PUT request to the API.
-   * Requires a valid clientId. After a successful update, the client data is revalidated.
-   *
-   * @param {Client} clientData - The updated data of the client.
-   *
-   * @returns {Promise<any>} - Returns the updated client data.
-   *
-   * @throws {Error} - Throws an error if the update request fails or if no clientId is provided.
-   */
   const updateClient = useCallback(
     async (clientData: Client) => {
       if (!clientId) {
         throw new Error("Client ID is required to update client");
       }
-      setClientLoading(true); // Inicia el estado de carga para la actualización
-      setError(null);
+      setClientLoading(true);
+      setError(null); // Limpiar error al iniciar
       try {
         const response = await apiRequest({
           url: `${routes.api.clients.root}/${clientId}`,
@@ -121,8 +79,6 @@ export const useClients = (clientId?: string) => {
           requiereAuth: true,
           data: clientData,
         });
-
-        // Revalidate the client data
         await dataMutate();
         return response;
       } catch (err) {
@@ -130,24 +86,15 @@ export const useClients = (clientId?: string) => {
         setError(errorMessage);
         throw err;
       } finally {
-        setClientLoading(false); // Termina el estado de carga para la actualización
+        setClientLoading(false);
       }
     },
     [apiRequest, clientId, dataMutate]
   );
 
-  /**
-   * Function to delete multiple clients by sending a DELETE request to the API.
-   * After successful deletion, the client list is revalidated.
-   *
-   * @param {number[]} ids - Array of client IDs to be deleted.
-   *
-   * @returns {Promise<boolean>} - Returns true on success, false on error.
-   *
-   * @throws {Error} - Throws an error if the deletion request fails.
-   */
   const deleteClients = async (ids: number[]): Promise<boolean> => {
-    setClientLoading(true); // Inicia el estado de carga para la eliminación
+    setClientLoading(true);
+    setError(null); // Limpiar error al iniciar
     try {
       await apiRequest({
         url: routes.api.clients.root,
@@ -155,25 +102,25 @@ export const useClients = (clientId?: string) => {
         requiereAuth: true,
         data: { ids },
       });
-      await mutate("clients"); // Revalidar lista de clientes tras eliminación
-      return true; // Retorna éxito
+      await mutate("clients");
+      return true;
     } catch (err) {
       const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error deleting clients" : "Unknown error occurred";
-      setError(errorMessage); // Guardamos el error en el estado local
-      return false; // Error
+      setError(errorMessage);
+      return false;
     } finally {
-      setClientLoading(false); // Termina el estado de carga para la eliminación
+      setClientLoading(false);
     }
   };
 
   return {
-    clientData: data, // Client data fetched from the API
-    clientError: error || fetchError, // Error message, if any
-    clientFetchLoading, // Estado de carga para fetch (obtener datos)
-    clientLoading, // Estado de carga para create, update, delete
-    createClient, // Function to create a client
-    updateClient, // Function to update a client
-    deleteClients, // Function to delete clients
-    mutate: dataMutate, // Expose mutate to manually trigger revalidation
+    clientData: data,
+    clientError: error,
+    clientFetchLoading,
+    clientLoading,
+    createClient,
+    updateClient,
+    deleteClients,
+    mutate: dataMutate,
   };
 };

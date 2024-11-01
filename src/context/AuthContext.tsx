@@ -6,7 +6,6 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { useTranslations } from "next-intl";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import axios from "axios";
 import routes from "@/lib/routes/routes";
@@ -26,14 +25,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
-  const t = useTranslations("pages.auth");
   const { api, web } = routes;
-
-  const isAuthenticated = Cookies.get("isAuthenticated") === "true";
-  const accessToken = Cookies.get("access_token");
+  const [isClient, setIsClient] = useState(false); // Nuevo estado para manejar la carga del cliente
 
   useEffect(() => {
-    if (accessToken) {
+    setIsClient(true); // Cambia a true cuando el componente está montado en el cliente
+  }, []);
+
+  const isAuthenticated = isClient && Cookies.get("isAuthenticated") === "true";
+  const accessToken = isClient ? Cookies.get("access_token") : null;
+
+  useEffect(() => {
+    if (isClient && accessToken) {
       const decodedToken = jwtDecode<JwtPayload>(accessToken);
       const expirationTime = decodedToken?.exp ? decodedToken.exp * 1000 : 0;
       const timeRemaining = expirationTime - Date.now();
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     }
-  }, [accessToken]);
+  }, [accessToken, isClient]);
 
   const fetchUserData = async () => {
     try {
@@ -108,13 +111,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (axios.isAxiosError(error)) {
       switch (error.response?.status) {
         case 401:
-          setError(t("errors.invalidCredentials"));
+          setError("Invalid credentials");
           break;
         case 500:
-          setError(t("errors.internalServerError"));
+          setError("Invalid credentials");
           break;
         default:
-          setError(error.message === "Network Error" ? t("errors.networkError") : t("errors.defaultError"));
+          setError("Invalid credentials");
       }
     }
   };
