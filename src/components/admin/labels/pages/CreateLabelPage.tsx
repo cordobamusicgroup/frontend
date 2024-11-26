@@ -3,10 +3,8 @@ import React, { useState } from "react";
 import { Box, CircularProgress, Typography, List, ListItem, ListItemText, useTheme, Grid, Paper } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
 import axios from "axios";
-
 import { useLabels } from "@/lib/hooks/useLabels";
 import BackPageButton from "@/components/global/atoms/BackPageButton";
 import BasicButton from "@/components/global/atoms/BasicButton";
@@ -17,9 +15,7 @@ import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import LabelFormLayout from "../organisms/LabelFormLayout";
 import { LabelValidationSchema } from "../utils/LabelValidationSchema";
 
-
 const CreateLabelPage: React.FC = () => {
-  const t = useTranslations();
   const theme = useTheme();
   const { createLabel, labelLoading } = useLabels(); // Usamos el hook combinado
 

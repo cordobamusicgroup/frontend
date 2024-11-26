@@ -3,9 +3,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, T
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import useSWRMutation from "swr/mutation";
-import routes from "@/lib/routes/routes";
-import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -16,7 +14,6 @@ interface IFormInput {
   email: string;
 }
 
-// Validación con Yup (solo campo de email)
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email format").required("Email is required"),
 });
@@ -24,23 +21,8 @@ const validationSchema = Yup.object().shape({
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ open, onClose }) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  // Utiliza el hook useApiRequest
-  const { apiRequest } = useApiRequest();
-
-  // SWR Mutation para manejar la solicitud de forgot password
-  const forgotPasswordRequest = async (url: string, { arg }: { arg: IFormInput }) => {
-    const { email } = arg;
-    const response = await apiRequest({
-      url,
-      method: "post",
-      data: { email },
-      requiereAuth: false,
-    });
-    return response;
-  };
-
-  const { trigger, isMutating } = useSWRMutation(routes.api.auth.forgotPassword, forgotPasswordRequest);
+  const [isLoading, setIsLoading] = useState(false);
+  const { forgotPassword } = useAuth();
 
   const {
     register,
@@ -53,12 +35,15 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ open, onClose }) => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setErrorMessage(null);
     setSuccessMessage(null);
+    setIsLoading(true);
 
     try {
-      await trigger(data); // Llamar la función de SWR Mutation
+      await forgotPassword(data.email);
       setSuccessMessage("If a user account exists with the entered email, we will send an email with further instructions to reset the password.");
     } catch (error) {
       setErrorMessage("An error occurred while trying to send the reset email. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +62,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ open, onClose }) => {
             error={!!errors.email}
             helperText={errors.email?.message}
             autoFocus
-            disabled={isMutating} // Deshabilitar mientras la solicitud está en progreso
+            disabled={isLoading} // Deshabilitar mientras la solicitud está en progreso
           />
           {successMessage && (
             <Typography variant="body2" color="success" align="center" sx={{ mt: 2 }}>
@@ -93,8 +78,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ open, onClose }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isMutating}>
-          {isMutating ? "Sending..." : "Submit"}
+        <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isLoading}>
+          {isLoading ? "Sending..." : "Submit"}
         </Button>
       </DialogActions>
     </Dialog>

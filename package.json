@@ -15,8 +15,8 @@
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
-    "@mui/x-data-grid": "^7.22.0",
-    "@mui/x-date-pickers": "^7.22.0",
+    "@mui/x-data-grid": "^7.22.2",
+    "@mui/x-date-pickers": "^7.22.2",
     "@reduxjs/toolkit": "^2.3.0",
     "@types/js-cookie": "^3.0.6",
     "ag-grid-react": "^32.3.2",
@@ -25,25 +25,25 @@
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
-    "next": "^15.0.2",
+    "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.53.1",
+    "react-hook-form": "^7.53.2",
     "react-redux": "^9.1.2",
     "redux-persist": "^6.0.0",
     "swr": "^2.2.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
-    "@types/bun": "^1.1.12",
+    "@eslint/js": "^9.14.0",
+    "@types/bun": "^1.1.13",
     "@types/react": "^18.3.12",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.4",
     "eslint-plugin-react": "^7.37.2",
-    "globals": "^15.11.0",
+    "globals": "^15.12.0",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.12.2"
+    "typescript-eslint": "^8.13.0"
   }
 }

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Box, CircularProgress, Typography, List, ListItem, ListItemText, useTheme, Grid, Paper } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useTranslations } from "next-intl";
 import { AddOutlined } from "@mui/icons-material";
 
 
@@ -19,7 +18,6 @@ import { useClients } from "@/lib/hooks/useClients";
 import { ClientValidationSchema } from "../utils/ClientValidationSchema";
 
 const CreateClientPage: React.FC = () => {
-  const t = useTranslations();
   const theme = useTheme();
   const { createClient, clientLoading } = useClients(); // Usamos el hook combinado
 

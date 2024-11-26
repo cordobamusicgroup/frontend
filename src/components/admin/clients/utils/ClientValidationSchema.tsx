@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { typeOptions, taxIdTypeOptions, contractTypeOptions, contractStatusOptions } from "@/constants/backend.enums";
-import { oneOfOptions, requireIf, transformDate, isValidDayjs, isAfterField, isFutureDate } from "@/components/global/utils/yup.util";
+import { oneOfOptions, requireIf, transformDate, isValidDayjs, isAfterField, isFutureDate, isNotEmpty } from "@/components/global/utils/yup.util";
 
 /**
  * Validation schema for client and contract-related data.
@@ -24,10 +24,7 @@ export const ClientValidationSchema = Yup.object({
   state: Yup.string().required("State is required"),
 
   // Validating and transforming countryId
-  countryId: Yup.number()
-    .transform((value, originalValue) => (originalValue === "" ? null : value))
-    .nullable()
-    .required("Country is required"),
+  countryId: Yup.mixed().nullable().test("is-not-empty", "Country is required", isNotEmpty).required(),
 
   zip: Yup.string().required("Zip is required"),
   contractUUID: Yup.string().nullable(),

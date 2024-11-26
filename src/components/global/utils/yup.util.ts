@@ -11,6 +11,15 @@ export const isValidDayjs = (value: any) => {
 };
 
 /**
+ * Validates if a value is not null, undefined, or an empty string.
+ * @param {any} value - The value to be checked.
+ * @returns {boolean} - Returns true if the value is not null, undefined, or an empty string.
+ */
+export const isNotEmpty = (value: any) => {
+  return value !== null && value !== undefined && value !== "";
+};
+
+/**
  * Checks if the date is in the future (after today).
  * @param {any} value - The date to be checked.
  * @returns {boolean} - Returns true if the date is in the future, otherwise false.

@@ -1,134 +1,80 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import useSWR, { mutate } from "swr";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
-import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import React, { createContext, useContext, ReactNode, useEffect, useState } from "react";
 import { useAppDispatch } from "@/lib/redux/hooks";
-import axios from "axios";
+import { setUserData, clearUserData } from "@/lib/redux/slices/userSlice";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { useRouter } from "next/navigation";
 import routes from "@/lib/routes/routes";
+import useSWR from "swr";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import Cookies from "js-cookie";
+import { useAuth } from "@/lib/hooks/useAuth"; // Agregar esta importación
 
 interface AuthContextType {
-  error: string | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  isInitialized: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({ isInitialized: false });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
-  const { api, web } = routes;
-  const [isClient, setIsClient] = useState(false); // Nuevo estado para manejar la carga del cliente
+  const { logout } = useAuth(); // Usar logout del hook
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Cambia a true cuando el componente está montado en el cliente
+    setIsClient(true);
   }, []);
 
-  const isAuthenticated = isClient && Cookies.get("isAuthenticated") === "true";
-  const accessToken = isClient ? Cookies.get("access_token") : null;
-
+  // Validación de expiración del token
   useEffect(() => {
-    if (isClient && accessToken) {
-      const decodedToken = jwtDecode<JwtPayload>(accessToken);
-      const expirationTime = decodedToken?.exp ? decodedToken.exp * 1000 : 0;
-      const timeRemaining = expirationTime - Date.now();
+    if (isClient) {
+      const token = Cookies.get("access_token");
+      if (token) {
+        const decodedToken = jwtDecode<JwtPayload>(token);
+        const expirationTime = decodedToken?.exp ? decodedToken.exp * 1000 : 0;
+        const timeRemaining = expirationTime - Date.now();
 
-      if (timeRemaining > 0) {
-        const timeoutId = setTimeout(logout, timeRemaining);
-        return () => clearTimeout(timeoutId);
-      } else {
-        logout();
+        if (timeRemaining > 0) {
+          const timeoutId = setTimeout(logout, timeRemaining);
+          return () => clearTimeout(timeoutId);
+        } else {
+          logout();
+        }
       }
     }
-  }, [accessToken, isClient]);
+  }, [isClient, logout]);
 
+  // Carga inicial del usuario
   const fetchUserData = async () => {
     try {
       const response = await apiRequest({
-        url: api.auth.me,
+        url: routes.api.auth.me,
         method: "get",
         requiereAuth: true,
       });
       return response;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        logout();
-      }
+      logout();
       throw error;
     }
   };
 
-  useSWR(isAuthenticated ? "userData" : null, fetchUserData, {
-    onSuccess: (data) => dispatch(setUserData(data)),
-    onError: (error) => console.error("Error fetching user data:", error),
+  const { data: userData } = useSWR("initialUserData", fetchUserData, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
 
-  const login = async (username: string, password: string) => {
-    try {
-      const response = await apiRequest({
-        url: api.auth.login,
-        method: "post",
-        data: { username, password },
-        requiereAuth: false,
-      });
-      const { access_token } = response;
-      setAuthCookies(access_token);
-      await mutate("userData");
-      router.push(web.portal.overview);
-    } catch (error) {
-      handleAuthError(error);
+  useEffect(() => {
+    if (userData) {
+      dispatch(setUserData(userData));
     }
-  };
+  }, [userData, dispatch]);
 
-  const logout = async () => {
-    await mutate("userData", null, { revalidate: false });
-    dispatch(clearUserData());
-    clearAuthCookies();
-    router.push(web.login);
-  };
-
-  const setAuthCookies = (token: string) => {
-    Cookies.set("access_token", token, { secure: true, sameSite: "Strict", expires: 1 / 24 });
-    Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
-  };
-
-  const clearAuthCookies = () => {
-    Cookies.remove("access_token");
-    Cookies.set("isAuthenticated", "false", { secure: true, sameSite: "Strict" });
-  };
-
-  const handleAuthError = (error: unknown) => {
-    if (axios.isAxiosError(error)) {
-      switch (error.response?.status) {
-        case 401:
-          setError("Invalid credentials");
-          break;
-        case 500:
-          setError("Invalid credentials");
-          break;
-        default:
-          setError("Invalid credentials");
-      }
-    }
-  };
-
-  return <AuthContext.Provider value={{ error, login, logout, setError }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isInitialized: true }}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+export const useAuthContext = () => {
+  return useContext(AuthContext);
 };

@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Skeleton, TextField } from "@mui/material";
+import { Box, Skeleton, TextField, InputAdornment, IconButton } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { LabelSpecialStoreStatus, LabelStatusChip, VatStatusChip } from "../../../global/atoms/ClientChips";
 import ActionButtonsClient from "../../../global/molecules/ActionsButtonsClient";
-import { useTranslations } from "next-intl";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "@styles/grid-cmg.css";
@@ -15,6 +14,11 @@ import { useLabels } from "@/lib/hooks/useLabels";
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 import Loading from "@/app/(portal)/loading";
 import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
+import useQuickFilter from "@/lib/hooks/useQuickFilter";
+import Search from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
+import GridTables from "@/components/global/molecules/GridTables";
 
 interface LabelsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -27,12 +31,7 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
   const { clientData = [], clientLoading, deleteClients, clientError } = useClients();
 
   const gridRef = useRef<any>(null);
-  const [quickFilterText, setQuickFilterText] = useState<string>("");
-
-  const onQuickFilterChange = useCallback(() => {
-    gridRef.current!.api.setGridOption("quickFilterText", quickFilterText);
-  }, [quickFilterText]);
-
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
   const handleEdit = (label: any): void => {
     router.push(`${web.admin.labels.edit}/${label.id}`);
   };
@@ -124,39 +123,8 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
 
   return (
     <Box sx={{ height: 600, width: "100%" }}>
-      <Box mt={2} mb={2}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Search" // Traducción adecuada según corresponda
-          value={quickFilterText} // Vincular con el estado
-          onChange={(e) => {
-            setQuickFilterText(e.target.value); // Actualiza el estado al escribir
-            onQuickFilterChange(); // Aplica el filtro cuando cambia
-          }}
-        />
-      </Box>
-      <div className="ag-grid-theme-builder" style={{ height: "600px", width: "100%" }}>
-        <AgGridReact
-          ref={gridRef}
-          columnDefs={columns}
-          rowData={rowData}
-          defaultColDef={{
-            sortable: true,
-            filter: true,
-            resizable: false,
-          }}
-          animateRows={false}
-          loading={labelFetchLoading}
-          loadingOverlayComponent={LoadingSpinner}
-          loadingOverlayComponentParams={{ size: 30 }}
-          loadingCellRenderer={Skeleton}
-          loadingCellRendererParams={{ height: 25 }}
-          suppressMovableColumns={true}
-          pagination={true}
-          paginationPageSize={20}
-        />
-      </div>
+      <SearchBoxTable searchTextRef={searchTextRef} applyFilter={applyFilter} resetFilter={resetFilter} />
+      <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={labelFetchLoading} quickFilterText={quickFilterText} />
     </Box>
   );
 };

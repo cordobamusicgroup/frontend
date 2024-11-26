@@ -18,6 +18,8 @@ import { MoreVert, Search } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { RowSelectedEvent, SelectionChangedEvent } from "@ag-grid-community/core";
 import { AgGridReact } from "ag-grid-react";
+import useQuickFilter from "@/lib/hooks/useQuickFilter";
+import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -29,11 +31,8 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const { clientData = [], clientFetchLoading, deleteClients, clientError, clientLoading } = useClients();
   const gridRef = useRef<AgGridReact>(null);
 
-  const searchTextRef = useRef<HTMLInputElement | null>(null); // Ref para el valor del TextField
-  const [quickFilterText, setQuickFilterText] = useState<string>("");
-  const [selectedRows, setSelectedRows] = useState<any[]>([]); // Almacena las filas seleccionadas
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Controla el menú desplegable
-
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
+  const [selectedRows, setSelectedRows] = useState<any[]>([]); // Almacena las filas seleccionadas para eliminar TODO
   const handleEdit = (client: any): void => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
   };
@@ -111,51 +110,9 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     vatNumber: client.vatId,
   }));
 
-  const applyFilter = () => {
-    setQuickFilterText(searchTextRef.current?.value || ""); // Aplica el filtro usando el valor del ref
-  };
-
-  const resetFilter = () => {
-    if (searchTextRef.current) {
-      searchTextRef.current.value = ""; // Limpia el valor visible del TextField sin cambiar el estado
-    }
-    setQuickFilterText(""); // Restablece el filtro
-  };
-
-  // Abre el menú de acciones
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  // Cierra el menú de acciones
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
     <Box sx={{ height: 600, width: "100%" }}>
-      <Box mt={2} mb={2}>
-        <TextField
-          size="medium" // Tamaño más compacto
-          variant="outlined"
-          placeholder="Search"
-          inputRef={searchTextRef}
-          onKeyDown={(e) => e.key === "Enter" && applyFilter()} // Aplica filtro al presionar Enter
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={applyFilter} aria-label="search">
-                  <Search />
-                </IconButton>
-                <IconButton onClick={resetFilter} aria-label="clear">
-                  <ClearIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button onClick={handleBulkDelete}>Delete</Button>
-      </Box>
+      <SearchBoxTable searchTextRef={searchTextRef} applyFilter={applyFilter} resetFilter={resetFilter} />
       <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={clientFetchLoading || clientLoading} quickFilterText={quickFilterText} />
     </Box>
   );
