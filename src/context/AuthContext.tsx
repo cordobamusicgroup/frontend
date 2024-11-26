@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({ isInitialized: false });
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
-  const { logout, fetchUserData } = useAuth(); // Usar logout y fetchUserData del hook
+  const { logout, fetchUserData, isAuthenticated } = useAuth(); // Usar logout, fetchUserData e isAuthenticated del hook
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -50,13 +50,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: userData } = useSWR("initialUserData", fetchUserData, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
+    isPaused: () => !isAuthenticated,
   });
 
   useEffect(() => {
-    if (userData) {
+    if (isAuthenticated && userData) {
       dispatch(setUserData(userData));
     }
-  }, [userData, dispatch]);
+  }, [userData, isAuthenticated, dispatch]);
 
   return <AuthContext.Provider value={{ isInitialized: true }}>{children}</AuthContext.Provider>;
 };
