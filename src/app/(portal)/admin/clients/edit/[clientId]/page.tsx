@@ -1,5 +1,4 @@
 import React from "react";
-import { getTranslations } from "next-intl/server";
 import UpdateClientPage from "@/components/admin/clients/pages/UpdateClientPage";
 import { Metadata } from "next";
 
