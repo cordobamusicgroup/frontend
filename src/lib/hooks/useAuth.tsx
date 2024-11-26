@@ -33,6 +33,20 @@ export const useAuth = () => {
     }
   };
 
+  const fetchUserData = async () => {
+    try {
+      const response = await apiRequest({
+        url: api.auth.me,
+        method: "get",
+        requiereAuth: true,
+      });
+      dispatch(setUserData(response));
+    } catch (error) {
+      logout();
+      throw error;
+    }
+  };
+
   const login = async (username: string, password: string) => {
     try {
       const response = await apiRequest({
@@ -43,6 +57,7 @@ export const useAuth = () => {
       });
       const { access_token } = response;
       setAuthCookies(access_token);
+      await fetchUserData();
       router.push(web.portal.overview);
     } catch (error) {
       handleAuthError(error);
@@ -79,5 +94,6 @@ export const useAuth = () => {
     logout,
     isAuthenticated,
     forgotPassword,
+    fetchUserData,
   };
 };

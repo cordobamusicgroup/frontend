@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType>({ isInitialized: false });
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
-  const { logout } = useAuth(); // Usar logout del hook
+  const { logout, fetchUserData } = useAuth(); // Usar logout y fetchUserData del hook
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -47,20 +47,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [isClient, logout]);
 
   // Carga inicial del usuario
-  const fetchUserData = async () => {
-    try {
-      const response = await apiRequest({
-        url: routes.api.auth.me,
-        method: "get",
-        requiereAuth: true,
-      });
-      return response;
-    } catch (error) {
-      logout();
-      throw error;
-    }
-  };
-
   const { data: userData } = useSWR("initialUserData", fetchUserData, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
