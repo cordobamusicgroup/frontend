@@ -52,7 +52,7 @@ const UserMenu: React.FC = () => {
           {userData ? (
             <>
               <Typography variant="body1">{userData.username}</Typography>
-              <Typography variant="body2">Client ID: {userData.id}</Typography>
+              <Typography variant="body2">Client ID: {userData.clientId || "Unknown"}</Typography>
             </>
           ) : (
             <LoadingSpinner size={25} />

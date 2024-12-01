@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ag-grid-community/core": "^32.3.2",
+    "@ag-grid-community/infinite-row-model": "^32.3.3",
+    "@ag-grid-community/styles": "^32.3.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@hookform/resolvers": "^3.9.1",

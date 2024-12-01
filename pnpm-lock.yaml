@@ -8,6 +8,12 @@ dependencies:
   '@ag-grid-community/core':
     specifier: ^32.3.2
     version: 32.3.2
+  '@ag-grid-community/infinite-row-model':
+    specifier: ^32.3.3
+    version: 32.3.3
+  '@ag-grid-community/styles':
+    specifier: ^32.3.3
+    version: 32.3.3
   '@emotion/react':
     specifier: ^11.13.3
     version: 11.13.3(@types/react@18.3.12)(react@18.3.1)
@@ -120,6 +126,24 @@ packages:
     dependencies:
       ag-charts-types: 10.3.1
       tslib: 2.8.1
+    dev: false
+
+  /@ag-grid-community/core@32.3.3:
+    resolution: {integrity: sha512-JMr5ahDjjl+pvQbBM1/VrfVFlioCVnMl1PKWc6MC1ENhpXT1+CPQdfhUEUw2VytOulQeQ4eeP0pFKPuBZ5Jn2g==}
+    dependencies:
+      ag-charts-types: 10.3.3
+      tslib: 2.8.1
+    dev: false
+
+  /@ag-grid-community/infinite-row-model@32.3.3:
+    resolution: {integrity: sha512-q1R8gW/JhyjctiMzQcQWed0at8JHHCckoeT1XuD3KSEEKk1+x6fiRLbio05maHkIKYpSaXLLr2w7xEhSgiyk6g==}
+    dependencies:
+      '@ag-grid-community/core': 32.3.3
+      tslib: 2.8.1
+    dev: false
+
+  /@ag-grid-community/styles@32.3.3:
+    resolution: {integrity: sha512-QAJc1CPbmFsAAq5M/8r0IOm8HL4Fb3eVK6tZXKzV9zibIereBjUwvvJRaSJa8iwtTlgxCtaULAQyE2gJcctphA==}
     dev: false
 
   /@alloc/quick-lru@5.2.0:
@@ -1713,6 +1737,10 @@ packages:
 
   /ag-charts-types@10.3.1:
     resolution: {integrity: sha512-oZvu9vJLk6lmzaYi0TmVVmHFZJpVNFziU0bnllx4wR3muXCmnxz5LouKIZ8CYnNiC7VO5HmHNlFu+0DmEO5zxg==}
+    dev: false
+
+  /ag-charts-types@10.3.3:
+    resolution: {integrity: sha512-8rmyquaTkwfP4Lzei/W/cbkq9wwEl8+grIo3z97mtxrMIXh9sHJK1oJipd/u08MmBZrca5Jjtn5F1+UNPu/4fQ==}
     dev: false
 
   /ag-grid-community@32.3.2:

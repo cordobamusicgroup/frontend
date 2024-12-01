@@ -16,6 +16,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
@@ -113,6 +114,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetPassword = async (token: string, newPassword: string) => {
+    try {
+      const response = await apiRequest({
+        url: api.auth.resetPassword,
+        method: "post",
+        data: { token, newPassword },
+        requiereAuth: false,
+      });
+      return response;
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
+    }
+  };
+
   const setAuthCookies = (token: string) => {
     Cookies.set("access_token", token, { secure: true, sameSite: "Strict", expires: 1 / 24 });
     Cookies.set("isAuthenticated", "true", { secure: true, sameSite: "Strict" });
@@ -125,20 +141,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAuthError = (error: unknown) => {
     if (axios.isAxiosError(error)) {
-      switch (error.response?.status) {
-        case 401:
-          setError("Invalid credentials");
+      const errorCode = error.response?.data?.code;
+      switch (errorCode) {
+        case 1001:
+          setError("User not found");
           break;
-        case 500:
-          setError("Internal Server Error");
+        case 1002:
+          setError("Invalid username or password");
+          break;
+        case 1012:
+          setError("Password is too weak");
+          break;
+        case 1013:
+          setError("Invalid or expired token");
+          break;
+        case 1015:
+          setError("Unauthorized access");
+          break;
+        case 1016:
+          setError(error.response?.data?.message || "Validation error");
           break;
         default:
-          setError("Unknow error");
+          setError("An unexpected error occurred");
       }
     }
   };
 
-  return <AuthContext.Provider value={{ error, login, logout, setError, forgotPassword }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ error, login, logout, setError, forgotPassword, resetPassword }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

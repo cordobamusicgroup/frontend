@@ -8,6 +8,7 @@ interface ErrorModalProps {
   open: boolean;
   onClose?: () => void;
   errorMessage: string;
+  showCloseButton?: boolean;
 }
 
 const style = {
@@ -24,7 +25,12 @@ const style = {
   borderRadius: 2,
 };
 
-const ErrorModal: React.FC<ErrorModalProps> = ({ open, onClose, errorMessage }) => {
+const ErrorModal: React.FC<ErrorModalProps> = ({ 
+  open, 
+  onClose, 
+  errorMessage, 
+  showCloseButton = true 
+}) => {
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
       <Box sx={style}>
@@ -34,9 +40,11 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ open, onClose, errorMessage }) 
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           {errorMessage}
         </Typography>
-        <Button onClick={onClose} sx={{ mt: 2 }} variant="contained" color="error">
-          Close
-        </Button>
+        {showCloseButton && (
+          <Button onClick={onClose} sx={{ mt: 2 }} variant="contained" color="error">
+            Close
+          </Button>
+        )}
       </Box>
     </Modal>
   );

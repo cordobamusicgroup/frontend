@@ -11,6 +11,7 @@ interface SuccessModalProps {
   onClose: () => void;
   title: string;
   message: string;
+  showCloseButton?: boolean;
 }
 
 const style = {
@@ -28,7 +29,7 @@ const style = {
   textAlign: "center" as "center",
 };
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ open, onClose, title, message }) => {
+const SuccessModal: React.FC<SuccessModalProps> = ({ open, onClose, title, message, showCloseButton = true }) => {
   const theme = useTheme();
 
   return (
@@ -41,9 +42,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ open, onClose, title, messa
         <Typography id="success-modal-description" sx={{ mt: 2 }}>
           {message}
         </Typography>
-        <Button onClick={onClose} sx={{ mt: 3 }} variant="contained" color="success">
-          Close
-        </Button>
+        {showCloseButton && (
+          <Button onClick={onClose} sx={{ mt: 3 }} variant="contained" color="success">
+            Close
+          </Button>
+        )}
       </Box>
     </Modal>
   );
