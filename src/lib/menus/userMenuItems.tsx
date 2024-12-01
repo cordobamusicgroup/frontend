@@ -1,7 +1,7 @@
 // menuItems.tsx
 import React from "react";
 import { AccountBalance, AccountCircle, ExitToApp } from "@mui/icons-material";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "@/context/AuthContext";
 
 interface MenuItemType {
   text: string;

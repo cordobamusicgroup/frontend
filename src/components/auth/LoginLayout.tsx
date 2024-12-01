@@ -3,10 +3,10 @@ import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import LoginLogo from "@/components/global/atoms/LoginLogo";
-import { useAuth } from "@/lib/hooks/useAuth"; // Actualizar importación
 import ErrorModal from "@/components/global/molecules/modals/ErrorModal";
 import LoginForm from "./LoginForm";
 import FullScreenLoader from "../global/molecules/FullScreenLoader";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * Renders a sign-in box component.

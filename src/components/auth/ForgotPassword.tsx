@@ -3,7 +3,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, T
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { useAuth } from "@/context/AuthContext";
 
 interface ForgotPasswordProps {
   open: boolean;
