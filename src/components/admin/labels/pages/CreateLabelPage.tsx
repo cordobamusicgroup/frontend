@@ -5,7 +5,6 @@ import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AddOutlined } from "@mui/icons-material";
 import axios from "axios";
-import { useLabels } from "@/lib/hooks/useLabels";
 import BackPageButton from "@/components/global/atoms/BackPageButton";
 import BasicButton from "@/components/global/atoms/BasicButton";
 import ErrorBox from "@/components/global/molecules/ErrorBox";
@@ -14,6 +13,7 @@ import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import LabelFormLayout from "../organisms/LabelFormLayout";
 import { LabelValidationSchema } from "../utils/LabelValidationSchema";
+import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
 
 const CreateLabelPage: React.FC = () => {
   const theme = useTheme();

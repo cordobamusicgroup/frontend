@@ -18,11 +18,11 @@ import useQuickFilter from "@/lib/hooks/useQuickFilter";
 import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import { AgGridReact } from "@ag-grid-community/react";
 
-interface ClientTableProps {
+interface UsersTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
 
-const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
   const router = useRouter();
   const web = routes.web;
   const { clientData = [], clientFetchLoading, deleteClients, clientError, clientLoading } = useClients();
@@ -40,19 +40,6 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     }
   };
 
-  const handleBulkDelete = async () => {
-    if (gridRef.current) {
-      // Verificación de existencia de gridRef.current
-      const selectedData = gridRef.current.api.getSelectedRows();
-      const selectedIds = selectedData.map((row) => row.id);
-      if (selectedIds.length && (await deleteClients(selectedIds))) {
-        setNotification({ message: `${selectedIds.length} clients deleted successfully`, type: "success" });
-        setSelectedRows([]);
-        gridRef.current.api.deselectAll(); // Deselecciona después de eliminar
-      }
-    }
-  };
-
   useEffect(() => {
     if (clientError) {
       setNotification({ message: clientError, type: "error" });
@@ -60,7 +47,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   }, [clientError, setNotification]);
 
   const columns = [
-    { field: "id", headerName: "ID", filter: "agNumberColumnFilter", width: 80, sortable: false, resizable: false },
+    { field: "id", headerName: "ID", width: 80, sortable: false, filter: false, resizable: false },
     { field: "clientName", headerName: "Client Name", width: 200 },
     { field: "firstName", headerName: "First Name", width: 150 },
     { field: "lastName", headerName: "Last Name", width: 150 },
@@ -115,4 +102,4 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   );
 };
 
-export default ClientTable;
+export default UsersTable;

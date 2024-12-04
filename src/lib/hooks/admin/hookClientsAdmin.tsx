@@ -1,7 +1,7 @@
 import useSWR, { mutate } from "swr";
 import { useState, useCallback, useEffect } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import routes from "../routes/routes";
+import routes from "../../routes/routes";
 import axios from "axios";
 
 type Client = any;

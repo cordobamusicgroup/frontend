@@ -4,6 +4,8 @@ import StyleProviders from "@/context/StyleContext";
 import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { themeAlpine, themeBalham, themeQuartz } from "@ag-grid-community/theming";
+
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { FormProvider, useForm } from "react-hook-form";

@@ -9,7 +9,7 @@ import { ClientValidationSchema } from "../utils/ClientValidationSchema";
 
 import axios from "axios";
 import dayjs from "dayjs";
-import { useClients } from "@/lib/hooks/useClients";
+import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import ClientFormLayout from "../organisms/ClientFormLayout";
 import BackPageButton from "@/components/global/atoms/BackPageButton";
 import BasicButton from "@/components/global/atoms/BasicButton";

@@ -23,7 +23,7 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
         <Collapse in={open && isSubMenuOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {item.subMenuItems.map((subItem) => (
-              <ListItem button key={subItem.text} onClick={subItem.onClick} sx={{ pl: 4 }}>
+              <ListItem button key={subItem.text} onClick={subItem.onClick} sx={{ pl: 2 }}>
                 <ListItemIcon>
                   <ArrowForwardOutlinedIcon />
                 </ListItemIcon>

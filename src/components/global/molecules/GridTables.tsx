@@ -1,31 +1,39 @@
 import React, { forwardRef } from "react";
-import { AgGridReact, AgGridReactProps } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import "@styles/grid-cmg.css";
+import { themeQuartz } from "@ag-grid-community/theming";
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
+import { AgGridReact, AgGridReactProps } from "@ag-grid-community/react";
+import { ModuleRegistry } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { cmgThemeGrid } from "@/styles/grid-royalties";
+import { Box } from "@mui/material";
 
 interface GridTablesProps extends AgGridReactProps {
   columns: any[];
   rowData: any[];
+  height?: string;
+  width?: string;
 }
 
-const GridTables = forwardRef<AgGridReact, GridTablesProps>(({ columns, rowData, ...props }, ref) => {
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+const GridTables = forwardRef<AgGridReact, GridTablesProps>(({ columns, rowData, height = "600px", width = "100%", ...props }, ref) => {
   return (
-    <div className="ag-grid-theme-builder" style={{ height: "600px", width: "100%" }}>
+    <Box width={width} height={height}>
       <AgGridReact
         ref={ref}
+        theme={cmgThemeGrid}
         columnDefs={columns}
         rowData={rowData}
-        rowSelection={{ mode: "multiRow" }}
         loadingOverlayComponent={LoadingSpinner}
-        loadingOverlayComponentParams={{ size: 30  }}
+        loadingOverlayComponentParams={{ size: 30 }}
         suppressMovableColumns={true}
         pagination={true}
         paginationPageSize={20}
+        suppressCellFocus
+        enableCellTextSelection
         {...props} // Props adicionales pasan directamente a AgGridReact
       />
-    </div>
+    </Box>
   );
 });
 

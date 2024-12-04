@@ -1,5 +1,6 @@
 import React from "react";
 import PageFinancialReports from "@/components/global/pages/admin/financial/PageFinancialReports";
+import ReportsPage from "@/components/user/reports/pages/ReportsPage";
 
 export const metadata = {
   title: "Financial Reports",
@@ -7,5 +8,5 @@ export const metadata = {
 };
 
 export default function FinancialPortal() {
-  return <PageFinancialReports />;
+  return <ReportsPage />;
 }

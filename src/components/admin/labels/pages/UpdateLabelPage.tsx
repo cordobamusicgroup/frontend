@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { AddOutlined, CachedOutlined } from "@mui/icons-material";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useClients } from "@/lib/hooks/useClients";
+import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import BackPageButton from "@/components/global/atoms/BackPageButton";
 import BasicButton from "@/components/global/atoms/BasicButton";
 import ErrorBox from "@/components/global/molecules/ErrorBox";
@@ -14,9 +14,9 @@ import FormErrorPopup from "@/components/global/molecules/FormErrorPopUp";
 import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import { LabelValidationSchema } from "../utils/LabelValidationSchema";
-import { useLabels } from "@/lib/hooks/useLabels";
 import LabelFormLayout from "../organisms/LabelFormLayout";
 import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader";
+import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
 
 type Props = {
   labelId: string;

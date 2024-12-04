@@ -1,9 +1,9 @@
 import useSWR, { mutate } from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import routes from "../routes/routes";
 import axios from "axios";
 import { set } from "react-hook-form";
+import routes from "@/lib/routes/routes";
 
 type Label = any; // Replace 'any' with your actual client type
 

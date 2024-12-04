@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon, LibraryMusic } from "@mui/icons-material";
+import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon, LibraryMusic, Group, SupervisedUserCircle, ContactEmergency, Assessment } from "@mui/icons-material";
 import { Roles } from "@/constants/roles";
 import routes from "../routes/routes";
 
@@ -33,8 +33,8 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       roles: [Roles.All],
       subMenuItems: [
         {
-          text: "Invoices",
-          onClick: () => router.push(routes.web.portal.financial.invoices),
+          text: "Payments",
+          onClick: () => router.push(routes.web.portal.financial.payments),
           roles: [Roles.All],
         },
         {
@@ -46,7 +46,7 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
     },
     {
       text: "Clients",
-      icon: <GroupIcon />,
+      icon: <ContactEmergency />,
       roles: [Roles.Admin],
       onClick: () => router.push(routes.web.admin.clients.root),
     },
@@ -55,6 +55,24 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       icon: <LibraryMusic />,
       roles: [Roles.Admin],
       onClick: () => router.push(routes.web.admin.labels.root),
+    },
+    {
+      text: "Users",
+      icon: <SupervisedUserCircle />,
+      roles: [Roles.Admin],
+      onClick: () => router.push(routes.web.admin.users.root),
+    },
+    {
+      text: "Reports",
+      icon: <Assessment />,
+      roles: [Roles.Admin],
+      subMenuItems: [
+        {
+          text: "Link Missing Reports",
+          onClick: () => router.push(routes.web.admin.reports.unlinked.root),
+          roles: [Roles.Admin],
+        },
+      ],
     },
   ];
 

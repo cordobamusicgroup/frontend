@@ -1,16 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Skeleton, TextField, InputAdornment, IconButton } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
 import { LabelSpecialStoreStatus, LabelStatusChip, VatStatusChip } from "../../../global/atoms/ClientChips";
 import ActionButtonsClient from "../../../global/molecules/ActionsButtonsClient";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import "@styles/grid-cmg.css";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useClients } from "@/lib/hooks/useClients";
+import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import routes from "@/lib/routes/routes";
-import { useLabels } from "@/lib/hooks/useLabels";
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 import Loading from "@/app/(portal)/loading";
 import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
@@ -19,6 +14,8 @@ import Search from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import GridTables from "@/components/global/molecules/GridTables";
+import { ColDef, ModuleRegistry } from "@ag-grid-community/core";
+import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
 
 interface LabelsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -55,14 +52,20 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
     }
   }, [labelError, clientError, setNotification]);
 
-  const columns = [
-    { field: "id", headerName: "ID", width: 70, sortable: false, filter: true, resizable: false },
+  const columns: ColDef[] = [
+    {
+      field: "id",
+      filter: "agNumberColumnFilter",
+      headerName: "ID",
+      width: 70,
+      sortable: false,
+      resizable: false,
+    },
     { field: "labelName", headerName: "Label Name", width: 400 },
     {
       field: "client",
       headerName: "Client Name",
       width: 300,
-      align: "center",
       cellRenderer: (params: any) => {
         // Si el valor es "loading", renderiza el componente de React con el spinner
         if (clientLoading) {

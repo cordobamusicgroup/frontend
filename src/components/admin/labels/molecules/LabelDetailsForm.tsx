@@ -3,7 +3,7 @@ import { Autocomplete, FormControlLabel, Input, MenuItem, Switch, TextField } fr
 import { Controller, useFormContext } from "react-hook-form";
 import TextFieldForm from "@/components/global/atoms/TextFieldForm";
 import { typeOptions, taxIdTypeOptions, LabelStatus } from "@/constants/backend.enums";
-import { useClients } from "@/lib/hooks/useClients";
+import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import { Block, BlockOutlined, CheckCircle, CheckCircleOutline, DoDisturbOnOutlined } from "@mui/icons-material";
 
 const LabelDetailsForm: React.FC = () => {

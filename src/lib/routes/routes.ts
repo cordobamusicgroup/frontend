@@ -1,4 +1,5 @@
 import { Roles } from "@/constants/roles";
+import { Link } from "@mui/material";
 
 export interface ProtectedRouteConfig {
   path: string;
@@ -19,6 +20,18 @@ const routes = {
     labels: {
       root: "/labels",
     },
+    financial: {
+      reports: {
+        user: {
+          currentReports: "/financial/reports/user-reports/current",
+          downloadReport: "/financial/reports/user-reports/download",
+        },
+        unlinked: {
+          get: "/financial/reports/admin/unlinked",
+          linkMissing: "/financial/reports/admin/link-missing",
+        },
+      },
+    },
 
     countries: "/countries",
   },
@@ -27,7 +40,7 @@ const routes = {
     portal: {
       overview: "/",
       financial: {
-        invoices: "/financial/invoices",
+        payments: "/financial/payments",
         reports: "/financial/reports",
       },
     },
@@ -44,6 +57,19 @@ const routes = {
         create: "/admin/labels/create",
         edit: "/admin/labels/edit",
         search: "/admin/labels/search",
+      },
+      users: {
+        root: "/admin/users",
+        create: "/admin/users/create",
+        edit: "/admin/users/edit",
+        search: "/admin/users/search",
+      },
+      reports: {
+        root: "/admin/reports",
+        unlinked: {
+          root: "/admin/reports/unlinked",
+          create: "/admin/reports/unlinked/link-report",
+        },
       },
     },
   },
