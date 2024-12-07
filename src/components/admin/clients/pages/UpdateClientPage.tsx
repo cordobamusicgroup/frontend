@@ -175,7 +175,7 @@ const UpdateClientPage: React.FC<Props> = ({ clientId }) => {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Edit Client</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Edit Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
         <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleFormSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<CachedOutlined />} endIcon={clientLoading ? <LoadingSpinner size={20} /> : null}>
           Update Client

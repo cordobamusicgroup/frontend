@@ -88,7 +88,7 @@ const CreateLabelPage: React.FC = () => {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"#24793B"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Creating New Label</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Creating New Label</Typography>
         <BackPageButton colorBackground="white" colorText={"#164723"} />
         <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleFormSubmit} color="primary" variant="contained" disabled={labelLoading} startIcon={<AddOutlined />} endIcon={labelLoading ? <CircularProgress size={20} /> : null}>
           Create Label

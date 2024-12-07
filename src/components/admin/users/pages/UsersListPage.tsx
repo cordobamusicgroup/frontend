@@ -25,7 +25,7 @@ const UserListPage: React.FC = () => {
     <>
       <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
         <CustomPageHeader background={"linear-gradient(90deg, #062E52 0%, #005C99 50%, #007BE6 100%)"} color={theme.palette.primary.contrastText}>
-          <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Manage Users</Typography>
+          <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Manage Users</Typography>
           <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleCreateUser} color="primary" variant="contained" startIcon={<PersonAdd />}>
             Create Users
           </BasicButton>

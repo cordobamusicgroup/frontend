@@ -24,7 +24,7 @@ const LabelsListPage: React.FC = () => {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"#24793B"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Manage Labels</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Manage Labels</Typography>
         <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleCreateLabel} color="primary" variant="contained" startIcon={<PersonAdd />}>
           Create Label
         </BasicButton>

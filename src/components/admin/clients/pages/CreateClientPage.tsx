@@ -112,7 +112,7 @@ const CreateClientPage: React.FC = () => {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Creating New Client</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Creating New Client</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
         <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleClientSubmit} color="primary" variant="contained" disabled={clientLoading} startIcon={<AddOutlined />} endIcon={clientLoading ? <CircularProgress size={20} /> : null}>
           Create Client

@@ -33,7 +33,7 @@ const UnlinkedReportsPage: React.FC = () => {
     <>
       <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
         <CustomPageHeader background={"linear-gradient(90deg, #062E52 0%, #005C99 50%, #007BE6 100%)"} color={theme.palette.primary.contrastText}>
-          <Typography sx={{ flexGrow: 1, fontWeight: "100", fontSize: "18px" }}>Link Missing Reports</Typography>
+          <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Link Missing Reports</Typography>
         </CustomPageHeader>
 
         <Box>
