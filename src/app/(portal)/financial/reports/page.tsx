@@ -1,6 +1,6 @@
 import React from "react";
 import PageFinancialReports from "@/components/global/pages/admin/financial/PageFinancialReports";
-import ReportsPage from "@/components/user/reports/pages/ReportsPage";
+import ReportsPage from "@/components/user/reports/pages/ReportsUserPage";
 
 export const metadata = {
   title: "Financial Reports",

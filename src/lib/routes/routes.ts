@@ -21,14 +21,20 @@ const routes = {
       root: "/labels",
     },
     financial: {
+      balances: {
+        root: "/financial/balances",
+        transactions: "/financial/balances/transactions",
+      },
       reports: {
         user: {
           currentReports: "/financial/reports/user-reports/current",
           downloadReport: "/financial/reports/user-reports/download",
         },
-        unlinked: {
-          get: "/financial/reports/admin/unlinked",
-          linkMissing: "/financial/reports/admin/link-missing",
+        admin: {
+          unlinked: {
+            get: "/financial/reports/admin/unlinked",
+            linkMissing: "/financial/reports/admin/link-missing",
+          },
         },
       },
     },

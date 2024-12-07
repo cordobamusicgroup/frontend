@@ -14,7 +14,7 @@ export const useLinkReports = () => {
     setLoading(true);
     try {
       const response = await apiRequest({
-        url: routes.api.financial.reports.unlinked.get,
+        url: routes.api.financial.reports.admin.unlinked.get,
         method: "get",
         requiereAuth: true,
       });
@@ -42,7 +42,7 @@ export const useLinkReports = () => {
       setLoading(true);
       try {
         const response = await apiRequest({
-          url: routes.api.financial.reports.unlinked.linkMissing,
+          url: routes.api.financial.reports.admin.unlinked.linkMissing,
           method: "post",
           requiereAuth: true,
           data: { unlinkedReportId, labelId },

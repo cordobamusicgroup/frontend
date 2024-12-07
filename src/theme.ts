@@ -29,6 +29,7 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
+    fontWeightRegular: 500,
   },
   breakpoints: {
     values: {

@@ -16,6 +16,8 @@ const BasicButton: React.FC<BasicButtonProps> = ({ colorText = "white", colorBac
       color="primary" // Valor predeterminado si no se pasa `colorBackground`
       variant="contained"
       sx={{
+        fontWeight: "500",
+        boxShadow: "none",
         backgroundColor: colorBackground === "primary" ? theme.palette.primary.main : colorBackground, // Fondo personalizado o color primario
         color: colorText === "primary" ? theme.palette.primary.contrastText : colorText, // Texto personalizado o color primario
         "&:hover": {

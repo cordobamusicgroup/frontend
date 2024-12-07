@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { royaltiesgrid } from "@/styles/grid-royalties";
 import { themeQuartz } from "@ag-grid-community/theming";
 import { AgGridReact } from "@ag-grid-community/react";
+import { FiberManualRecord as DotIcon } from "@mui/icons-material";
 
 interface ReportsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -36,11 +37,16 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80, filter: false },
-    { field: "createdAt", headerName: "Created", width: 200, valueFormatter: (params: any) => dayjs(params.value).format("YYYY-MM-DD") },
-    { field: "currency", headerName: "Currency", width: 200 },
-    { field: "distributor", headerName: "Distributor", width: 200 },
-    { field: "reportingMonth", headerName: "Reporting Month", width: 200 },
+    { field: "id", headerName: "ID", width: 80, filter: false, flex: 0 },
+    { field: "createdAt", headerName: "Date", sort: "desc", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
+    { field: "currency", headerName: "Currency", width: 150 },
+    { field: "distributor", headerName: "Distributor", width: 150 },
+    {
+      field: "reportingMonth",
+      headerName: "Reporting Month",
+      width: 150,
+      valueFormatter: (params: any) => dayjs(params.value).format("YYYY.MM"),
+    },
     {
       field: "totalRoyalties",
       headerName: "Total Royalties",
@@ -51,8 +57,28 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
           style: "currency",
           currency: currency,
           minimumFractionDigits: 2,
-          maximumFractionDigits: 5,
+          maximumFractionDigits: 20,
         });
+      },
+    },
+    {
+      field: "debitState",
+      headerName: "Debit State",
+      width: 200,
+      cellRenderer: (params: any) => {
+        const isPaid = params.value === "PAID";
+        const color = isPaid ? "#b6c92f" : "#F5364D";
+        const state = isPaid ? "Paid" : "Unpaid";
+        const date = isPaid && params.data.paidOn ? ` (${dayjs(params.data.paidOn).format("YYYY-MM-DD")})` : "";
+        return (
+          <Box display="flex" gap={1} alignItems="center">
+            <DotIcon sx={{ fontSize: "16px" }} style={{ color }} />
+            <span>
+              {state}
+              {date}
+            </span>
+          </Box>
+        );
       },
     },
     {
@@ -82,9 +108,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
     distributor: report.distributor,
     reportingMonth: report.reportingMonth,
     totalRoyalties: report.totalRoyalties,
+    debitState: report.debitState,
+    paidOn: report.paidOn,
   }));
 
-  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={{ sortable: false, resizable: false, flex: 1 }} overlayNoRowsTemplate="Reports not found" />;
+  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={{ flex: 1, sortable: false, resizable: false, filter: true }} overlayNoRowsTemplate="Reports not found" />;
 };
 
 export default ReportsTable;
