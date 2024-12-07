@@ -33,23 +33,22 @@ export default function PaymentsUserPage() {
         {notification?.type === "error" && <ErrorBox>{notification.message}</ErrorBox>}
       </Box>
 
-      {!balanceFetchLoading && balances && balances.length > 0 && (
-        <>
-          <FormControl sx={{ minWidth: 200, marginBottom: 2 }}>
-            <InputLabel>Select Balance</InputLabel>
-            <Select value={selectedCurrency ?? ""} onChange={handleBalanceChange} label="Select Balance">
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-            </Select>
-          </FormControl>
-          {selectedCurrency && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <BalancesBlock balance={balances.find((balance) => balance.currency === selectedCurrency)?.total} currency={selectedCurrency} />
-              <TransactionsTable setNotification={setNotification} currency={selectedCurrency} />
-            </Box>
-          )}
-        </>
-      )}
+      <>
+        <FormControl sx={{ minWidth: 200, marginBottom: 2 }}>
+          <InputLabel>Select Balance</InputLabel>
+          <Select value={selectedCurrency ?? ""} onChange={handleBalanceChange} label="Select Balance">
+            <MenuItem value="USD">USD</MenuItem>
+            <MenuItem value="EUR">EUR</MenuItem>
+          </Select>
+        </FormControl>
+        {selectedCurrency && (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {balances && <BalancesBlock balance={balances.find((balance) => balance.currency === selectedCurrency)?.total} currency={selectedCurrency} />}
+            <TransactionsTable setNotification={setNotification} currency={selectedCurrency} />
+          </Box>
+        )}
+      </>
+
       {balanceError && <ErrorBox>{balanceError}</ErrorBox>}
     </Box>
   );
