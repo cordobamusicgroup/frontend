@@ -11,30 +11,18 @@ interface MenuItemType {
 
 // TODO: [CMGDEV-8]  Refactorizar este hook para que sea más legible y mantenible a largo plazo
 
+const createMenuItem = (text: string, icon: React.ReactNode, onClick: () => void): MenuItemType => ({
+  text,
+  icon,
+  onClick,
+});
+
 export const useUserMenuItems = (): MenuItemType[] => {
   const auth = useAuth();
 
   return [
-    {
-      text: "Profile",
-      icon: <AccountCircle fontSize="small" />,
-      onClick: () => {
-        console.log("Profile clicked");
-      },
-    },
-    {
-      text: "Bank Information",
-      icon: <AccountBalance fontSize="small" />,
-      onClick: () => {
-        console.log("Profile clicked");
-      },
-    },
-    {
-      text: "Logout",
-      icon: <ExitToApp fontSize="small" />,
-      onClick: () => {
-        auth.logout();
-      },
-    },
+    createMenuItem("Logout", <ExitToApp fontSize="small" />, () => {
+      auth.logout();
+    }),
   ];
 };

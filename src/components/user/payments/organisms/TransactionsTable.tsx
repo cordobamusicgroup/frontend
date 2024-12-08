@@ -71,11 +71,24 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
     },
   ];
 
+  const defaultColDef = {
+    flex: 1,
+    resizable: false,
+    filter: true,
+    sortable: false,
+  };
+
+  // Add media query to adjust flex property for mobile
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    defaultColDef.flex = 0;
+  }
+
   if (transactions?.length === 0) {
     return <Typography>No transactions found</Typography>;
   }
 
-  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={transactions ?? []} defaultColDef={{ flex: 1, resizable: false, filter: true, sortable: false }} overlayNoRowsTemplate="Transactions not found" loading={transactionsLoading} />;
+  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={transactions ?? []} defaultColDef={defaultColDef} overlayNoRowsTemplate="Transactions not found" loading={transactionsLoading} />;
 };
 
 export default TransactionsTable;

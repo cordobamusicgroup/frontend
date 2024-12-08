@@ -8,6 +8,7 @@ import { Roles } from "@/constants/roles";
 
 interface VerticalDrawerListProps {
   open: boolean;
+  onItemClick: () => void;
 }
 
 const StyledDivider = styled(Divider)(({ theme }) => ({
@@ -18,7 +19,7 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
   textTransform: "uppercase",
 }));
 
-const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
+const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open, onItemClick }) => {
   const user = useAppSelector((state) => state.user.userData); // Obtenemos los datos del usuario desde Redux
   const dispatch = useAppDispatch();
   const openSubMenu = useAppSelector((state) => state.pageData.openSubMenu);
@@ -38,7 +39,22 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
     <List>
       {/* Renderizamos los ítems generales del menú */}
       {generalItems.map((item) => (
-        <VerticalMenuItem key={item.text} item={item} open={open} isSubMenuOpen={openSubMenu === item.text} onClick={() => (item.subMenuItems && item.subMenuItems.length > 0 ? handleSubMenuClick(item.text) : item.onClick?.())} onSubMenuClick={() => handleSubMenuClick(item.text)} />
+        <VerticalMenuItem
+          key={item.text}
+          item={item}
+          open={open}
+          isSubMenuOpen={openSubMenu === item.text}
+          onClick={() => {
+            if (item.subMenuItems && item.subMenuItems.length > 0) {
+              handleSubMenuClick(item.text);
+            } else {
+              item.onClick?.();
+              onItemClick();
+            }
+          }}
+          onSubMenuClick={() => handleSubMenuClick(item.text)}
+          onSubItemClick={onItemClick}
+        />
       ))}
 
       {/* Si hay ítems de administrador, mostramos el divisor "Admin Menu" y los ítems */}
@@ -46,7 +62,22 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open }) => {
         <>
           {open && <StyledDivider>Admin Menu</StyledDivider>}
           {adminItems.map((item) => (
-            <VerticalMenuItem key={item.text} item={item} open={open} isSubMenuOpen={openSubMenu === item.text} onClick={() => (item.subMenuItems && item.subMenuItems.length > 0 ? handleSubMenuClick(item.text) : item.onClick?.())} onSubMenuClick={() => handleSubMenuClick(item.text)} />
+            <VerticalMenuItem
+              key={item.text}
+              item={item}
+              open={open}
+              isSubMenuOpen={openSubMenu === item.text}
+              onClick={() => {
+                if (item.subMenuItems && item.subMenuItems.length > 0) {
+                  handleSubMenuClick(item.text);
+                } else {
+                  item.onClick?.();
+                  onItemClick();
+                }
+              }}
+              onSubMenuClick={() => handleSubMenuClick(item.text)}
+              onSubItemClick={onItemClick}
+            />
           ))}
         </>
       )}

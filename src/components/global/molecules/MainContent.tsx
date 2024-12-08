@@ -4,13 +4,14 @@ import { styled } from "@mui/material/styles";
 interface MainContentProps {
   open: boolean;
   children: ReactNode;
+  isMobile: boolean;
 }
 
 /**
  * Represents the main content component.
  * @component
  */
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ open?: boolean }>(({ theme, open }) => ({
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" && prop !== "isMobile" })<{ open?: boolean; isMobile?: boolean }>(({ theme, open, isMobile }) => ({
   flexGrow: 1,
   backgroundColor: "#fcfcfc",
   padding: theme.spacing(3),
@@ -20,20 +21,23 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{ 
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  marginLeft: `60px`,
+  marginLeft: isMobile ? 0 : `60px`,
   ...(open && {
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    marginLeft: `240px`,
+    marginLeft: isMobile ? 0 : `240px`,
   }),
   [theme.breakpoints.down("sm")]: {
-    marginLeft: "60px",
     padding: theme.spacing(1),
   },
 }));
 
-const MainContent: React.FC<MainContentProps> = ({ open, children }) => <Main open={open}>{children}</Main>;
+const MainContent: React.FC<MainContentProps> = ({ open, children, isMobile }) => (
+  <Main open={open} isMobile={isMobile}>
+    {children}
+  </Main>
+);
 
 export default MainContent;

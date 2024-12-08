@@ -9,9 +9,10 @@ interface VerticalMenuItemProps {
   isSubMenuOpen: boolean;
   onClick: () => void;
   onSubMenuClick: () => void;
+  onSubItemClick: () => void;
 }
 
-const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMenuOpen, onClick, onSubMenuClick }) => {
+const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMenuOpen, onClick, onSubMenuClick, onSubItemClick }) => {
   return (
     <>
       <ListItem button onClick={onClick}>
@@ -23,7 +24,15 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
         <Collapse in={open && isSubMenuOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {item.subMenuItems.map((subItem) => (
-              <ListItem button key={subItem.text} onClick={subItem.onClick} sx={{ pl: 2 }}>
+              <ListItem
+                button
+                key={subItem.text}
+                onClick={() => {
+                  subItem.onClick?.();
+                  onSubItemClick();
+                }}
+                sx={{ pl: 2 }}
+              >
                 <ListItemIcon>
                   <ArrowForwardOutlinedIcon />
                 </ListItemIcon>

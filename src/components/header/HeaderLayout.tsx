@@ -19,6 +19,10 @@ const StyledAppBar = styled(AppBar)<{ isOpen?: boolean }>(({ theme, isOpen }) =>
     width: `calc(100% - 60px)`,
     marginLeft: `60px`,
   }),
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+    marginLeft: 0,
+  },
 }));
 
 const HeaderLayout: React.FC = () => {

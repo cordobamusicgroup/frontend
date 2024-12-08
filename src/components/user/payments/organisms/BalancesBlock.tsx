@@ -27,8 +27,30 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
   const currencySymbol = currency === "USD" ? "$" : "€";
 
   return (
-    <Box id="balance" sx={{ display: "flex", backgroundColor: "#f6f7fa", borderRadius: "4px", border: "1px solid #e9e9e9", width: "100%", justifyContent: "center", padding: "25px", color: "#444444" }}>
-      <Box id="balance_info_text" sx={{ display: "flex", width: "50%", alignItems: "start", flexDirection: "column", gap: 2 }}>
+    <Box
+      id="balance"
+      sx={{
+        display: "flex",
+        backgroundColor: "#f6f7fa",
+        borderRadius: "4px",
+        border: "1px solid #e9e9e9",
+        width: "100%",
+        justifyContent: "center",
+        padding: "25px",
+        color: "#444444",
+        flexDirection: { xs: "column-reverse", md: "row" }, // Responsive layout
+      }}
+    >
+      <Box
+        id="balance_info_text"
+        sx={{
+          display: "flex",
+          width: { xs: "100%", md: "50%" }, // Responsive width
+          alignItems: "start",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
         <Typography color={"#444444"}>
           <b>Payment Method:</b> {paymentMethod}
         </Typography>
@@ -65,7 +87,17 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
         )}
       </Box>
 
-      <Box id="balance_amount" sx={{ display: "flex", flexDirection: "column", justifyContent: "start", width: "50%", alignItems: "flex-end" }}>
+      <Box
+        id="balance_amount"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "start",
+          width: { xs: "100%", md: "50%" }, // Responsive width
+          alignItems: { xs: "flex-start", md: "flex-end" }, // Responsive alignment
+          marginTop: { xs: 0, md: 0 }, // Add margin for spacing on mobile
+        }}
+      >
         <Typography color={"#444444"}>Available balance on {date}</Typography>
         <Typography color={"#444444"}>
           <b>Currency:</b> {currency}

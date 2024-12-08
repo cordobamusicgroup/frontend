@@ -43,6 +43,9 @@ const theme = createTheme({
     },
     body1: {
       fontWeight: 400,
+      xs: {
+        fontSize: "0.875rem",
+      },
     },
   },
   breakpoints: {

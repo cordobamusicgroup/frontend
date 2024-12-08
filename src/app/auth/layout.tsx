@@ -3,7 +3,10 @@ import RootLayout from "../layout";
 import { CssBaseline } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Authentication",
+  title: {
+    default: "Auth",
+    template: "%s - Córdoba Music Group",
+  },
 };
 
 export default function AuthLayout({
