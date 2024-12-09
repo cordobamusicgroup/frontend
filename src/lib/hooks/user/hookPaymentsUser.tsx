@@ -1,52 +1,56 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import axios from "axios";
 import routes from "@/lib/routes/routes";
 
-type Balance = {
-  currency: string;
-  total: number;
+type WithdrawalAuthorized = {
+  id: string;
+  amount: number;
+  status: string;
+  isBlocked: boolean;
+  isPaymentInProgress: boolean;
+  isPaymentDataInValidation: boolean;
 };
 
 export const usePaymentsUser = () => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
-  const [balanceFetchLoading, setBalanceFetchLoading] = useState<boolean>(false);
+  const [withdrawalFetchLoading, setWithdrawalFetchLoading] = useState<boolean>(false);
 
-  const getBalances = useCallback(async () => {
+  const getWithdrawalAuthorized = useCallback(async () => {
     setError(null); // Clear error on start
-    setBalanceFetchLoading(true);
+    setWithdrawalFetchLoading(true);
     try {
-      const url = routes.api.financial.balances.root;
+      const url = routes.api.financial.payments.withdrawalAuthorized;
       const response = await apiRequest({
         url,
         method: "get",
         requiereAuth: true,
       });
-      return response;
+      return response.data;
     } catch (err) {
-      const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error fetching balances" : "Unknown error occurred";
+      const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error fetching withdrawal authorized" : "Unknown error occurred";
       setError(errorMessage);
       throw err;
     } finally {
-      setBalanceFetchLoading(false);
+      setWithdrawalFetchLoading(false);
     }
   }, [apiRequest]);
 
   const {
-    data: balances,
+    data: withdrawalAuthorized,
     error: fetchError,
-    mutate: balancesMutate,
-  } = useSWR<Balance[]>(routes.api.financial.balances.root, getBalances, {
+    mutate: withdrawalMutate,
+  } = useSWR<WithdrawalAuthorized>(routes.api.financial.payments.withdrawalAuthorized, getWithdrawalAuthorized, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
 
   return {
-    balances,
-    balanceError: error,
-    balanceFetchLoading,
-    mutate: balancesMutate,
+    withdrawalAuthorized,
+    withdrawalError: error,
+    withdrawalFetchLoading,
+    mutate: withdrawalMutate,
   };
 };

@@ -14,6 +14,12 @@ const routes = {
       forgotPassword: "/auth/forgot-password",
       resetPassword: "/auth/reset-password",
     },
+    users: {
+      current: "/users/current",
+      editProfile: "/users/edit-profile",
+      changePassword: "/users/change-password",
+      getCurrent: "/users/current", // New route added
+    },
     clients: {
       root: "/clients",
     },
@@ -24,6 +30,10 @@ const routes = {
       balances: {
         root: "/financial/balances",
         transactions: "/financial/balances/transactions",
+      },
+      payments: {
+        root: "/financial/payments",
+        withdrawalAuthorized: "/financial/payments/withdrawal-authorized",
       },
       reports: {
         user: {
@@ -48,6 +58,9 @@ const routes = {
       financial: {
         payments: "/financial/payments",
         reports: "/financial/reports",
+      },
+      user: {
+        profile: "/user/profile",
       },
     },
     admin: {

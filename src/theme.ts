@@ -39,13 +39,7 @@ const theme = createTheme({
       fontWeight: 500,
     },
     h6: {
-      fontWeight: 500,
-    },
-    body1: {
-      fontWeight: 400,
-      xs: {
-        fontSize: "0.875rem",
-      },
+      fontWeight: 600,
     },
   },
   breakpoints: {
@@ -58,6 +52,13 @@ const theme = createTheme({
     },
   },
 });
+
+const isMobile = () => {
+  if (typeof window !== "undefined") {
+    return window.innerWidth < theme.breakpoints.values.sm;
+  }
+  return false;
+};
 
 theme.typography.h1 = {
   fontSize: "2rem",
@@ -96,5 +97,7 @@ theme.typography.h6 = {
   fontSize: "18px",
   fontWeight: 500,
 };
+
+export { isMobile };
 
 export default theme;

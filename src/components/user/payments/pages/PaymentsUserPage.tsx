@@ -7,12 +7,12 @@ import theme from "@/theme";
 import { Box, Typography, Select, MenuItem, SelectChangeEvent, FormControl, InputLabel } from "@mui/material";
 import { useState } from "react";
 import BalancesBlock from "../organisms/BalancesBlock";
-import { usePaymentsUser } from "@/lib/hooks/user/hookPaymentsUser";
+import { useBalancesUser } from "@/lib/hooks/user/hookBalancesUser";
 import TransactionsTable from "../organisms/TransactionsTable";
 
 export default function PaymentsUserPage() {
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
-  const { balances, balanceFetchLoading, balanceError, mutate } = usePaymentsUser();
+  const { balances, balanceFetchLoading, balanceError, mutate } = useBalancesUser();
   const [selectedCurrency, setSelectedCurrency] = useState<"USD" | "EUR" | null>(null);
 
   const handleBalanceChange = (event: SelectChangeEvent<string>) => {

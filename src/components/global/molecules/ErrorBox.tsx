@@ -22,7 +22,7 @@ const ErrorBox: React.FC<ErrorBoxProps> = ({ children }) => {
         }}
       >
         <AlertTitle sx={{ fontWeight: 700, display: "flex", alignItems: "center" }}>
-          <Typography variant="h6" component="span">
+          <Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
             ERROR
           </Typography>
         </AlertTitle>

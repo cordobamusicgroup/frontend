@@ -10,7 +10,7 @@ const api = axios.create({
 
 interface ApiParams {
   url: string;
-  method: "get" | "post" | "put" | "delete";
+  method: "get" | "post" | "put" | "delete" | "patch";
   data?: any;
   params?: any;
   headers?: any;

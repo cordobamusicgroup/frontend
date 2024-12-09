@@ -1,9 +1,9 @@
 import BasicButton from "@/components/global/atoms/BasicButton";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { styled } from "@mui/material/styles";
-import InfoIcon from "@mui/icons-material/Info"; // Import the icon
-import { Block, MoneyOff, Pending, ScheduleSend, Warning, WarningAmber } from "@mui/icons-material";
+import { Block, MoneyOff, Pending, ScheduleSend, WarningAmber } from "@mui/icons-material";
+import { usePaymentsUser } from "@/lib/hooks/user/hookPaymentsUser";
 
 interface BalancesBlockProps {
   paymentMethod?: string;
@@ -25,6 +25,13 @@ const DisabledButton = styled(BasicButton)({
 export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, currency = "EUR" }: BalancesBlockProps) {
   const date = dayjs().format("DD MMMM YYYY");
   const currencySymbol = currency === "USD" ? "$" : "€";
+  const { withdrawalAuthorized } = usePaymentsUser();
+
+  const isBlocked = withdrawalAuthorized?.isBlocked;
+  const isPaymentInProgress = withdrawalAuthorized?.isPaymentInProgress;
+  const isPaymentDataInValidation = withdrawalAuthorized?.isPaymentDataInValidation;
+
+  const showRequestPaymentButton = balance >= 100 && !isBlocked && !isPaymentInProgress && !isPaymentDataInValidation;
 
   return (
     <Box
@@ -54,8 +61,7 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
         <Typography color={"#444444"}>
           <b>Payment Method:</b> {paymentMethod}
         </Typography>
-        <BasicButton>Request Payment</BasicButton>
-        <DisabledButton>Payment Not Available</DisabledButton>
+        {showRequestPaymentButton ? <BasicButton>Request Payment</BasicButton> : <DisabledButton>Payment Not Available</DisabledButton>}
         {balance >= 100 && (
           <Typography color={"#444444"}>
             Your royalties have reached the <b>$100 threshold</b>, and you can now request a withdrawal in your chosen payment method.
@@ -67,18 +73,24 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
             <Typography sx={{ fontSize: 16 }}>The amount of royalties due is inferior to the minimum required by your distribution contract.</Typography>
           </Box>
         )}
-        <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
-          <ScheduleSend sx={{ fontSize: 18, marginRight: 1, color: "#09365F" }} />
-          <Typography sx={{ fontSize: 16 }}>You have a payment in progress, when it is completed you can request a new payment.</Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
-          <Pending sx={{ fontSize: 18, marginRight: 1, color: "#2196F3" }} />
-          <Typography sx={{ fontSize: 16 }}>Your payment details is being validated. The average processing time is 3 days.</Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
-          <Block sx={{ fontSize: 18, marginRight: 1, color: "#F44336" }} />
-          <Typography sx={{ fontSize: 16 }}>Your royalty withdrawals, method updates are blocked, contact us for more information.</Typography>
-        </Box>
+        {isPaymentInProgress && (
+          <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
+            <ScheduleSend sx={{ fontSize: 18, marginRight: 1, color: "#09365F" }} />
+            <Typography sx={{ fontSize: 16 }}>You have a payment in progress, when it is completed you can request a new payment.</Typography>
+          </Box>
+        )}
+        {isPaymentDataInValidation && (
+          <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
+            <Pending sx={{ fontSize: 18, marginRight: 1, color: "#2196F3" }} />
+            <Typography sx={{ fontSize: 16 }}>Your payment details are being validated. The average processing time is 3 days.</Typography>
+          </Box>
+        )}
+        {isBlocked && (
+          <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
+            <Block sx={{ fontSize: 18, marginRight: 1, color: "#F44336" }} />
+            <Typography sx={{ fontSize: 16 }}>Your royalty withdrawals, method updates are blocked, contact us for more information.</Typography>
+          </Box>
+        )}
         {balance < 0 && (
           <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
             <WarningAmber sx={{ fontSize: 18, marginRight: 1, color: "#FF9800" }} />

@@ -8,6 +8,7 @@ import { royaltiesgrid } from "@/styles/grid-royalties";
 import { AgGridReact } from "@ag-grid-community/react";
 import { FiberManualRecord as DotIcon } from "@mui/icons-material";
 import { useTransactions } from "@/lib/hooks/user/hookTransactions";
+import { isMobile } from "@/theme";
 
 interface TransactionsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -72,21 +73,11 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
   ];
 
   const defaultColDef = {
-    flex: 1,
+    flex: isMobile() ? 0 : 1,
     resizable: false,
     filter: true,
     sortable: false,
   };
-
-  // Add media query to adjust flex property for mobile
-  const isMobile = window.innerWidth <= 768;
-  if (isMobile) {
-    defaultColDef.flex = 0;
-  }
-
-  if (transactions?.length === 0) {
-    return <Typography>No transactions found</Typography>;
-  }
 
   return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={transactions ?? []} defaultColDef={defaultColDef} overlayNoRowsTemplate="Transactions not found" loading={transactionsLoading} />;
 };

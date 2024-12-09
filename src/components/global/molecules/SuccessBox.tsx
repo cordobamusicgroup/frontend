@@ -22,7 +22,7 @@ const SuccessBox: React.FC<SuccessBoxProps> = ({ children }) => {
         }}
       >
         <AlertTitle sx={{ fontWeight: 700, display: "flex", alignItems: "center" }}>
-          <Typography variant="h6" component="span">
+          <Typography variant="h6" component="span" sx={{ fontWeight: 700 }}>
             SUCCESS
           </Typography>
         </AlertTitle>
