@@ -1,13 +1,8 @@
-import "./globals.css";
 import { Metadata } from "next";
-import { getLocale, getMessages } from "next-intl/server";
-import { NextIntlClientProvider } from "next-intl";
 import StyleProviders from "@/context/StyleContext";
 import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
 import { AuthProvider } from "@/context/AuthContext";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 export const metadata: Metadata = {
   title: {
@@ -21,18 +16,13 @@ interface RootLayoutProps {
 }
 export const runtime = "edge";
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-
   return (
-    <html lang={locale}>
+    <html>
       <body>
         <ReduxProvider>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <AuthProvider>
-              <StyleProviders>{children}</StyleProviders>
-            </AuthProvider>
-          </NextIntlClientProvider>
+          <AuthProvider>
+            <StyleProviders>{children}</StyleProviders>
+          </AuthProvider>
         </ReduxProvider>
       </body>
     </html>

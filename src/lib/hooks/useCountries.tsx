@@ -1,17 +1,18 @@
 import useSWR from "swr";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import apiRoutes from "@/lib/routes/apiRoutes";
+import routes from "../routes/routes";
 
 export const useCountries = () => {
   const { apiRequest } = useApiRequest();
+  const api = routes.api;
 
   const fetchCountries = async () => {
     const response = await apiRequest({
-      url: apiRoutes.countries,
+      url: api.countries,
       method: "get",
       requiereAuth: true,
     });
-    return response.data;
+    return response;
   };
 
   const {

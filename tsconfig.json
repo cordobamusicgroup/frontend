@@ -18,10 +18,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@styles/*": ["./src/styles/*"]
     },
+
     "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/context/AuthContext.tsx", "src/lib/data/userMenuItems.jsx", "src/app/dictonaries.ts", "global.d.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/context/AuthContext.tsx", "src/lib/data/userMenuItems.jsx", "src/app/dictonaries.ts", "global.d.ts", "src/components/header/HeaderLayout.tsx", "src/styles/grid-royalties.js"],
   "exclude": ["node_modules"]
 }
