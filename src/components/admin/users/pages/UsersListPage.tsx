@@ -1,9 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Box, TextField, Typography } from "@mui/material";
-import { AddOutlined, PersonAdd } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
+import { PersonAdd } from "@mui/icons-material";
 import theme from "@/theme";
 import routes from "@/lib/routes/routes";
 import UsersTable from "../organisms/UsersTable";
@@ -11,11 +9,12 @@ import BasicButton from "@/components/global/atoms/BasicButton";
 import ErrorBox from "@/components/global/molecules/ErrorBox";
 import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const UserListPage: React.FC = () => {
-  const router = useRouter();
-
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const router = useRouter();
 
   const handleCreateUser = (): void => {
     router.push(routes.web.admin.users.create);

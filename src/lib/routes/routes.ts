@@ -15,10 +15,11 @@ const routes = {
       resetPassword: "/auth/reset-password",
     },
     users: {
-      current: "/users/current",
-      editProfile: "/users/edit-profile",
-      changePassword: "/users/change-password",
-      getCurrent: "/users/current", // New route added
+      root: "/users/admin",
+      register: "/users/admin/register",
+      getAll: "/users/admin/all",
+      viewAs: "/users/admin/view-as-client",
+      getById: (id: number) => `/users/admin/${id}`, // Add this line
     },
     clients: {
       root: "/clients",
@@ -81,7 +82,6 @@ const routes = {
         root: "/admin/users",
         create: "/admin/users/create",
         edit: "/admin/users/edit",
-        search: "/admin/users/search",
       },
       reports: {
         root: "/admin/reports",
