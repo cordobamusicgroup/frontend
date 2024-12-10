@@ -1,4 +1,5 @@
 import { Roles } from "@/constants/roles";
+import { Edit } from "@mui/icons-material";
 import { Link } from "@mui/material";
 
 export interface ProtectedRouteConfig {
@@ -15,11 +16,15 @@ const routes = {
       resetPassword: "/auth/reset-password",
     },
     users: {
-      root: "/users/admin",
-      register: "/users/admin/register",
-      getAll: "/users/admin/all",
-      viewAs: "/users/admin/view-as-client",
-      getById: (id: number) => `/users/admin/${id}`, // Add this line
+      editProfile: "/users/edit-profile",
+      getCurrent: "/users/current",
+      admin: {
+        root: "/users/admin",
+        register: "/users/admin/register",
+        getAll: "/users/admin/all",
+        viewAs: "/users/admin/view-as-client",
+        getById: (id: number) => `/users/admin/${id}`,
+      },
     },
     clients: {
       root: "/clients",

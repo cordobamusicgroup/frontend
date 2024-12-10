@@ -16,7 +16,7 @@ export const useUsersAdmin = (userId?: string) => {
     setError(null); // Clear error on start
     setUserFetchLoading(true);
     try {
-      const url = userId ? `${routes.api.users.root}/${userId}` : routes.api.users.root;
+      const url = userId ? `${routes.api.users.admin.root}/${userId}` : routes.api.users.admin.root;
       const response = await apiRequest({
         url,
         method: "get",
@@ -47,7 +47,7 @@ export const useUsersAdmin = (userId?: string) => {
       setError(null); // Clear error on start
       try {
         const response = await apiRequest({
-          url: routes.api.users.register,
+          url: routes.api.users.admin.register,
           method: "post",
           requiereAuth: true,
           data: userData,
@@ -74,7 +74,7 @@ export const useUsersAdmin = (userId?: string) => {
       setError(null); // Clear error on start
       try {
         const response = await apiRequest({
-          url: `${routes.api.users.root}/${userId}`,
+          url: `${routes.api.users.admin.root}/${userId}`,
           method: "put",
           requiereAuth: true,
           data: userData,
@@ -97,7 +97,7 @@ export const useUsersAdmin = (userId?: string) => {
     setError(null); // Clear error on start
     try {
       await apiRequest({
-        url: routes.api.users.root,
+        url: routes.api.users.admin.root,
         method: "delete",
         requiereAuth: true,
         data: { ids },
@@ -119,7 +119,7 @@ export const useUsersAdmin = (userId?: string) => {
       setError(null); // Clear error on start
       try {
         const response = await apiRequest({
-          url: routes.api.users.viewAs,
+          url: routes.api.users.admin.viewAs,
           method: "patch",
           requiereAuth: true,
           data: { clientId },
@@ -143,7 +143,7 @@ export const useUsersAdmin = (userId?: string) => {
       setError(null); // Clear error on start
       try {
         const response = await apiRequest({
-          url: routes.api.users.getById(id),
+          url: routes.api.users.admin.getById(id),
           method: "get",
           requiereAuth: true,
         });
