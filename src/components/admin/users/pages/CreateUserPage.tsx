@@ -15,6 +15,7 @@ import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import { useUsersAdmin } from "@/lib/hooks/admin/hookUsersAdmin";
 import { UserAdminValidationSchema } from "../utils/UsersAdminValidationSchema";
+import BoxButtonsHeader from "@/components/header/molecules/BoxButtonsHeader";
 
 const CreateUserPage: React.FC = () => {
   const theme = useTheme();
@@ -79,10 +80,12 @@ const CreateUserPage: React.FC = () => {
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Creating New User</Typography>
-        <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
-        <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleUserSubmit} color="primary" variant="contained" disabled={userLoading} startIcon={<AddOutlined />} endIcon={userLoading ? <CircularProgress size={20} /> : null}>
-          Create User
-        </BasicButton>
+        <BoxButtonsHeader>
+          <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
+          <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleUserSubmit} color="primary" variant="contained" disabled={userLoading} startIcon={<AddOutlined />} endIcon={userLoading ? <CircularProgress size={20} /> : null}>
+            Create User
+          </BasicButton>
+        </BoxButtonsHeader>
       </CustomPageHeader>
 
       <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>

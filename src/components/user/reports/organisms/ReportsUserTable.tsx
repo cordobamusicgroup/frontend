@@ -10,6 +10,7 @@ import { royaltiesgrid } from "@/styles/grid-royalties";
 import { themeQuartz } from "@ag-grid-community/theming";
 import { AgGridReact } from "@ag-grid-community/react";
 import { FiberManualRecord as DotIcon } from "@mui/icons-material";
+import { isMobile } from "@/theme";
 
 interface ReportsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -112,7 +113,14 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
     paidOn: report.paidOn,
   }));
 
-  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={{ flex: 1, sortable: false, resizable: false, filter: true }} overlayNoRowsTemplate="Reports not found" />;
+  const defaultColDef = {
+    flex: isMobile() ? 0 : 1,
+    sortable: false,
+    resizable: false,
+    filter: true,
+  };
+
+  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={defaultColDef} overlayNoRowsTemplate="Reports not found" />;
 };
 
 export default ReportsTable;

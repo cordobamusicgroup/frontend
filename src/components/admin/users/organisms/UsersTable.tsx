@@ -10,6 +10,7 @@ import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import { AgGridReact } from "@ag-grid-community/react";
 import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
+import { isMobile } from "@/theme";
 
 interface UsersTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
@@ -81,6 +82,13 @@ const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
     clientId: user.clientId, // Ensure clientId is included in rowData
   }));
 
+  const defaultColDef = {
+    flex: isMobile() ? 0 : 1,
+    sortable: false,
+    resizable: false,
+    filter: true,
+  };
+
   if (clientLoading) {
     return <TableSkeletonLoader />;
   }
@@ -88,7 +96,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
   return (
     <Box sx={{ height: 600, width: "100%" }}>
       <SearchBoxTable searchTextRef={searchTextRef} applyFilter={applyFilter} resetFilter={resetFilter} />
-      <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={userFetchLoading || userLoading} quickFilterText={quickFilterText} defaultColDef={{ flex: 1 }} />
+      <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={userFetchLoading || userLoading} quickFilterText={quickFilterText} defaultColDef={defaultColDef} />
     </Box>
   );
 };
