@@ -18,6 +18,7 @@ import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 import { UserValidationSchema } from "../utils/UserValidationSchema";
 import UserFormLayout from "../organisms/UserFormLayout";
+import BoxButtonsHeader from "@/components/header/molecules/BoxButtonsHeader";
 
 const getUpdatedFields = (formData: any, originalData: any) => {
   return Object.keys(formData).reduce((acc: any, key) => {
@@ -138,10 +139,12 @@ const ProfileUserPage: React.FC = () => {
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
         <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Profile</Typography>
-        <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleFormSubmit} color="primary" variant="contained" startIcon={<CachedOutlined />} disabled={loading}>
-          Update Profile
-        </BasicButton>
-        <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
+        <BoxButtonsHeader>
+          <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
+          <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleFormSubmit} color="primary" variant="contained" startIcon={<CachedOutlined />} disabled={loading}>
+            Update Profile
+          </BasicButton>
+        </BoxButtonsHeader>
       </CustomPageHeader>
 
       <Box>{successMessage && <SuccessBox>{successMessage}</SuccessBox>}</Box>

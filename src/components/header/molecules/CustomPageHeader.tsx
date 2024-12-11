@@ -1,31 +1,38 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { isMobile } from "@/theme";
+import { Box, BoxProps, SxProps } from "@mui/material";
 
-interface CustomPageHeaderProps {
+interface CustomPageHeaderProps extends BoxProps {
   background: string;
   color?: string;
   children: React.ReactNode;
 }
 
-const CustomPageHeader: React.FC<CustomPageHeaderProps> = ({ background, color, children }) => {
+const CustomPageHeader: React.FC<CustomPageHeaderProps> = ({ background, color, children, sx, ...boxProps }) => {
+  const isSticky = !isMobile();
+
+  const defaultStyles: SxProps = {
+    display: "flex",
+    flexDirection: isMobile() ? "column" : "row",
+    justifyContent: isMobile() ? "center" : "space-between",
+    alignItems: isMobile() ? "center" : "center",
+    marginBottom: "20px",
+    minHeight: "62.5px",
+    gap: 2,
+    background,
+    color,
+    boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
+    padding: "13px",
+    borderRadius: "5px",
+    position: isSticky ? "sticky" : "static",
+    top: isSticky ? "80px" : "auto",
+    zIndex: isSticky ? "50" : "auto",
+  };
+
   return (
     <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "20px",
-        minHeight: "62.5px",
-        gap: 2,
-        background,
-        color,
-        boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
-        padding: "13px",
-        borderRadius: "5px",
-        position: "sticky",
-        top: "80px",
-        zIndex: "50",
-      }}
+      sx={{ ...defaultStyles, ...sx }} // Merge default styles with provided styles
+      {...boxProps} // Spread other Box props
     >
       {children}
     </Box>

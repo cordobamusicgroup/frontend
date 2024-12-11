@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, ButtonProps } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { isMobile } from "@/theme";
 
 interface BasicButtonProps extends ButtonProps {
   colorText?: string; // Color del texto personalizado
@@ -20,6 +21,7 @@ const BasicButton: React.FC<BasicButtonProps> = ({ colorText = "white", colorBac
         boxShadow: "none",
         backgroundColor: colorBackground === "primary" ? theme.palette.primary.main : colorBackground, // Fondo personalizado o color primario
         color: colorText === "primary" ? theme.palette.primary.contrastText : colorText, // Texto personalizado o color primario
+        padding: isMobile() ? "6px 12px" : "8px 16px",
         "&:hover": {
           backgroundColor: colorBackground === "primary" ? theme.palette.primary.dark : theme.palette.grey[300], // Hover dependiendo del fondo
         },
