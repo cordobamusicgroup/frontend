@@ -13,7 +13,7 @@ const PageOverview: React.FC = () => {
           Córdoba Music Group is your go-to platform for all things music. We are a music distributor and this is our new platform currently under continuous development. Explore our vast collection of music, stay updated with the latest trends, and connect with other music enthusiasts.
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          For feedback, please email us at info@cordobamusicgroup.co.uk
+          For feedback, please email us at feedback@cordobamusicgroup.co.uk
         </Typography>
       </Box>
     </Container>
