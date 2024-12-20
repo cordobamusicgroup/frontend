@@ -21,6 +21,7 @@ const GridTables = forwardRef<AgGridReact, GridTablesProps>(({ columns, rowData,
     <Box width={width} height={height}>
       <AgGridReact
         ref={ref}
+        loadThemeGoogleFonts={true}
         theme={cmgThemeGrid}
         columnDefs={columns}
         rowData={rowData}
