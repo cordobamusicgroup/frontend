@@ -18,6 +18,7 @@
     "@ag-grid-community/theming": "^32.3.3",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@fontsource/roboto": "^5.1.1",
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^5.16.8",
     "@mui/material": "^5.16.8",
