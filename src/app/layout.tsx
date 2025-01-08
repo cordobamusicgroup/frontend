@@ -3,6 +3,7 @@ import StyleProviders from "@/context/StyleContext";
 import React from "react";
 import ReduxProvider from "@/context/ReduxContext";
 import { AuthProvider } from "@/context/AuthContext";
+import "@fontsource/roboto";
 
 export const metadata: Metadata = {
   title: {

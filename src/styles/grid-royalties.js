@@ -9,6 +9,7 @@ export const royaltiesgrid = themeQuartz.withParams({
     googleFont: "Roboto",
   },
   fontSize: "15px",
+  headerFontWeight: "normal",
   headerColumnBorder: false,
   headerFontSize: "15px",
   headerRowBorder: false,
@@ -20,6 +21,7 @@ export const royaltiesgrid = themeQuartz.withParams({
 // to use myTheme in an application, pass it to the theme grid option
 export const cmgThemeGrid = themeQuartz.withParams({
   browserColorScheme: "light",
+  headerFontWeight: "normal",
   fontFamily: {
     googleFont: "Roboto",
   },
