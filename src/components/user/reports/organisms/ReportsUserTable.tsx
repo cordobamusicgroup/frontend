@@ -14,11 +14,12 @@ import { isMobile } from "@/theme";
 
 interface ReportsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
+  distributor: string;
 }
 
-const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
+const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification, distributor }) => {
   const router = useRouter();
-  const { reportData = [], reportFetchLoading, downloadReport, reportError, reportLoading } = useReportsUser();
+  const { reportData = [], reportFetchLoading, downloadReport, reportError, reportLoading } = useReportsUser(distributor);
   const gridRef = useRef<AgGridReact>(null);
 
   useEffect(() => {
@@ -37,29 +38,45 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification }) => {
     }
   };
 
+  const distributorFormatter = (distributor: string) => {
+    switch (distributor) {
+      case "KONTOR":
+        return "Kontor New Media";
+      case "BELIEVE":
+        return "Believe Digital";
+      default:
+        return distributor;
+    }
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 80, filter: false, flex: 0 },
-    { field: "createdAt", headerName: "Date", sort: "desc", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
-    { field: "currency", headerName: "Currency", width: 150 },
-    { field: "distributor", headerName: "Distributor", width: 150 },
+    { field: "createdAt", headerName: "Creation Date", sort: "desc", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
     {
       field: "reportingMonth",
       headerName: "Reporting Month",
       width: 150,
       valueFormatter: (params: any) => dayjs(params.value).format("YYYY.MM"),
     },
+    { 
+      field: "distributor", 
+      headerName: "Distributor", 
+      width: 150,
+      valueFormatter: (params: any) => distributorFormatter(params.value)
+    },
+    { field: "currency", headerName: "Currency", width: 150 },
+
     {
       field: "totalRoyalties",
       headerName: "Total Royalties",
       width: 200,
       valueFormatter: (params: any) => {
         const currency = params.data.currency === "EUR" ? "EUR" : "USD";
-        return params.value.toLocaleString("en-GB", {
-          style: "currency",
-          currency: currency,
+        const currencySymbol = currency === "USD" ? "$" : "€";
+        return `${currencySymbol}${params.value.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 20,
-        });
+        })}`;
       },
     },
     {
