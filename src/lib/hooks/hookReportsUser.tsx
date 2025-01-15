@@ -6,7 +6,7 @@ import axios from "axios";
 
 type Report = any;
 
-export const useReportsUser = (reportId?: string) => {
+export const useReportsUser = (distributor: string, reportId?: string) => {
   const { apiRequest } = useApiRequest();
   const [error, setError] = useState<string | null>(null);
   const [reportFetchLoading, setReportFetchLoading] = useState<boolean>(false);
@@ -16,7 +16,7 @@ export const useReportsUser = (reportId?: string) => {
     setError(null); // Limpiar error al iniciar
     setReportFetchLoading(true);
     try {
-      const url = routes.api.financial.reports.user.currentReports;
+      const url = `${routes.api.financial.reports.user.currentReports}?distributor=${distributor}`;
       const response = await apiRequest({
         url,
         method: "get",
@@ -30,13 +30,13 @@ export const useReportsUser = (reportId?: string) => {
     } finally {
       setReportFetchLoading(false);
     }
-  }, [apiRequest]);
+  }, [apiRequest, distributor]);
 
   const {
     data,
     error: fetchError,
     mutate: dataMutate,
-  } = useSWR<Report[]>(routes.api.financial.reports.user.currentReports, currentReports, {
+  } = useSWR<Report[]>(`${routes.api.financial.reports.user.currentReports}?distributor=${distributor}`, currentReports, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
@@ -57,9 +57,7 @@ export const useReportsUser = (reportId?: string) => {
         }
         return response.url; // Ensure the URL is correctly extracted
       } catch (err) {
-        const errorMessage = axios.isAxiosError(err) 
-          ? (err.response?.data?.message || "Error downloading report") 
-          : (err instanceof Error ? err.message : "Unknown error occurred");
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error downloading report" : err instanceof Error ? err.message : "Unknown error occurred";
         setError(errorMessage);
         throw err;
       } finally {

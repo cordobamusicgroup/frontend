@@ -5,12 +5,19 @@ import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import theme from "@/theme";
 import { FileUpload, PersonAdd } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Select, MenuItem, SelectChangeEvent, FormControl, InputLabel } from "@mui/material";
 import { useState } from "react";
 import ReportsTable from "../organisms/ReportsUserTable";
 
 export default function ReportsPage() {
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [selectedDistributor, setSelectedDistributor] = useState<string | null>(null);
+
+  const handleDistributorChange = (event: SelectChangeEvent<string>) => {
+    const distributor = event.target.value;
+    setSelectedDistributor(distributor);
+    setNotification(null); // Clear any existing notifications
+  };
 
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
@@ -20,6 +27,14 @@ export default function ReportsPage() {
           Export Reports
         </BasicButton> */}
       </CustomPageHeader>
+
+      <FormControl sx={{ minWidth: 200, marginBottom: 2 }}>
+        <InputLabel>Select Distributor</InputLabel>
+        <Select value={selectedDistributor ?? ""} onChange={handleDistributorChange} label="Select Distributor">
+          <MenuItem value="KONTOR">Kontor New Media</MenuItem>
+          <MenuItem value="BELIEVE">Believe Digital</MenuItem>
+        </Select>
+      </FormControl>
 
       <Box>
         {notification?.type === "success" && <SuccessBox>{notification.message}</SuccessBox>}
@@ -35,9 +50,11 @@ export default function ReportsPage() {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "flex", height: "600px", width: "100%", justifyContent: "center" }}>
-        <ReportsTable setNotification={setNotification} />
-      </Box>
+      {selectedDistributor && (
+        <Box sx={{ display: "flex", height: "600px", width: "100%", justifyContent: "center" }}>
+          <ReportsTable setNotification={setNotification} distributor={selectedDistributor} />
+        </Box>
+      )}
     </Box>
   );
 }
