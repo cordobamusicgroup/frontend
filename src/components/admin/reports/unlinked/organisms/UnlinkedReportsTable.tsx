@@ -1,32 +1,22 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Autocomplete } from "@mui/material";
-import routes from "@/lib/routes/routes";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, Button } from "@mui/material";
 import GridTables from "@/components/global/molecules/GridTables";
-import { useRouter } from "next/navigation";
 import useQuickFilter from "@/lib/hooks/useQuickFilter";
-import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import { AgGridReact } from "@ag-grid-community/react";
-import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
 import { useLinkReports } from "@/lib/hooks/admin/hookLinkReportsAdmin";
 import { Refresh } from "@mui/icons-material";
 import { mutate } from "swr";
 import "@/styles/ag-grid.css"; // Add this line to import the CSS file
-import LinkUnlinkedReportForm from "@/components/admin/reports/unlinked/molecules/LinkUnlinkedReportForm";
 import LinkReportDialog from "../molecules/LinkReportDialog";
 import { useAppStore } from "@/lib/zustand/zustandStore";
+import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 
-interface UnlinkedReportsTableProps {
-  setNotification: (notification: { message: string; type: "success" | "error" }) => void;
-}
-
-const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = () => {
-  const router = useRouter();
+const UnlinkedReportsTable: React.FC = () => {
   const { unlinkedReports, unlinkedReportsLoading, unlinkedReportsError } = useLinkReports();
   const gridRef = useRef<AgGridReact>(null);
 
   const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
-  const [open, setOpen] = useState(false);
   const [openLinkDialog, setOpenLinkDialog] = useState(false);
   const [selectedReportData, setSelectedReportData] = useState<any>(null);
   const { setNotification } = useAppStore.notification();
@@ -91,12 +81,7 @@ const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = () => {
         </Box>
         <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={unlinkedReportsLoading} quickFilterText={quickFilterText} defaultColDef={{ filter: true, headerClass: "center-header", flex: 1 }} />
       </Box>
-      <LinkReportDialog
-        open={openLinkDialog}
-        onClose={handleCloseLinkDialog}
-        reportId={selectedReportId}
-        reportData={selectedReportData}
-      />
+      <LinkReportDialog open={openLinkDialog} onClose={handleCloseLinkDialog} reportId={selectedReportId} reportData={selectedReportData} />
     </>
   );
 };

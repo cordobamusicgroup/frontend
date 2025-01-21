@@ -15,22 +15,9 @@ import { useAppStore } from "@/lib/zustand/zustandStore";
 import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 const UnlinkedReportsPage: React.FC = () => {
-  const router = useRouter();
   const { notification, setNotification } = useAppStore.notification();
-  const [open, setOpen] = useState(false);
-  const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
 
   useNotificationCleanup();
-
-  const handleOpen = (reportId: number) => {
-    setSelectedReportId(reportId);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedReportId(null);
-  };
 
   return (
     <>
@@ -45,7 +32,7 @@ const UnlinkedReportsPage: React.FC = () => {
         </Box>
 
         <Box sx={{ display: "flex", height: "600px", width: "100%" }}>
-          <UnlinkedReportsTable setNotification={setNotification} />
+          <UnlinkedReportsTable />
         </Box>
       </Box>
     </>

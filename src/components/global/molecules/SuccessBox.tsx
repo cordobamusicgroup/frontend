@@ -1,13 +1,15 @@
 import React from "react";
-import { Alert, AlertTitle, Box, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Typography, IconButton } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
+import CloseIcon from "@mui/icons-material/Close";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface SuccessBoxProps {
   children: React.ReactNode;
 }
 
 const SuccessBox: React.FC<SuccessBoxProps> = ({ children }) => {
+  const { clearNotification } = useAppStore.notification();
 
   return (
     <Box mb={2}>
@@ -16,6 +18,16 @@ const SuccessBox: React.FC<SuccessBoxProps> = ({ children }) => {
         iconMapping={{
           success: <CheckCircleOutlineIcon fontSize="large" />,
         }}
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            size="small"
+            onClick={clearNotification}
+          >
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+        }
         sx={{
           backgroundColor: "#e7f5e9",
           color: "#2e7d32",
