@@ -2,12 +2,8 @@
 import React from "react";
 import { Box, Typography, Container } from "@mui/material";
 import ConstructionIcon from "@mui/icons-material/Construction";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { setPageTitle } from "@/lib/redux/slices/pageDataSlice";
 
 const PageMaintenance: React.FC = () => {
-  const dispatch = useAppDispatch();
-  dispatch(setPageTitle("Maintenance"));
   return (
     <Container
       sx={{
