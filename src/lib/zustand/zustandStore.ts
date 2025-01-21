@@ -25,6 +25,12 @@ interface PageDataState {
   setPageTitle: (pageTitle: string) => void;
 }
 
+interface NotificationState {
+  notification: { message: string; type: "success" | "error" } | null;
+  setNotification: (notification: { message: string; type: "success" | "error" } | null) => void;
+  clearNotification: () => void;
+}
+
 // Custom storage adapter para zustand-persist
 const zustandStorage: PersistStorage<any> = {
   getItem: (name) => {
@@ -100,14 +106,26 @@ const usePageDataStore = create<PageDataState>()(
   )
 );
 
+const useNotificationStore = create<NotificationState>()(
+  devtools(
+    (set) => ({
+      notification: null,
+      setNotification: (notification) => set({ notification }),
+      clearNotification: () => set({ notification: null }),
+    }),
+    { name: "NotificationStore" }
+  )
+);
+
 // Exportar los stores
 export const useAppStore = {
   loader: useLoaderStore,
   user: useUserStore,
   pageData: usePageDataStore,
+  notification: useNotificationStore,
 };
 
 // Ejemplo de uso
 // const { loading, setLoading } = useAppStore.loader();
 // const { userData, setUserData, clearUserData } = useAppStore.user();
-// const { openMenu, toggleMenu } = useAppStore.pageData();
+// const { openMenu, toggleMenu } = useAppStore.pageData;

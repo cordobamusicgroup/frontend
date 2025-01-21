@@ -8,7 +8,7 @@ import { Block, BlockOutlined, CheckCircle, CheckCircleOutline, DoDisturbOnOutli
 import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
 import { useLinkReports } from "@/lib/hooks/admin/hookLinkReportsAdmin";
 import ErrorBox from "@/components/global/molecules/ErrorBox";
-import SuccessBox from "@/components/global/molecules/SuccessBox";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface LinkUnlinkedReportFormProps {
   reportId: number | null;
@@ -24,11 +24,17 @@ interface LinkUnlinkedReportFormProps {
 
 const LinkUnlinkedReportForm: React.FC<LinkUnlinkedReportFormProps> = ({ reportId, onClose, reportData }) => {
   const methods = useForm();
-  const { setValue, watch, handleSubmit, formState: { errors }, reset } = methods;
+  const {
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = methods;
   const { labelData = [], labelFetchLoading, labelError } = useLabels();
   const { linkReport, error: linkError, loading: linkLoading } = useLinkReports();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { setNotification } = useAppStore.notification();
 
   const labelId = watch("labelId");
   const selectedClient = labelData?.find((label: any) => label.id === labelId) || null;
@@ -37,7 +43,7 @@ const LinkUnlinkedReportForm: React.FC<LinkUnlinkedReportFormProps> = ({ reportI
     if (reportId && labelId) {
       try {
         await linkReport(reportId, labelId);
-        setSuccessMessage("Report linked successfully");
+        setNotification({ message: "Report linked successfully", type: "success" });
         onClose();
         reset();
       } catch (error) {
@@ -63,7 +69,6 @@ const LinkUnlinkedReportForm: React.FC<LinkUnlinkedReportFormProps> = ({ reportI
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(handleLinkReport)}>
         {errorMessage && <ErrorBox>{errorMessage}</ErrorBox>}
-        {successMessage && <SuccessBox>{successMessage}</SuccessBox>}
         {reportData && (
           <>
             <TextFieldForm name="id" label="Unlinked Report ID" value={reportData.id} disabled />
@@ -90,7 +95,7 @@ const LinkUnlinkedReportForm: React.FC<LinkUnlinkedReportFormProps> = ({ reportI
         />
 
         <Button type="submit" disabled={!reportId || !labelId || linkLoading}>
-          Link Report
+          {linkLoading ? "Linking..." : "Link Report"}
         </Button>
       </form>
     </FormProvider>

@@ -47,6 +47,7 @@ export const useLinkReports = () => {
           requiereAuth: true,
           data: { unlinkedReportId, labelId },
         });
+        mutate("unlinked-reports"); // Refresh the data
         return response;
       } catch (err) {
         setError("Error linking report");

@@ -11,22 +11,18 @@ import { themeQuartz } from "@ag-grid-community/theming";
 import { AgGridReact } from "@ag-grid-community/react";
 import { FiberManualRecord as DotIcon } from "@mui/icons-material";
 import { isMobile } from "@/theme";
+import axios from "axios";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface ReportsTableProps {
-  setNotification: (notification: { message: string; type: "success" | "error" }) => void;
   distributor: string;
 }
 
-const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification, distributor }) => {
+const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
   const router = useRouter();
+  const { setNotification } = useAppStore.notification();
   const { reportData = [], reportFetchLoading, downloadReport, reportError, reportLoading } = useReportsUser(distributor);
   const gridRef = useRef<AgGridReact>(null);
-
-  useEffect(() => {
-    if (reportError) {
-      setNotification({ message: reportError, type: "error" });
-    }
-  }, [reportError, setNotification]);
 
   const handleDownload = async (reportId: number): Promise<void> => {
     try {
@@ -34,7 +30,12 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification, distributo
       window.open(url, "_blank");
       setNotification({ message: "Report downloaded successfully", type: "success" });
     } catch (error) {
-      setNotification({ message: "Error downloading report", type: "error" });
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || "Error downloading report";
+        setNotification({ message: errorMessage, type: "error" });
+      } else {
+        setNotification({ message: "An unexpected error occurred", type: "error" });
+      }
     }
   };
 
@@ -58,11 +59,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ setNotification, distributo
       width: 150,
       valueFormatter: (params: any) => dayjs(params.value).format("YYYY.MM"),
     },
-    { 
-      field: "distributor", 
-      headerName: "Distributor", 
+    {
+      field: "distributor",
+      headerName: "Distributor",
       width: 150,
-      valueFormatter: (params: any) => distributorFormatter(params.value)
+      valueFormatter: (params: any) => distributorFormatter(params.value),
     },
     { field: "currency", headerName: "Currency", width: 150 },
 

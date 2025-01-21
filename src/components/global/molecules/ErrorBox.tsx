@@ -1,12 +1,14 @@
 import React from "react";
 import { Alert, AlertTitle, Box, Typography } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 interface ErrorBoxProps {
   children: React.ReactNode;
 }
 
 const ErrorBox: React.FC<ErrorBoxProps> = ({ children }) => {
+
   return (
     <Box mb={2}>
       <Alert

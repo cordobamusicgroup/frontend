@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import LinkUnlinkedReportForm from "@/components/admin/reports/unlinked/molecules/LinkUnlinkedReportForm";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface LinkReportDialogProps {
   open: boolean;
@@ -16,14 +17,32 @@ interface LinkReportDialogProps {
 }
 
 const LinkReportDialog: React.FC<LinkReportDialogProps> = ({ open, onClose, reportId, reportData }) => {
+  const [loading, setLoading] = useState(false);
+  const { setNotification } = useAppStore.notification();
+
+  const handleClose = () => {
+    if (!loading) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>Link Unlinked Report</DialogTitle>
       <DialogContent>
-        <LinkUnlinkedReportForm reportId={reportId} onClose={onClose} reportData={reportData} />
+        <LinkUnlinkedReportForm
+          reportId={reportId}
+          onClose={() => {
+            setLoading(false);
+            onClose();
+          }}
+          reportData={reportData}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose} disabled={loading}>
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

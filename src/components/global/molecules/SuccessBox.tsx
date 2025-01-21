@@ -1,28 +1,30 @@
 import React from "react";
 import { Alert, AlertTitle, Box, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 interface SuccessBoxProps {
   children: React.ReactNode;
 }
 
 const SuccessBox: React.FC<SuccessBoxProps> = ({ children }) => {
+
   return (
     <Box mb={2}>
       <Alert
         severity="success"
         iconMapping={{
-          error: <CheckCircleOutlineIcon fontSize="large" />,
+          success: <CheckCircleOutlineIcon fontSize="large" />,
         }}
         sx={{
-          backgroundColor: "#eaf6ea",
+          backgroundColor: "#e7f5e9",
           color: "#2e7d32",
           borderLeft: "6px solid #2e7d32",
           padding: "16px",
         }}
       >
         <AlertTitle sx={{ fontWeight: 700, display: "flex", alignItems: "center" }}>
-          <Typography variant="h6" component="span" sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
             SUCCESS
           </Typography>
         </AlertTitle>

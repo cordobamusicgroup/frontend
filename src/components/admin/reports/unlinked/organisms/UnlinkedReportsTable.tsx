@@ -13,12 +13,13 @@ import { mutate } from "swr";
 import "@/styles/ag-grid.css"; // Add this line to import the CSS file
 import LinkUnlinkedReportForm from "@/components/admin/reports/unlinked/molecules/LinkUnlinkedReportForm";
 import LinkReportDialog from "../molecules/LinkReportDialog";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface UnlinkedReportsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
 
-const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = ({ setNotification }) => {
+const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = () => {
   const router = useRouter();
   const { unlinkedReports, unlinkedReportsLoading, unlinkedReportsError } = useLinkReports();
   const gridRef = useRef<AgGridReact>(null);
@@ -28,6 +29,7 @@ const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = ({ setNotifica
   const [open, setOpen] = useState(false);
   const [openLinkDialog, setOpenLinkDialog] = useState(false);
   const [selectedReportData, setSelectedReportData] = useState<any>(null);
+  const { setNotification } = useAppStore.notification();
 
   useEffect(() => {
     if (unlinkedReportsError) {
@@ -89,7 +91,12 @@ const UnlinkedReportsTable: React.FC<UnlinkedReportsTableProps> = ({ setNotifica
         </Box>
         <GridTables ref={gridRef} columns={columns} rowData={rowData} loading={unlinkedReportsLoading} quickFilterText={quickFilterText} defaultColDef={{ filter: true, headerClass: "center-header", flex: 1 }} />
       </Box>
-      <LinkReportDialog open={openLinkDialog} onClose={handleCloseLinkDialog} reportId={selectedReportId} reportData={selectedReportData} />
+      <LinkReportDialog
+        open={openLinkDialog}
+        onClose={handleCloseLinkDialog}
+        reportId={selectedReportId}
+        reportData={selectedReportData}
+      />
     </>
   );
 };
