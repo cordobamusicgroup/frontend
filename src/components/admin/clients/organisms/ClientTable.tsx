@@ -29,7 +29,6 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const gridRef = useRef<AgGridReact>(null);
 
   const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
-  const [selectedRows, setSelectedRows] = useState<any[]>([]); // Almacena las filas seleccionadas para eliminar TODO
   const handleEdit = (client: any): void => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
   };
@@ -47,7 +46,6 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
       const selectedIds = selectedData.map((row) => row.id);
       if (selectedIds.length && (await deleteClients(selectedIds))) {
         setNotification({ message: `${selectedIds.length} clients deleted successfully`, type: "success" });
-        setSelectedRows([]);
         gridRef.current.api.deselectAll(); // Deselecciona después de eliminar
       }
     }
