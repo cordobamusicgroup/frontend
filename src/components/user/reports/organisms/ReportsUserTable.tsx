@@ -52,13 +52,14 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 80, filter: false, flex: 0 },
-    { field: "createdAt", headerName: "Creation Date", sort: "desc", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
     {
       field: "reportingMonth",
       headerName: "Reporting Month",
+      sort: "desc", // Change sorting to reportingMonth
       width: 150,
       valueFormatter: (params: any) => dayjs(params.value).format("YYYY.MM"),
     },
+    { field: "createdAt", headerName: "Creation Date", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
     {
       field: "distributor",
       headerName: "Distributor",
