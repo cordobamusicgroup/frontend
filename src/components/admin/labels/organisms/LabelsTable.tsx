@@ -28,7 +28,7 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
   const { clientData = [], clientLoading, deleteClients, clientError } = useClients();
 
   const gridRef = useRef<any>(null);
-  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter(gridRef);
   const handleEdit = (label: any): void => {
     router.push(`${web.admin.labels.edit}/${label.id}`);
   };

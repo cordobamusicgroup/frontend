@@ -15,7 +15,7 @@ const UnlinkedReportsTable: React.FC = () => {
   const { unlinkedReports, unlinkedReportsLoading, unlinkedReportsError } = useLinkReports();
   const gridRef = useRef<AgGridReact>(null);
 
-  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter(gridRef);
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
   const [openLinkDialog, setOpenLinkDialog] = useState(false);
   const [selectedReportData, setSelectedReportData] = useState<any>(null);
