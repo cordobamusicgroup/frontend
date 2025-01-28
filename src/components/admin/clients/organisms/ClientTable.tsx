@@ -28,7 +28,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const { clientData = [], clientFetchLoading, deleteClients, clientError, clientLoading } = useClients();
   const gridRef = useRef<AgGridReact>(null);
 
-  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter(gridRef);
   const handleEdit = (client: any): void => {
     router.push(`${web.admin.clients.edit}/${client.id}`);
   };
