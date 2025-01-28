@@ -27,11 +27,14 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
   const currencySymbol = currency === "USD" ? "$" : "€";
   const { withdrawalAuthorized } = usePaymentsUser();
 
+  // Ensure balance is a number
+  const numericBalance = typeof balance === "number" ? balance : parseFloat(balance);
+
   const isBlocked = withdrawalAuthorized?.isBlocked;
   const isPaymentInProgress = withdrawalAuthorized?.isPaymentInProgress;
   const isPaymentDataInValidation = withdrawalAuthorized?.isPaymentDataInValidation;
 
-  const showRequestPaymentButton = balance >= 100 && !isBlocked && !isPaymentInProgress && !isPaymentDataInValidation;
+  const showRequestPaymentButton = numericBalance >= 100 && !isBlocked && !isPaymentInProgress && !isPaymentDataInValidation;
 
   return (
     <Box
@@ -62,12 +65,12 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
           <b>Payment Method:</b> {paymentMethod}
         </Typography>
         {showRequestPaymentButton ? <BasicButton>Request Payment</BasicButton> : <DisabledButton>Payment Not Available</DisabledButton>}
-        {balance >= 100 && (
+        {numericBalance >= 100 && (
           <Typography color={"#444444"}>
             Your royalties have reached the <b>$100 threshold</b>, and you can now request a withdrawal in your chosen payment method.
           </Typography>
         )}
-        {balance < 100 && (
+        {numericBalance < 100 && (
           <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
             <MoneyOff sx={{ fontSize: 18, marginRight: 1, color: "#09365F" }} />
             <Typography sx={{ fontSize: 16 }}>The amount of royalties due is inferior to the minimum required by your distribution contract.</Typography>
@@ -91,7 +94,7 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
             <Typography sx={{ fontSize: 16 }}>Your royalty withdrawals, method updates are blocked, contact us for more information.</Typography>
           </Box>
         )}
-        {balance < 0 && (
+        {numericBalance < 0 && (
           <Box sx={{ display: "flex", alignItems: "start", color: "#444444" }}>
             <WarningAmber sx={{ fontSize: 18, marginRight: 1, color: "#FF9800" }} />
             <Typography sx={{ fontSize: 16 }}>Your balance is negative, the outstanding balance will be deducted from your next royalty payment.</Typography>
@@ -115,7 +118,7 @@ export default function BalancesBlock({ paymentMethod = "N/A", balance = 0.0, cu
           <b>Currency:</b> {currency}
         </Typography>
         <Typography color={"#1E73BE"} id="current_balance" sx={{ fontSize: "30px", fontWeight: "600" }}>
-          {currencySymbol} {balance.toFixed(2)}
+          {currencySymbol} {numericBalance.toFixed(2)}
         </Typography>
       </Box>
     </Box>

@@ -1,26 +1,26 @@
 import { useRef, useState } from "react";
+import { AgGridReact } from "@ag-grid-community/react";
 
-const useQuickFilter = () => {
-  const searchTextRef = useRef<HTMLInputElement | null>(null);
-  const [quickFilterText, setQuickFilterText] = useState<string>("");
+const useQuickFilter = (gridRef: React.RefObject<AgGridReact>) => {
+  const searchTextRef = useRef<HTMLInputElement>(null);
+  const [quickFilterText, setQuickFilterText] = useState("");
 
   const applyFilter = () => {
-    setQuickFilterText(searchTextRef.current?.value || "");
+    const filterText = searchTextRef.current?.value || "";
+    setQuickFilterText(filterText);
+    gridRef.current?.api.setGridOption("quickFilterText", filterText);
   };
 
   const resetFilter = () => {
-    if (searchTextRef.current) {
-      searchTextRef.current.value = "";
-    }
     setQuickFilterText("");
+    if (searchTextRef.current) {
+      searchTextRef
+.current.value = "";
+    }
+    gridRef.current?.api.setGridOption("quickFilterText", "");
   };
 
-  return {
-    searchTextRef,
-    quickFilterText,
-    applyFilter,
-    resetFilter,
-  };
+  return { searchTextRef, quickFilterText, applyFilter, resetFilter };
 };
 
 export default useQuickFilter;
