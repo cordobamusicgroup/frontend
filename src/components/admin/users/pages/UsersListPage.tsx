@@ -11,14 +11,18 @@ import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAppStore } from "@/lib/zustand/zustandStore";
+import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 const UserListPage: React.FC = () => {
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const { notification } = useAppStore.notification();
   const router = useRouter();
 
   const handleCreateUser = (): void => {
     router.push(routes.web.admin.users.create);
   };
+  useNotificationCleanup();
+
 
   return (
     <>
@@ -26,7 +30,7 @@ const UserListPage: React.FC = () => {
         <CustomPageHeader background={"linear-gradient(90deg, #062E52 0%, #005C99 50%, #007BE6 100%)"} color={theme.palette.primary.contrastText}>
           <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Manage Users</Typography>
           <BasicButton colorBackground="white" colorText={"#164723"} onClick={handleCreateUser} color="primary" variant="contained" startIcon={<PersonAdd />}>
-            Create Users
+            Create User
           </BasicButton>
         </CustomPageHeader>
 
@@ -36,7 +40,7 @@ const UserListPage: React.FC = () => {
         </Box>
 
         <Box sx={{ display: "flex", height: "600px", width: "100%" }}>
-          <UsersTable setNotification={setNotification} />
+          <UsersTable />
         </Box>
       </Box>
     </>

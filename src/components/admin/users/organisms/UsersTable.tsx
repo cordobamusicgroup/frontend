@@ -11,21 +11,18 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
 import { isMobile } from "@/theme";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
-interface UsersTableProps {
-  setNotification: (notification: { message: string; type: "success" | "error" }) => void;
-}
-
-const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
+const UsersTable: React.FC = () => {
   const router = useRouter();
   const web = routes.web;
+  const { setNotification } = useAppStore.notification();
   const { userData = [], userFetchLoading, deleteUsers, userError, userLoading } = useUsersAdmin();
-  const { clientData = [], clientLoading, deleteClients, clientError } = useClients();
+  const { clientData = [], clientLoading } = useClients();
 
   const gridRef = useRef<AgGridReact>(null);
+  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter(gridRef);
 
-  const { searchTextRef, quickFilterText, applyFilter, resetFilter } = useQuickFilter();
-  const [selectedRows, setSelectedRows] = useState<any[]>([]); // Almacena las filas seleccionadas para eliminar TODO
   const handleEdit = (user: any): void => {
     router.push(`${web.admin.users.edit}/${user.id}`);
   };
@@ -42,6 +39,19 @@ const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
     }
   }, [userError, setNotification]);
 
+  const rowData = userData.map((user: any) => {
+    const client = clientData.find((client: any) => client.id === user.clientId);
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      clientId: user.clientId,
+      clientName: client ? `${client.clientName} (${client.id})` : "No client found",
+    };
+  });
+
   const columns = [
     { field: "id", headerName: "ID", width: 80, sortable: false, filter: false, resizable: false, flex: 0 },
     { field: "username", headerName: "Username", width: 200 },
@@ -51,13 +61,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
       field: "client",
       headerName: "Client",
       width: 300,
-      cellRenderer: (params: any) => {
-        if (clientLoading) {
-          return <TableSkeletonLoader />;
-        }
-        const client = clientData.find((client: any) => client.id === params.data.clientId);
-        return client ? `${client.clientName} (${client.id})` : "No client found";
-      },
+      valueGetter: (params: any) => params.data.clientName,
     },
     { field: "role", headerName: "Role", width: 150 },
     {
@@ -72,15 +76,6 @@ const UsersTable: React.FC<UsersTableProps> = ({ setNotification }) => {
       cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
     },
   ];
-
-  const rowData = userData.map((user: any) => ({
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    fullName: user.fullName,
-    role: user.role,
-    clientId: user.clientId, // Ensure clientId is included in rowData
-  }));
 
   const defaultColDef = {
     flex: isMobile() ? 0 : 1,

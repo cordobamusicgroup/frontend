@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Box, TextField, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Autocomplete } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { AddOutlined, PersonAdd, Refresh } from "@mui/icons-material";
 import theme from "@/theme";
 import routes from "@/lib/routes/routes";
@@ -11,23 +11,13 @@ import ErrorBox from "@/components/global/molecules/ErrorBox";
 import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import UnlinkedReportsTable from "../organisms/UnlinkedReportsTable";
+import { useAppStore } from "@/lib/zustand/zustandStore";
+import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 const UnlinkedReportsPage: React.FC = () => {
-  const router = useRouter();
+  const { notification, setNotification } = useAppStore.notification();
 
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
-  const [open, setOpen] = useState(false);
-  const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
-
-  const handleOpen = (reportId: number) => {
-    setSelectedReportId(reportId);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedReportId(null);
-  };
+  useNotificationCleanup();
 
   return (
     <>
@@ -42,7 +32,7 @@ const UnlinkedReportsPage: React.FC = () => {
         </Box>
 
         <Box sx={{ display: "flex", height: "600px", width: "100%" }}>
-          <UnlinkedReportsTable setNotification={setNotification} />
+          <UnlinkedReportsTable />
         </Box>
       </Box>
     </>

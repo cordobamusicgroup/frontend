@@ -4,12 +4,11 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { clearUserData, setUserData } from "@/lib/redux/slices/userSlice";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { useAppDispatch } from "@/lib/redux/hooks";
 import axios from "axios";
 import routes from "@/lib/routes/routes";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface AuthContextType {
   error: string | null;
@@ -25,17 +24,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const { apiRequest } = useApiRequest();
   const { api, web } = routes;
   const [isClient, setIsClient] = useState(false); // Nuevo estado para manejar la carga del cliente
 
-  useEffect(() => {
-    setIsClient(true); // Cambia a true cuando el componente está montado en el cliente
-  }, []);
-
-  const isAuthenticated = isClient && Cookies.get("isAuthenticated") === "true";
-  const accessToken = isClient ? Cookies.get("access_token") : null;
+  const isAuthenticated = Cookies.get("isAuthenticated") === "true";
+  const accessToken = Cookies.get("access_token");
 
   useEffect(() => {
     if (isClient && accessToken) {
@@ -69,7 +63,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useSWR(isAuthenticated ? "userData" : null, fetchUserData, {
-    onSuccess: (data) => dispatch(setUserData(data)),
+    onSuccess: (data) => {
+      const { setUserData } = useAppStore.user.getState(); // Acceso al estado sin hooks
+      setUserData(data);
+    },
     onError: (error) => console.error("Error fetching user data:", error),
     revalidateOnFocus: false,
     shouldRetryOnError: false,
@@ -94,7 +91,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     await mutate("userData", null, { revalidate: false });
-    dispatch(clearUserData());
+    const { clearUserData } = useAppStore.user.getState(); // Acceso al estado sin hooks
+    clearUserData();
     clearAuthCookies();
     router.push(web.login);
   };

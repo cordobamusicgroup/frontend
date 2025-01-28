@@ -4,9 +4,9 @@ import { Menu, MenuItem, ListItemIcon, ListItemText, Box, Typography, IconButton
 import { AccountCircle } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useAppSelector } from "@/lib/redux/hooks";
 import LoadingSpinner from "@/components/global/atoms/LoadingSpinner";
 import { useUserMenuItems } from "@/lib/menus/userMenuItems";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 /**
  * UserMenu component displays a user menu with options for the current user.
@@ -19,7 +19,7 @@ const UserMenu: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const menuItems = useUserMenuItems(); // Obtén los items del menú
-  const userData = useAppSelector((state) => state.user.userData);
+  const userData = useAppStore.user((state) => state.userData);
 
   /**
    * Handles the opening of the user menu.

@@ -1,12 +1,16 @@
 import React from "react";
-import { Alert, AlertTitle, Box, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Typography, IconButton } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface ErrorBoxProps {
   children: React.ReactNode;
 }
 
 const ErrorBox: React.FC<ErrorBoxProps> = ({ children }) => {
+  const { clearNotification } = useAppStore.notification();
+
   return (
     <Box mb={2}>
       <Alert
@@ -14,6 +18,11 @@ const ErrorBox: React.FC<ErrorBoxProps> = ({ children }) => {
         iconMapping={{
           error: <ErrorOutlineIcon fontSize="large" />,
         }}
+        action={
+          <IconButton aria-label="close" color="inherit" size="small" onClick={clearNotification}>
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+        }
         sx={{
           backgroundColor: "#fdecea",
           color: "#d32f2f",

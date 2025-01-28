@@ -2,15 +2,16 @@ import React from "react";
 import { Drawer, Divider, List, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import VerticalMenuHeader from "./VerticalMenuHeader";
-import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import VerticalMenuList from "./VerticalMenuList";
 import CloseIcon from "@mui/icons-material/Close";
-import { toggleMenu } from "@/lib/redux/slices/pageDataSlice";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
-const StyledDrawer = styled(Drawer)<{ isOpen?: boolean }>(({ theme, isOpen }) => ({
+const StyledDrawer = styled(Drawer, {
+  shouldForwardProp: (prop) => prop !== "isMenuOpen",
+})<{ isMenuOpen: boolean }>(({ theme, isMenuOpen }) => ({
   "& .MuiDrawer-paper": {
-    width: isOpen ? 240 : 60,
+    width: isMenuOpen ? 240 : 60,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -18,37 +19,38 @@ const StyledDrawer = styled(Drawer)<{ isOpen?: boolean }>(({ theme, isOpen }) =>
     overflowX: "hidden",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
-      display: isOpen ? "block" : "none",
+      display: isMenuOpen ? "block" : "none",
     },
   },
 }));
 
 const VerticalMenu: React.FC = () => {
-  const isOpen = useAppSelector((state) => state.pageData.openMenu);
-  const dispatch = useAppDispatch();
+  const isMenuOpen = useAppStore.pageData((state) => state.openMenu);
+  const { toggleMenu } = useAppStore.pageData.getState();
+
   const isMobile = useMediaQuery((theme: any) => theme.breakpoints.down("sm"));
 
   const handleClose = () => {
-    dispatch(toggleMenu());
+    toggleMenu();
   };
 
   const handleItemClick = () => {
     if (isMobile) {
-      dispatch(toggleMenu());
+      toggleMenu();
     }
   };
 
   return (
-    <StyledDrawer variant="permanent" isOpen={isOpen}>
-      {isMobile && isOpen && (
+    <StyledDrawer variant="permanent" isMenuOpen={isMenuOpen}>
+      {isMobile && isMenuOpen && (
         <IconButton onClick={handleClose} sx={{ position: "absolute", top: 10, right: 2 }}>
           <CloseIcon />
         </IconButton>
       )}
-      <VerticalMenuHeader isOpen={isOpen} />
+      <VerticalMenuHeader />
       <Divider />
       <List>
-        <VerticalMenuList open={isOpen} onItemClick={handleItemClick} />
+        <VerticalMenuList onItemClick={handleItemClick} />
       </List>
     </StyledDrawer>
   );

@@ -1,13 +1,11 @@
 import React from "react";
 import { List, Divider, styled } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import VerticalMenuItem from "./VerticalMenuItem";
-import { toggleSubMenu } from "@/lib/redux/slices/pageDataSlice";
 import { usePortalMenus } from "@/lib/hooks/usePortalMenus";
 import { Roles } from "@/constants/roles";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 
 interface VerticalDrawerListProps {
-  open: boolean;
   onItemClick: () => void;
 }
 
@@ -19,16 +17,17 @@ const StyledDivider = styled(Divider)(({ theme }) => ({
   textTransform: "uppercase",
 }));
 
-const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open, onItemClick }) => {
-  const user = useAppSelector((state) => state.user.userData); // Obtenemos los datos del usuario desde Redux
-  const dispatch = useAppDispatch();
-  const openSubMenu = useAppSelector((state) => state.pageData.openSubMenu);
+const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ onItemClick }) => {
+  const user = useAppStore.user((state) => state.userData);
+  const openSubMenu = useAppStore.pageData((state) => state.openSubMenu);
+  const toggleSubMenu = useAppStore.pageData((state) => state.toggleSubMenu);
+  const isOpen = useAppStore.pageData((state) => state.openMenu);
 
   // Obtenemos los ítems del menú basados en el rol del usuario
   const menuItems = usePortalMenus(user?.role);
 
   const handleSubMenuClick = (text: string) => {
-    dispatch(toggleSubMenu(text));
+    toggleSubMenu(text);
   };
 
   // Separar los ítems de admin de los ítems generales
@@ -42,7 +41,7 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open, onItemClick
         <VerticalMenuItem
           key={item.text}
           item={item}
-          open={open}
+          open={isOpen}
           isSubMenuOpen={openSubMenu === item.text}
           onClick={() => {
             if (item.subMenuItems && item.subMenuItems.length > 0) {
@@ -60,12 +59,12 @@ const VerticalMenuList: React.FC<VerticalDrawerListProps> = ({ open, onItemClick
       {/* Si hay ítems de administrador, mostramos el divisor "Admin Menu" y los ítems */}
       {adminItems.length > 0 && (
         <>
-          {open && <StyledDivider>Admin Menu</StyledDivider>}
+          {isOpen && <StyledDivider>Admin Menu</StyledDivider>}
           {adminItems.map((item) => (
             <VerticalMenuItem
               key={item.text}
               item={item}
-              open={open}
+              open={isOpen}
               isSubMenuOpen={openSubMenu === item.text}
               onClick={() => {
                 if (item.subMenuItems && item.subMenuItems.length > 0) {

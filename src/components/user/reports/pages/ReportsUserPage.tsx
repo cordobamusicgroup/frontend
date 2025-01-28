@@ -6,12 +6,16 @@ import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import theme from "@/theme";
 import { FileUpload, PersonAdd } from "@mui/icons-material";
 import { Box, Typography, Select, MenuItem, SelectChangeEvent, FormControl, InputLabel } from "@mui/material";
+import { useAppStore } from "@/lib/zustand/zustandStore";
 import { useState } from "react";
 import ReportsTable from "../organisms/ReportsUserTable";
+import { useNotificationCleanup } from "@/lib/hooks/useNotificationCleanup";
 
 export default function ReportsPage() {
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const { notification, setNotification } = useAppStore.notification();
   const [selectedDistributor, setSelectedDistributor] = useState<string | null>(null);
+
+  useNotificationCleanup();
 
   const handleDistributorChange = (event: SelectChangeEvent<string>) => {
     const distributor = event.target.value;
@@ -52,7 +56,7 @@ export default function ReportsPage() {
 
       {selectedDistributor && (
         <Box sx={{ display: "flex", height: "600px", width: "100%", justifyContent: "center" }}>
-          <ReportsTable setNotification={setNotification} distributor={selectedDistributor} />
+          <ReportsTable distributor={selectedDistributor} />
         </Box>
       )}
     </Box>
