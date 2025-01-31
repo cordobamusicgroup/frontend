@@ -12,12 +12,13 @@ import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoader";
 import { isMobile } from "@/theme";
 import { useAppStore } from "@/lib/zustand/zustandStore";
+import UserAdminActionButtons from "@/components/global/molecules/ActionsButtonsUserAdmin";
 
 const UsersTable: React.FC = () => {
   const router = useRouter();
   const web = routes.web;
   const { setNotification } = useAppStore.notification();
-  const { userData = [], userFetchLoading, deleteUsers, userError, userLoading } = useUsersAdmin();
+  const { userData = [], userFetchLoading, resendWelcomeEmail, deleteUsers, userError, userLoading } = useUsersAdmin();
   const { clientData = [], clientLoading } = useClients();
 
   const gridRef = useRef<AgGridReact>(null);
@@ -27,17 +28,17 @@ const UsersTable: React.FC = () => {
     router.push(`${web.admin.users.edit}/${user.id}`);
   };
 
+  const handleResendEmail = async (email: string): Promise<void> => {
+    if (await resendWelcomeEmail(email)) {
+      setNotification({ message: "Email sent successfully", type: "success" });
+    }
+  };
+
   const handleDelete = async (userId: number): Promise<void> => {
     if (await deleteUsers([userId])) {
       setNotification({ message: "User deleted successfully", type: "success" });
     }
   };
-
-  useEffect(() => {
-    if (userError) {
-      setNotification({ message: userError, type: "error" });
-    }
-  }, [userError, setNotification]);
 
   const rowData = userData.map((user: any) => {
     const client = clientData.find((client: any) => client.id === user.clientId);
@@ -73,7 +74,15 @@ const UsersTable: React.FC = () => {
       filter: false,
       resizable: false,
       flex: 1,
-      cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
+      cellRenderer: (params: any) => (
+        <UserAdminActionButtons
+          onEdit={() => handleEdit(params.data)}
+          onDelete={() => handleDelete(params.data.id)}
+          onResendEmail={() => {
+            handleResendEmail(params.data.email);
+          }}
+        />
+      ),
     },
   ];
 
