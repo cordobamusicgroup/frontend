@@ -28,9 +28,13 @@ const UsersTable: React.FC = () => {
     router.push(`${web.admin.users.edit}/${user.id}`);
   };
 
-  const handleResendEmail = async (email: string): Promise<void> => {
-    if (await resendWelcomeEmail(email)) {
-      setNotification({ message: "Email sent successfully", type: "success" });
+  const handleResendEmail = async (email: string): Promise => {
+    try {
+      if (await resendWelcomeEmail(email)) {
+        setNotification({ message: "Email sent successfully", type: "success" });
+      }
+    } catch (error) {
+      setNotification({ message: error.message || "Failed to send email", type: "error" });
     }
   };
 
