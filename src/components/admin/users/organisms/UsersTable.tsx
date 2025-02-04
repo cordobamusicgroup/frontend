@@ -60,7 +60,7 @@ const UsersTable: React.FC = () => {
   });
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80, sortable: false, filter: false, resizable: false, flex: 0 },
+    { field: "id", headerName: "ID", width: 100, flex: 0, sortable: true, sort: "desc" },
     { field: "username", headerName: "Username", width: 200 },
     { field: "email", headerName: "Email", width: 200 },
     { field: "fullName", headerName: "Full Name", width: 200 },
