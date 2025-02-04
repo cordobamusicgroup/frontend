@@ -13,6 +13,7 @@ import TableSkeletonLoader from "@/components/global/molecules/TableSkeletonLoad
 import { isMobile } from "@/theme";
 import { useAppStore } from "@/lib/zustand/zustandStore";
 import UserAdminActionButtons from "@/components/global/molecules/ActionsButtonsUserAdmin";
+import { AxiosError } from "axios";
 
 const UsersTable: React.FC = () => {
   const router = useRouter();
@@ -28,13 +29,14 @@ const UsersTable: React.FC = () => {
     router.push(`${web.admin.users.edit}/${user.id}`);
   };
 
-  const handleResendEmail = async (email: string): Promise => {
+  const handleResendEmail = async (email: string): Promise<void> => {
     try {
       if (await resendWelcomeEmail(email)) {
         setNotification({ message: "Email sent successfully", type: "success" });
       }
-    } catch (error) {
-      setNotification({ message: error.message || "Failed to send email", type: "error" });
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      setNotification({ message: axiosError.message || "Failed to send email", type: "error" });
     }
   };
 
