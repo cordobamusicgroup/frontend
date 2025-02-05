@@ -54,5 +54,6 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.21.0",
     "vercel": "39.1.1"
-  }
+  },
+  "packageManager": "pnpm@10.1.0+sha1.ab7948c89104fdd3fc88b5b391fa4b73fd800631"
 }
