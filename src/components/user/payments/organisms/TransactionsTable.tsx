@@ -74,7 +74,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
 
   const defaultColDef = {
     flex: isMobile() ? 0 : 1,
-    resizable: false,
+    resizable: true,
     filter: true,
     sortable: false,
   };
