@@ -159,6 +159,29 @@ export const useUsersAdmin = (userId?: string) => {
     [apiRequest]
   );
 
+  const resendWelcomeEmail = useCallback(
+    async (email: string) => {
+      setUserLoading(true);
+      setError(null); // Clear error on start
+      try {
+        const response = await apiRequest({
+          url: routes.api.users.admin.resendAccountInfo,
+          method: "post",
+          requiereAuth: true,
+          data: { email },
+        });
+        return response;
+      } catch (err) {
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error resending welcome email" : "Unknown error occurred";
+        setError(errorMessage);
+        throw err;
+      } finally {
+        setUserLoading(false);
+      }
+    },
+    [apiRequest]
+  );
+
   return {
     userData: data,
     userError: error,
@@ -169,6 +192,7 @@ export const useUsersAdmin = (userId?: string) => {
     deleteUsers,
     changeClientId,
     getUserById,
+    resendWelcomeEmail,
     mutate: userMutate,
   };
 };

@@ -55,7 +55,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
       headerName: "Operations",
       width: 150,
       valueFormatter: (params: any) => {
-        const currencySymbol = params.data.currency === "USD" ? "$" : "€";
+        const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
         return `${currencySymbol} ${value}`;
       },
@@ -65,7 +65,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
       headerName: "Balance",
       width: 150,
       valueFormatter: (params: any) => {
-        const currencySymbol = params.data.currency === "USD" ? "$" : "€";
+        const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
         return `${currencySymbol} ${value}`;
       },
@@ -74,7 +74,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
 
   const defaultColDef = {
     flex: isMobile() ? 0 : 1,
-    resizable: false,
+    resizable: true,
     filter: true,
     sortable: false,
   };

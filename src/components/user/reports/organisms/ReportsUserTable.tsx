@@ -135,7 +135,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
   const defaultColDef = {
     flex: isMobile() ? 0 : 1,
     sortable: false,
-    resizable: false,
+    resizable: true,
     filter: true,
   };
 

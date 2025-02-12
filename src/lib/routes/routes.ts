@@ -24,6 +24,7 @@ const routes = {
         getAll: "/users/admin/all",
         viewAs: "/users/admin/view-as-client",
         getById: (id: number) => `/users/admin/${id}`,
+        resendAccountInfo: "/users/admin/resend-account-info",
       },
     },
     clients: {
