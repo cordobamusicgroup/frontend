@@ -16,7 +16,7 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
   return (
     <>
       <ListItem button onClick={onClick}>
-        <ListItemIcon sx={{ mr: 2, minWidth: "auto" }}>{item.icon}</ListItemIcon> {/* Ajuste: menor margen entre icono y texto */}
+        <ListItemIcon sx={{ mr: 2, minWidth: "auto" }}>{React.isValidElement(item.icon) ? React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: "1.3rem" } }) : item.icon}</ListItemIcon> {/* Ajuste: menor margen entre icono y texto */}
         {open && (
           <ListItemText
             primary={item.text}
