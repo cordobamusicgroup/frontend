@@ -29,18 +29,6 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
-    h1: {
-      fontWeight: 500,
-    },
-    h2: {
-      fontWeight: 500,
-    },
-    h3: {
-      fontWeight: 500,
-    },
-    h6: {
-      fontWeight: 600,
-    },
   },
   breakpoints: {
     values: {
@@ -68,7 +56,7 @@ theme.typography.h1 = {
   [theme.breakpoints.up("md")]: {
     fontSize: "3rem",
   },
-  fontWeight: 500,
+  fontWeight: 400,
 };
 
 theme.typography.h2 = {

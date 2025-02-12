@@ -16,8 +16,13 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
   return (
     <>
       <ListItem button onClick={onClick}>
-        <ListItemIcon>{item.icon}</ListItemIcon>
-        {open && <ListItemText primary={item.text} />}
+        <ListItemIcon sx={{ mr: 2, minWidth: "auto" }}>{item.icon}</ListItemIcon> {/* Ajuste: menor margen entre icono y texto */}
+        {open && (
+          <ListItemText
+            primary={item.text}
+            primaryTypographyProps={{ fontSize: "14px" }} // Ajuste: letra más pequeña para menú principal
+          />
+        )}
         {open && item.subMenuItems && item.subMenuItems.length > 0 && (isSubMenuOpen ? <ExpandLess /> : <ExpandMore />)}
       </ListItem>
       {item.subMenuItems && item.subMenuItems.length > 0 && (
@@ -31,12 +36,17 @@ const VerticalMenuItem: React.FC<VerticalMenuItemProps> = ({ item, open, isSubMe
                   subItem.onClick?.();
                   onSubItemClick();
                 }}
-                sx={{ pl: 2 }}
+                sx={{ pl: 3, py: 0.5 }} // Ajuste: menor padding vertical
               >
-                <ListItemIcon>
-                  <ArrowForwardOutlinedIcon />
+                <ListItemIcon sx={{ mr: 2, minWidth: "auto" }}>
+                  {" "}
+                  {/* Ajuste: remueve el gap entre icono y texto */}
+                  <ArrowForwardOutlinedIcon sx={{ fontSize: "1rem" }} /> {/* Ajuste: ícono más pequeño */}
                 </ListItemIcon>
-                <ListItemText primary={subItem.text} />
+                <ListItemText
+                  primary={subItem.text}
+                  primaryTypographyProps={{ fontSize: "14px" }} // Ajuste: letra más pequeña
+                />
               </ListItem>
             ))}
           </List>

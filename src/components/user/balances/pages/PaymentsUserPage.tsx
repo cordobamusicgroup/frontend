@@ -10,7 +10,7 @@ import BalancesBlock from "../organisms/BalancesBlock";
 import { useBalancesUser } from "@/lib/hooks/user/hookBalancesUser";
 import TransactionsTable from "../organisms/TransactionsTable";
 
-export default function BalancesUserPage() {
+export default function PaymentsUserPage() {
   const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const { balances, balanceFetchLoading, balanceError, mutate } = useBalancesUser();
   const [selectedCurrency, setSelectedCurrency] = useState<"USD" | "EUR" | null>(null);
