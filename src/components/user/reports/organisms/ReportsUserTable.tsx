@@ -133,13 +133,13 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
   }));
 
   const defaultColDef = {
-    flex: isMobile() ? 0 : 1,
+    flex: 0,
     sortable: false,
     resizable: true,
     filter: true,
   };
 
-  return <GridTables theme={royaltiesgrid} height="400px" ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={defaultColDef} overlayNoRowsTemplate="Reports not found" />;
+  return <GridTables theme={royaltiesgrid} ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={defaultColDef} overlayNoRowsTemplate="Reports not found" />;
 };
 
 export default ReportsTable;

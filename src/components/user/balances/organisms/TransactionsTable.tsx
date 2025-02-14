@@ -30,14 +30,13 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
   }, [transactionsError, setNotification]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80, filter: false, flex: 0 },
-    { field: "createdAt", headerName: "Created At", sort: "desc", sortingOrder: ["desc"], width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
-    { field: "type", headerName: "Type", width: 150 },
-    { field: "description", headerName: "Description", width: 250 },
+    { field: "id", headerName: "ID", width: 80, filter: false },
+    { field: "createdAt", headerName: "Created At", sort: "desc", sortingOrder: ["desc"], width: 200, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
+    { field: "type", headerName: "Type", width: 100 },
     {
       field: "debitState",
       headerName: "Op. Type",
-      width: 200,
+      width: 130,
       cellRenderer: (params: any) => {
         const isCredit = params.data.amount > 0;
         const state = isCredit ? "Credit" : "Debit";
@@ -50,10 +49,12 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
         );
       },
     },
+    { field: "description", headerName: "Description", width: 350, flex: 1 },
     {
       field: "amount",
       headerName: "Operations",
-      width: 150,
+      width: 250,
+      flex: 1,
       valueFormatter: (params: any) => {
         const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
@@ -63,7 +64,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
     {
       field: "balanceAmount",
       headerName: "Balance",
-      width: 150,
+      width: 250,
+      flex: 1,
       valueFormatter: (params: any) => {
         const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
@@ -73,8 +75,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
   ];
 
   const defaultColDef = {
-    flex: isMobile() ? 0 : 1,
-    resizable: true,
+    flex: 0,
+    resizable: false,
     filter: true,
     sortable: false,
   };
