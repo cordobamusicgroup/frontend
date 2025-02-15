@@ -17,10 +17,21 @@ import { RowSelectedEvent, SelectionChangedEvent } from "@ag-grid-community/core
 import useQuickFilter from "@/lib/hooks/useQuickFilter";
 import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import { AgGridReact } from "@ag-grid-community/react";
+import DMBStatusChip from "@/components/global/atoms/DMBStatusChip";
+import IsBlockedChip from "@/components/global/atoms/IsBlockedChip";
 
 interface ClientTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
+
+const formatCurrency = (currencySymbol: string, value: number): string => {
+  const num = Number(value);
+  const s = num.toString();
+  if (!s.includes(".")) return `${currencySymbol}${s}.00`;
+  const [intPart, fractionPart] = s.split(".");
+  const fraction = fractionPart.length === 1 ? fractionPart + "0" : fractionPart;
+  return `${currencySymbol}${intPart}.${fraction}`;
+};
 
 const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const router = useRouter();
@@ -60,30 +71,48 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
   const columns = [
     { field: "id", headerName: "ID", filter: "agNumberColumnFilter", width: 80, sortable: false, resizable: false },
     { field: "clientName", headerName: "Client Name", width: 200 },
+    {
+      headerName: "Client Status",
+      width: 120,
+      cellRenderer: (params: any) => <IsBlockedChip isBlocked={Boolean(params.data.isBlocked)} />,
+    },
     { field: "firstName", headerName: "First Name", width: 150 },
     { field: "lastName", headerName: "Last Name", width: 150 },
+    { field: "type", headerName: "Type", width: 100 },
+    // Se eliminó la columna "dmb" y se agregan nuevas columnas para cada propiedad
     {
-      field: "type",
-      headerName: "Type",
-      width: 100,
-    },
-    {
-      field: "taxIdType",
-      headerName: "Tax ID Type",
+      headerName: "DMB Access Type",
       width: 150,
+      valueGetter: (params: any) => params.data.dmb?.accessType || "",
     },
-    { field: "taxId", headerName: "Tax ID", width: 180 },
     {
-      field: "vatRegistered",
-      headerName: "VAT Registered",
-      width: 180,
-      cellRenderer: (params: any) => <VatStatusChip isRegistered={params.value} />,
+      headerName: "DMB Subclient",
+      width: 200,
+      valueGetter: (params: any) => params.data.dmb?.subclientName ?? "-",
     },
-    { field: "vatNumber", headerName: "VAT Number", width: 180 },
+    {
+      headerName: "DMB Status",
+      width: 150,
+      cellRenderer: (params: any) => <DMBStatusChip status={params.data.dmb?.status || ""} />,
+    },
+    // Nueva columna para isBlocked
+
+    {
+      field: "balanceUsd",
+      headerName: "Balance USD",
+      width: 180,
+      valueFormatter: (params: any) => formatCurrency("$", params.value),
+    },
+    {
+      field: "balanceEur",
+      headerName: "Balance EUR",
+      width: 180,
+      valueFormatter: (params: any) => formatCurrency("€", params.value),
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 200,
       minWidth: 100,
       sortable: false,
       filter: false,
@@ -99,10 +128,10 @@ const ClientTable: React.FC<ClientTableProps> = ({ setNotification }) => {
     firstName: client.firstName,
     lastName: client.lastName,
     type: client.type,
-    taxIdType: client.taxIdType,
-    taxId: client.taxId,
-    vatRegistered: client.vatRegistered,
-    vatNumber: client.vatId,
+    dmb: client.dmb, // objeto dmb con accessType, subclientName y status
+    balanceUsd: client.balances?.find((b: any) => b.currency === "USD")?.amount ?? 0,
+    balanceEur: client.balances?.find((b: any) => b.currency === "EUR")?.amount ?? 0,
+    isBlocked: client.isBlocked, // propiedad boolean isBlocked
   }));
 
   return (

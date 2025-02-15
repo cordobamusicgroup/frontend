@@ -16,7 +16,7 @@ interface GridTablesProps extends AgGridReactProps {
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const GridTables = forwardRef<AgGridReact, GridTablesProps>(({ columns, rowData, height = "600px", width = "100%", ...props }, ref) => {
+const GridTables = forwardRef<AgGridReact, GridTablesProps>(({ columns, rowData, height = "500px", width = "100%", ...props }, ref) => {
   return (
     <Box width={width} height={height}>
       <AgGridReact

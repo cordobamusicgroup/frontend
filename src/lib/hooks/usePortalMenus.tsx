@@ -33,12 +33,12 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       roles: [Roles.All],
       subMenuItems: [
         {
-          text: "Payments",
+          text: "Payments & Operations",
           onClick: () => router.push(routes.web.portal.financial.payments),
           roles: [Roles.All],
         },
         {
-          text: "Reports",
+          text: "Financial Reports",
           onClick: () => router.push(routes.web.portal.financial.reports),
           roles: [Roles.All],
         },
