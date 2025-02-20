@@ -56,7 +56,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
       field: "reportingMonth",
       headerName: "Reporting Month",
       sort: "desc", // Change sorting to reportingMonth
-      width: 150,
+      width: 200,
       valueFormatter: (params: any) => dayjs(params.value).format("YYYY.MM"),
     },
     { field: "createdAt", headerName: "Creation Date", width: 250, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
@@ -64,9 +64,10 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
       field: "distributor",
       headerName: "Distributor",
       width: 150,
+      flex: 0,
       valueFormatter: (params: any) => distributorFormatter(params.value),
     },
-    { field: "currency", headerName: "Currency", width: 150 },
+    { field: "currency", headerName: "Currency", width: 150, flex: 0 },
 
     {
       field: "totalRoyalties",
@@ -85,6 +86,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
       field: "debitState",
       headerName: "Debit State",
       width: 200,
+      flex: 0,
       cellRenderer: (params: any) => {
         const isPaid = params.value === "PAID";
         const color = isPaid ? "#b6c92f" : "#F5364D";
@@ -109,7 +111,6 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
       sortable: false,
       filter: false,
       resizable: false,
-      flex: 1,
       cellRenderer: (params: any) => (
         <Tooltip title="Download Report">
           <IconButton onClick={() => handleDownload(params.data.id)}>
@@ -133,10 +134,9 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ distributor }) => {
   }));
 
   const defaultColDef = {
-    flex: 0,
-    sortable: false,
-    resizable: true,
+    resizable: false,
     filter: true,
+    sortable: false,
   };
 
   return <GridTables theme={royaltiesgrid} ref={gridRef} columns={columns} rowData={rowData} loading={reportFetchLoading || reportLoading} defaultColDef={defaultColDef} overlayNoRowsTemplate="Reports not found" />;

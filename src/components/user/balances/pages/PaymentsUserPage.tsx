@@ -25,7 +25,7 @@ export default function PaymentsUserPage() {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"#0173C2"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Payments & Operations</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "16px" }}>Payments & Operations</Typography>
       </CustomPageHeader>
 
       <Box>
