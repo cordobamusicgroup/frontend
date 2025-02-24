@@ -1,7 +1,7 @@
 import React from "react";
-import UpdateClientPage from "@/components/admin/clients/pages/UpdateClientPage";
+import UpdateClientPage from "@/components/admin-components/clients/pages/UpdateClientPage";
 import { Metadata } from "next";
-import UpdateUserPage from "@/components/admin/users/pages/UpdateUserPage";
+import UpdateUserPage from "@/components/admin-components/users/pages/UpdateUserPage";
 
 export const metadata: Metadata = {
   title: "Update Client",

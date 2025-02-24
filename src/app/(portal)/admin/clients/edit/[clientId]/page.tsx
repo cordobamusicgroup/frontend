@@ -1,5 +1,5 @@
 import React from "react";
-import UpdateClientPage from "@/components/admin/clients/pages/UpdateClientPage";
+import UpdateClientPage from "@/components/admin-components/clients/pages/UpdateClientPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
