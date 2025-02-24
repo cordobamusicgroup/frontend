@@ -30,9 +30,9 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
   }, [transactionsError, setNotification]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80, filter: false },
+    { field: "id", headerName: "ID", width: 80, filter: false, flex: 0 },
     { field: "createdAt", headerName: "Created At", sort: "desc", sortingOrder: ["desc"], width: 200, valueFormatter: (params: any) => dayjs(params.value).format("MMMM D, YYYY") },
-    { field: "type", headerName: "Type", width: 100 },
+    { field: "type", headerName: "Type", width: 150 },
     {
       field: "debitState",
       headerName: "Op. Type",
@@ -49,12 +49,11 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
         );
       },
     },
-    { field: "description", headerName: "Description", width: 350, flex: 1 },
+    { field: "description", headerName: "Description", width: 350 },
     {
       field: "amount",
       headerName: "Operations",
       width: 250,
-      flex: 1,
       valueFormatter: (params: any) => {
         const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
@@ -65,7 +64,6 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
       field: "balanceAmount",
       headerName: "Balance",
       width: 250,
-      flex: 1,
       valueFormatter: (params: any) => {
         const currencySymbol = currency === "USD" ? "$" : "€";
         const value = params.value % 1 === 0 ? `${params.value}.00` : params.value;
@@ -75,7 +73,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ setNotification, 
   ];
 
   const defaultColDef = {
-    flex: 0,
+    flex: isMobile() ? 0 : 1,
     resizable: false,
     filter: true,
     sortable: false,
