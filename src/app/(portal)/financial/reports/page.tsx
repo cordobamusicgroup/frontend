@@ -1,5 +1,5 @@
 import React from "react";
-import ReportsPage from "@/components/user/reports/pages/ReportsUserPage";
+import ReportsPage from "@/components/user-components/reports/pages/ReportsUserPage";
 
 export const metadata = {
   title: "Financial Reports",
