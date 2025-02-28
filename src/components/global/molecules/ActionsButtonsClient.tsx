@@ -1,5 +1,5 @@
 import { Box, Tooltip } from "@mui/material";
-import { DeleteActionButton, EditActionButton } from "../atoms/ActionButtonClient";
+import { DeleteActionButton, EditActionButton } from "../atoms/ActionButtonsTables";
 
 interface ActionButtonsProps {
   onEdit: () => void;

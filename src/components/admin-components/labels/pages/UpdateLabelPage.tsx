@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, CircularProgress, Typography, Grid, Paper, useTheme, List, ListItem, ListItemText, Skeleton } from "@mui/material";
+import { Box, CircularProgress, Typography, List, ListItem, ListItemText } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { AddOutlined, CachedOutlined } from "@mui/icons-material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CachedOutlined } from "@mui/icons-material";
 import axios from "axios";
-import dayjs from "dayjs";
 import { useClients } from "@/lib/hooks/admin/hookClientsAdmin";
 import BackPageButton from "@/components/global/atoms/BackPageButton";
 import BasicButton from "@/components/global/atoms/BasicButton";
@@ -13,10 +12,11 @@ import ErrorBox from "@/components/global/molecules/ErrorBox";
 import FormErrorPopup from "@/components/global/molecules/FormErrorPopUp";
 import SuccessBox from "@/components/global/molecules/SuccessBox";
 import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
-import { LabelValidationSchema } from "../utils/LabelValidationSchema";
+import { LabelValidationSchema, LabelFormValues } from "../utils/LabelValidationSchema";
 import LabelFormLayout from "../organisms/LabelFormLayout";
 import FormSkeletonLoader from "@/components/global/molecules/FormSkeletonLoader";
 import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
+import { useTheme } from "@mui/material";
 
 type Props = {
   labelId: string;
@@ -48,9 +48,9 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
     }
   }, [labelData]);
 
-  const methods = useForm({
+  const methods = useForm<LabelFormValues>({
     mode: "onSubmit",
-    resolver: yupResolver(LabelValidationSchema),
+    resolver: zodResolver(LabelValidationSchema),
     reValidateMode: "onChange",
   });
 
@@ -81,7 +81,7 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
     }
   }, [labelData, originalData, reset]);
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: LabelFormValues) => {
     // Mapea los datos del formulario a la estructura que espera la API
     const updatedFields = getUpdatedFields(formData, originalData);
 
@@ -89,10 +89,16 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
       name: updatedFields.labelName,
       clientId: updatedFields.clientId,
       status: updatedFields.labelStatus,
+      website: updatedFields.labelWebsite,
+      countryId: updatedFields.countryId,
+      beatportStatus: updatedFields.beatportStatus,
+      traxsourceStatus: updatedFields.traxsourceStatus,
+      beatportUrl: updatedFields.beatportUrl,
+      traxsourceUrl: updatedFields.traxsourceUrl,
     };
 
     try {
-      await updateLabel(mappedData); // Aquí llamas a la API con la estructura correcta
+      await updateLabel(mappedData);
       scrollToTop();
       setSuccessMessage("The label was successfully updated.");
       setApiErrorMessage(null);
@@ -130,10 +136,10 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
   return (
     <Box p={3} sx={{ display: "flex", flexDirection: "column" }}>
       <CustomPageHeader background={"linear-gradient(58deg, rgba(0,124,233,1) 0%, rgba(0,79,131,1) 85%)"} color={theme.palette.primary.contrastText}>
-        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Edit Client</Typography>
+        <Typography sx={{ flexGrow: 1, fontSize: "18px" }}>Edit Label</Typography>
         <BackPageButton colorBackground="white" colorText={theme.palette.secondary.main} />
         <BasicButton colorBackground="white" colorText={theme.palette.secondary.main} onClick={handleFormSubmit} color="primary" variant="contained" disabled={labelLoading} startIcon={<CachedOutlined />} endIcon={labelLoading ? <CircularProgress size={20} /> : null}>
-          Update Client
+          Update Label
         </BasicButton>
       </CustomPageHeader>
 
@@ -145,8 +151,8 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>
-          {Object.values(errors).map((error) => (
-            <ListItem key={error.ref?.toString()} disableGutters sx={{ padding: "1px 0" }}>
+          {Object.entries(errors).map(([field, error]) => (
+            <ListItem key={field} disableGutters sx={{ padding: "1px 0" }}>
               <ListItemText primary={`• ${error.message}`} sx={{ margin: 0, padding: 0 }} />
             </ListItem>
           ))}

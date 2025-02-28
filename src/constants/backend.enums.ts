@@ -52,7 +52,8 @@ export const LabelStatus = [
 ];
 
 export const LabelRegistrationStatus = [
-  { label: "Unregistered", value: "UNREGISTERED" },
-  { label: "Registered", value: "REGISTERED" },
-  { label: "Pending", value: "PENDING" },
+  { value: "NO_REGISTRATION", label: "No Registration" },
+  { value: "PENDING", label: "Pending" },
+  { value: "REJECTED", label: "Rejected" },
+  { value: "ACTIVE", label: "Active" },
 ];
