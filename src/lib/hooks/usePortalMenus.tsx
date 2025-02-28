@@ -1,31 +1,28 @@
-import { useRouter } from "next/navigation";
-import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, Group as GroupIcon, Settings as SettingsIcon, LibraryMusic, Group, SupervisedUserCircle, ContactEmergency, Assessment } from "@mui/icons-material";
+import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, LibraryMusic, SupervisedUserCircle, ContactEmergency, Assessment } from "@mui/icons-material";
 import { Roles } from "@/constants/roles";
 import routes from "../routes/routes";
 
 export interface SubMenuType {
   text: string;
-  onClick: () => void;
   roles: Roles[];
+  path: string;
 }
 
 export interface MenuItemType {
   text: string;
   icon: React.ReactNode;
   roles: Roles[];
-  onClick?: () => void;
   subMenuItems?: SubMenuType[];
+  path?: string;
 }
 
 export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
-  const router = useRouter();
-
   const allMenuItems: MenuItemType[] = [
     {
       text: "Overview",
       icon: <HomeIcon />,
       roles: [Roles.All],
-      onClick: () => router.push(routes.web.portal.overview),
+      path: routes.web.portal.overview,
     },
     {
       text: "Financial",
@@ -34,12 +31,12 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       subMenuItems: [
         {
           text: "Payments & Operations",
-          onClick: () => router.push(routes.web.portal.financial.payments),
+          path: routes.web.portal.financial.payments,
           roles: [Roles.All],
         },
         {
           text: "Financial Reports",
-          onClick: () => router.push(routes.web.portal.financial.reports),
+          path: routes.web.portal.financial.reports,
           roles: [Roles.All],
         },
       ],
@@ -48,19 +45,19 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       text: "Clients",
       icon: <ContactEmergency />,
       roles: [Roles.Admin],
-      onClick: () => router.push(routes.web.admin.clients.root),
+      path: routes.web.admin.clients.root,
     },
     {
       text: "Labels",
       icon: <LibraryMusic />,
       roles: [Roles.Admin],
-      onClick: () => router.push(routes.web.admin.labels.root),
+      path: routes.web.admin.labels.root,
     },
     {
       text: "Users",
       icon: <SupervisedUserCircle />,
       roles: [Roles.Admin],
-      onClick: () => router.push(routes.web.admin.users.root),
+      path: routes.web.admin.users.root,
     },
     {
       text: "Reports",
@@ -69,7 +66,7 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
       subMenuItems: [
         {
           text: "Link Missing Reports",
-          onClick: () => router.push(routes.web.admin.reports.unlinked.root),
+          path: routes.web.admin.reports.unlinked.root,
           roles: [Roles.Admin],
         },
       ],

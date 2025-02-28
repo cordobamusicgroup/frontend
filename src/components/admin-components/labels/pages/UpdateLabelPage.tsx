@@ -40,6 +40,14 @@ const UpdateLabelPage: React.FC<Props> = ({ labelId }) => {
 
   const [originalData, setOriginalData] = useState<any>(null);
 
+  // Update useEffect to follow the title template format
+  useEffect(() => {
+    if (labelData?.name) {
+      // Follow the template format: "%s - Córdoba Music Group"
+      document.title = `${labelData.name} - Córdoba Music Group`;
+    }
+  }, [labelData]);
+
   const methods = useForm({
     mode: "onSubmit",
     resolver: yupResolver(LabelValidationSchema),
