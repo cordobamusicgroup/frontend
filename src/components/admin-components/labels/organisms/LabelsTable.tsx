@@ -16,10 +16,26 @@ import SearchBoxTable from "@/components/global/molecules/SearchBoxTable";
 import GridTables from "@/components/global/molecules/GridTables";
 import { ColDef, ModuleRegistry } from "@ag-grid-community/core";
 import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
+import { DeleteActionButton, EditActionButton } from "@/components/global/atoms/ActionButtonsTables";
 
 interface LabelsTableProps {
   setNotification: (notification: { message: string; type: "success" | "error" }) => void;
 }
+
+interface ActionButtonsProps {
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const ActionButtonsLabels: React.FC<ActionButtonsProps> = ({ onEdit, onDelete }) => {
+  return (
+    <Box>
+      <EditActionButton onClick={onEdit} />
+
+      <DeleteActionButton onClick={onDelete} />
+    </Box>
+  );
+};
 
 const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
   const router = useRouter();
@@ -107,7 +123,7 @@ const LabelsTable: React.FC<LabelsTableProps> = ({ setNotification }) => {
       filter: false,
       resizable: false,
       flex: 1,
-      cellRenderer: (params: any) => <ActionButtonsClient onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
+      cellRenderer: (params: any) => <ActionButtonsLabels onEdit={() => handleEdit(params.data)} onDelete={() => handleDelete(params.data.id)} />,
     },
   ];
 

@@ -2,6 +2,7 @@ import useSWR, { mutate } from "swr";
 import { useState, useCallback } from "react";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import routes from "@/lib/routes/routes";
+import axios from "axios";
 
 type UnlinkedReport = any; // Replace 'any' with your actual unlinked report type
 
@@ -20,7 +21,8 @@ export const useLinkReports = () => {
       });
       return response;
     } catch (err) {
-      setError("Error fetching unlinked reports");
+      const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error fetching unlinked reports" : "An unexpected error occurred";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -50,7 +52,8 @@ export const useLinkReports = () => {
         mutate("unlinked-reports"); // Refresh the data
         return response;
       } catch (err) {
-        setError("Error linking report");
+        const errorMessage = axios.isAxiosError(err) ? err.response?.data?.message || "Error linking report" : "An unexpected error occurred";
+        setError(errorMessage);
         throw err;
       } finally {
         setLoading(false);

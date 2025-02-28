@@ -9,6 +9,7 @@ import { useAppStore } from "@/lib/zustand/zustandStore";
 import { Autocomplete } from "@mui/material";
 import { CheckCircle, DoDisturbOnOutlined } from "@mui/icons-material";
 import FullScreenLoader from "@/components/global/molecules/FullScreenLoader";
+import axios from "axios";
 
 interface LinkReportDialogProps {
   open: boolean;
@@ -44,12 +45,13 @@ const LinkReportDialog: React.FC<LinkReportDialogProps> = ({ open, onClose, repo
     if (reportId && labelId) {
       try {
         await linkReport(reportId, labelId);
-        setNotification({ message: "Report linked successfully", type: "success" });
+        setNotification({ message: "Report successfully sent to the processing queue", type: "success" });
         onClose();
         reset();
       } catch (error) {
         console.error("Error linking report:", error);
-        setErrorMessage("Error linking report");
+        const errorMessage = axios.isAxiosError(error) ? error.response?.data?.message || "Error linking report" : "An unexpected error occurred";
+        setErrorMessage(errorMessage);
       }
     }
   };
@@ -60,7 +62,8 @@ const LinkReportDialog: React.FC<LinkReportDialogProps> = ({ open, onClose, repo
       setErrorMessage("Error fetching labels");
     } else if (linkError) {
       console.error("Error linking report:", linkError);
-      setErrorMessage("Error linking report");
+      const errorMessage = axios.isAxiosError(linkError) ? linkError.response?.data?.message || "Error linking report" : "An unexpected error occurred";
+      setErrorMessage(errorMessage);
     } else {
       setErrorMessage(null);
     }
@@ -97,11 +100,11 @@ const LinkReportDialog: React.FC<LinkReportDialogProps> = ({ open, onClose, repo
               value={selectedClient}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderOption={(props, option) => {
-                const { key, ...restProps } = props; // Extraemos la clave primero
+                const { key, ...restProps } = props;
                 return (
                   <li key={`${option.id}-${key}`} {...restProps}>
-                    {option.status === "ACTIVE" ? <CheckCircle style={{ marginRight: 8 }} /> : <DoDisturbOnOutlined style={{ marginRight: 8 }} />}
-                    {`[ID: ${option.id}] ${option.name} (${option.status})`}
+                    {option.status === "ACTIVE" ? <CheckCircle style={{ marginRight: 8, color: "#4caf50" }} /> : <DoDisturbOnOutlined style={{ marginRight: 8, color: "#f44336" }} />}
+                    {`[ID: ${option.id}] ${option.name}`}
                   </li>
                 );
               }}

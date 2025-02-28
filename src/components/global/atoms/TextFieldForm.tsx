@@ -12,7 +12,28 @@ interface TextFieldFormProps extends Omit<TextFieldProps, "error"> {
 const TextFieldForm: React.FC<TextFieldFormProps> = ({ name, label, defaultValue = "", rules, ...props }) => {
   const { control } = useFormContext();
 
-  return <Controller name={name} control={control} defaultValue={defaultValue} rules={rules} render={({ field, fieldState: { error } }) => <TextField {...field} {...props} label={label} fullWidth sx={{ marginBottom: 2, marginTop: 2 }} error={Boolean(error)} helperText={error?.message} variant="standard" />} />;
+  return (
+    <Controller 
+      name={name} 
+      control={control} 
+      defaultValue={defaultValue} 
+      rules={rules} 
+      render={({ field, fieldState: { error } }) => (
+        <TextField 
+          {...field} 
+          // Convert null values to empty string to avoid React warnings
+          value={field.value === null ? "" : field.value} 
+          {...props} 
+          label={label} 
+          fullWidth 
+          sx={{ marginBottom: 2, marginTop: 2 }} 
+          error={Boolean(error)} 
+          helperText={error?.message} 
+          variant="standard" 
+        />
+      )} 
+    />
+  );
 };
 
 export default TextFieldForm;
