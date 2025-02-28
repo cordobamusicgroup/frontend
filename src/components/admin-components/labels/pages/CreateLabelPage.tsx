@@ -14,6 +14,7 @@ import CustomPageHeader from "@/components/header/molecules/CustomPageHeader";
 import LabelFormLayout from "../organisms/LabelFormLayout";
 import { LabelValidationSchema } from "../utils/LabelValidationSchema";
 import { useLabels } from "@/lib/hooks/admin/hookLabelsAdmin";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const CreateLabelPage: React.FC = () => {
   const theme = useTheme();
@@ -26,7 +27,7 @@ const CreateLabelPage: React.FC = () => {
   // Configuración de useForm con yupResolver para validación
   const methods = useForm({
     mode: "all",
-    resolver: yupResolver(LabelValidationSchema),
+    resolver: zodResolver(LabelValidationSchema),
     reValidateMode: "onChange",
   });
 
