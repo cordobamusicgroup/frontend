@@ -21,6 +21,15 @@ const UnlinkedReportsTable: React.FC = () => {
   const [selectedReportData, setSelectedReportData] = useState<any>(null);
   const { setNotification } = useAppStore.notification();
 
+  // Add automatic refresh every 10 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      mutate("unlinked-reports");
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(intervalId); // Clean up on unmount
+  }, []);
+
   useEffect(() => {
     if (unlinkedReportsError) {
       setNotification({ message: unlinkedReportsError, type: "error" });
