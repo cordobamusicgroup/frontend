@@ -14,6 +14,7 @@ export interface MenuItemType {
   roles: Roles[];
   subMenuItems?: SubMenuType[];
   path?: string;
+  // Remove the onClick property as it should use path instead
 }
 
 export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
