@@ -54,14 +54,14 @@ const CreateLabelPage: React.FC = () => {
       setSuccessMessage("The client was successfully created.");
       setApiErrorMessage(null); // Limpiar errores de la API al éxito
       reset(); // Reseteamos el formulario
-    } catch (error: any) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        scrollToTop();
+    } catch (error: unknown) {
+      scrollToTop();
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
         setApiErrorMessage(error.response.data.message);
-        setSuccessMessage(null);
       } else {
         setApiErrorMessage("An unexpected error occurred.");
       }
+      setSuccessMessage(null);
     }
 
     console.log("Form Submitted with data:", payload);
@@ -104,9 +104,9 @@ const CreateLabelPage: React.FC = () => {
       </FormProvider>
       <FormErrorPopup open={errorOpen} onClose={handleErrorClose}>
         <List sx={{ padding: 0, margin: 0 }}>
-          {Object.values(errors).map((error) => (
-            <ListItem key={error.ref?.toString()} disableGutters sx={{ padding: "1px 0" }}>
-              <ListItemText primary={`• ${error.message}`} sx={{ margin: 0, padding: 0 }} />
+          {Object.values(errors).map((error, index) => (
+            <ListItem key={index} disableGutters sx={{ padding: "1px 0" }}>
+              <ListItemText primary={`• ${error?.message || "Validation error"}`} sx={{ margin: 0, padding: 0 }} />
             </ListItem>
           ))}
         </List>
