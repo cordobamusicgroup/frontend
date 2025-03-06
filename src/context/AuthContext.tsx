@@ -159,6 +159,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         case 1016:
           setError(error.response?.data?.message || "Validation error");
           break;
+        case 1017: // Client Blocked
+          setError("The client related to your user is blocked, contact us for more details.s");
+          break;
         default:
           setError("An unexpected error occurred");
       }
