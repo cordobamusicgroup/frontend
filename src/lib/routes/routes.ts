@@ -72,6 +72,9 @@ const routes = {
     },
     admin: {
       overview: "/admin",
+      workflow: {
+        root: "/admin/workflow",
+      },
       clients: {
         root: "/admin/clients",
         create: "/admin/clients/create",
