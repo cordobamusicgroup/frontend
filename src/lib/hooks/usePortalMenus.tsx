@@ -1,4 +1,4 @@
-import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, LibraryMusic, SupervisedUserCircle, ContactEmergency, Assessment } from "@mui/icons-material";
+import { Home as HomeIcon, AttachMoney as AttachMoneyIcon, LibraryMusic, SupervisedUserCircle, ContactEmergency, Assessment, Inbox } from "@mui/icons-material";
 import { Roles } from "@/constants/roles";
 import routes from "../routes/routes";
 
@@ -41,6 +41,12 @@ export const usePortalMenus = (userRole: Roles): MenuItemType[] => {
           roles: [Roles.All],
         },
       ],
+    },
+    {
+      text: "Workflow",
+      icon: <Inbox />,
+      roles: [Roles.Admin],
+      path: routes.web.admin.workflow.root,
     },
     {
       text: "Clients",
