@@ -14,6 +14,8 @@ const routes = {
       me: "/auth/me",
       forgotPassword: "/auth/forgot-password",
       resetPassword: "/auth/reset-password",
+      refresh: "/auth/refresh",
+      logout: "/auth/logout",
     },
     users: {
       editProfile: "/users/edit-profile",

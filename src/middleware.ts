@@ -9,80 +9,89 @@ const JWT_SECRET = encoder.encode(process.env.JWT_SECRET);
 
 // Expresión regular para rutas públicas dentro de /auth/*
 const publicAuthRegex = /^\/auth\/.*/;
+// Add API URLs to the public routes list
+const publicApiRoutes = ["/api/auth/login", "/api/auth/refresh", "/api/auth/forgot-password", "/api/auth/reset-password"];
 
 export async function middleware(request: NextRequest) {
   const { web, protected: protectedRoutes } = routes;
-  const token = request.cookies.get("access_token")?.value;
+  const accessToken = request.cookies.get("access_token")?.value;
+  const refreshToken = request.cookies.get("refresh_token")?.value;
   const lastUrl = request.cookies.get("last_url")?.value || web.portal.overview;
   const currentPath = request.nextUrl.pathname;
 
   let isAuthenticated = false;
-  let userRole: Roles | null = null; // Definimos explícitamente que el rol es de tipo `Roles` o `null`
+  let userRole: Roles | null = null;
 
-  // Verificar si la ruta es pública (cualquier ruta que comience con /auth/)
-  const isPublicRoute = publicAuthRegex.test(currentPath);
+  // Verify if the route is public
+  const isPublicRoute = publicAuthRegex.test(currentPath) || publicApiRoutes.includes(currentPath);
 
-  // Si es una ruta pública, permitir el acceso sin autenticación
+  // If it's a public route, allow access without authentication
   if (isPublicRoute) {
-    console.log(`Ruta pública detectada: ${currentPath}, acceso permitido.`);
+    console.log(`Public route detected: ${currentPath}, access allowed.`);
     return NextResponse.next();
   }
 
-  // Verificar token JWT
-  if (token) {
+  // Verify JWT token
+  if (accessToken) {
     try {
-      // Verificar el token y extraer el rol del payload
-      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const { payload } = await jwtVerify(accessToken, JWT_SECRET);
       isAuthenticated = true;
-      userRole = payload.role as Roles; // Casteamos el rol al tipo `Roles`
-      console.log(`Token válido, rol detectado: ${userRole}, ruta actual: ${currentPath}`);
+      userRole = payload.role as Roles;
+      console.log(`Valid token, detected role: ${userRole}, current route: ${currentPath}`);
     } catch (error) {
       console.log("Token verification failed:", error);
+
+      // If there's a refresh token available, redirect to login so the client can refresh the token
+      if (refreshToken) {
+        console.log("Refresh token available, redirecting to login for fresh authentication");
+      } else {
+        console.log("No refresh token available, authentication required");
+      }
     }
   } else {
-    console.log(`No se encontró token, ruta actual: ${currentPath}`);
+    console.log(`No token found, current route: ${currentPath}`);
   }
 
-  // Redirigir al login si no está autenticado y no está en una ruta pública
+  // Redirect to login if not authenticated and not on the login page
   if (!isAuthenticated && currentPath !== web.login) {
-    console.log(`Usuario no autenticado, redirigiendo al login desde: ${currentPath}`);
+    console.log(`User not authenticated, redirecting to login from: ${currentPath}`);
     return NextResponse.redirect(new URL(web.login, request.url));
   }
 
-  // Redirigir al último URL si está autenticado y está en la página de login
+  // Redirect to last URL if authenticated and on the login page
   if (isAuthenticated && currentPath === web.login) {
     const redirectUrl = lastUrl || web.portal.overview;
-    console.log(`Usuario autenticado, redirigiendo a la última URL visitada: ${redirectUrl}`);
+    console.log(`User authenticated, redirecting to last visited URL: ${redirectUrl}`);
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
-  // Comprobar si la ruta es protegida y si el rol de usuario tiene acceso
+  // Check if the route is protected and if the user role has access
   const matchedRoute = protectedRoutes.find((route) => {
     const regex = new RegExp(`^${route.path}`);
     return regex.test(currentPath);
   });
 
-  // Si la ruta está protegida, comprobar el rol del usuario
+  // If the route is protected, check the user's role
   if (matchedRoute) {
     if (matchedRoute.roles === Roles.All) {
       if (!isAuthenticated) {
-        console.log(`Ruta protegida para todos los roles, pero no autenticado: ${currentPath}`);
+        console.log(`Protected route for all roles, but not authenticated: ${currentPath}`);
         return NextResponse.redirect(new URL(web.portal.overview, request.url));
       } else {
-        console.log(`Acceso permitido para todos los roles en la ruta: ${currentPath}`);
+        console.log(`Access allowed for all roles on route: ${currentPath}`);
       }
     } else if (!userRole || !matchedRoute.roles.includes(userRole)) {
-      console.log(`Acceso denegado. Rol detectado: ${userRole}, Ruta: ${currentPath}`);
+      console.log(`Access denied. Detected role: ${userRole}, Route: ${currentPath}`);
       return NextResponse.redirect(new URL(web.portal.overview, request.url));
     } else {
-      console.log(`Acceso permitido. Rol detectado: ${userRole}, Ruta: ${currentPath}`);
+      console.log(`Access allowed. Detected role: ${userRole}, Route: ${currentPath}`);
     }
   }
 
-  // Crear la respuesta
+  // Create response
   const response = NextResponse.next();
 
-  // Configurar `last_url` si no está en la página de login
+  // Configure `last_url` if not on login page
   if (currentPath !== web.login && lastUrl !== currentPath) {
     response.cookies.set("last_url", currentPath, {
       path: "/",
@@ -92,7 +101,7 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // Configurar `isAuthenticated` en las cookies
+  // Set `isAuthenticated` in cookies
   response.cookies.set("isAuthenticated", isAuthenticated.toString(), {
     path: "/",
     sameSite: "strict",
